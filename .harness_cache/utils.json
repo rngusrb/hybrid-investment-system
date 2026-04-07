@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "passed": 44,
+  "failed": 0,
+  "returncode": 0,
+  "output": "............................................                             [100%]\n44 passed in 0.60s\n",
+  "tests": [
+    "tests/integration/test_e2e_fixes.py",
+    "tests/integration/test_multicycle.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T10:55:11.570663"
+}

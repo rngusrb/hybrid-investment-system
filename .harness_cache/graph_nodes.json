@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "passed": 64,
+  "failed": 0,
+  "returncode": 0,
+  "output": "................................................................         [100%]\n64 passed in 1.45s\n",
+  "tests": [
+    "tests/integration/test_daily_cycle.py",
+    "tests/integration/test_e2e_fixes.py",
+    "tests/integration/test_multicycle.py",
+    "tests/integration/test_risk_alert.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T11:40:25.001289"
+}

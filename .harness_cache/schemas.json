@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "passed": 95,
+  "failed": 0,
+  "returncode": 0,
+  "output": "........................................................................ [ 75%]\n.......................                                                  [100%]\n95 passed in 0.06s\n",
+  "tests": [
+    "tests/unit/test_schemas.py",
+    "tests/unit/test_agents.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T10:55:06.492148"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "passed": 48,
+  "failed": 0,
+  "returncode": 0,
+  "output": "................................................                         [100%]\n48 passed in 0.30s\n",
+  "tests": [
+    "tests/unit/test_llm_providers.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T10:55:12.277093"
+}

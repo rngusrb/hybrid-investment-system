@@ -1,0 +1,51 @@
+agents:
+  emily:
+    name: "Emily"
+    role: "Market Analyst"
+    system_prompt_path: "prompts/emily_system.md"
+    max_retries: 3
+    temperature: 0.2
+    regime_confidence_threshold: 0.55
+    technical_confidence_threshold: 0.6
+
+  bob:
+    name: "Bob"
+    role: "Strategy Analyst"
+    system_prompt_path: "prompts/bob_system.md"
+    max_retries: 3
+    temperature: 0.2
+    strategy_confidence_floor: 0.45
+    min_candidates: 2
+    max_candidates: 5
+
+  dave:
+    name: "Dave"
+    role: "Risk Control Analyst"
+    system_prompt_path: "prompts/dave_system.md"
+    max_retries: 3
+    temperature: 0.1
+    risk_weights:
+      beta: 0.3
+      illiquidity: 0.25
+      sector_concentration: 0.25
+      volatility: 0.2
+
+  otto:
+    name: "Otto"
+    role: "Fund Manager"
+    system_prompt_path: "prompts/otto_system.md"
+    max_retries: 3
+    temperature: 0.2
+    dual_reward:
+      lambda1: 0.3    # RiskScore penalty
+      lambda2: 0.2    # ConstraintViolation penalty
+      lambda3: 0.15   # MarketAlignment penalty
+      lambda4: 0.2    # ExecutionFeasibility penalty
+      lambda5: 0.15   # AgentReliability penalty
+    adaptive_weight_lookback: 8
+
+reliability:
+  cold_start: 0.5
+  floor: 0.35
+  update_window: 10
+  decay_factor: 0.9

@@ -1,0 +1,52 @@
+evaluation:
+  backtest:
+    mode: "point_in_time_safe"
+    lookahead_bias_check: true
+    review_horizon_days: 20
+
+  metrics:
+    primary:
+      - total_return
+      - annualized_return
+      - sharpe_ratio
+      - sortino_ratio
+      - calmar_ratio
+      - max_drawdown
+      - turnover
+      - win_rate
+    stability:
+      - regime_robustness
+      - risk_alert_precision
+      - policy_oscillation_index
+    propagation:
+      - technical_signal_adoption_rate
+      - source_to_manager_semantic_similarity
+      - dropped_critical_signal_rate
+      - agent_specific_marginal_utility
+
+  ablation:
+    enabled: true
+    variants:
+      - remove_simulated_reward
+      - remove_strategy_memory
+      - remove_market_analysis_meeting
+      - remove_risk_alert_meeting
+      - remove_adaptive_weighting
+      - remove_debate_protocol
+      - remove_execution_feasibility_layer
+      - remove_retrieval_validity_scoring
+      - remove_technical_priority_routing
+      - remove_calibration_layer
+      - remove_propagation_audit
+      - remove_agent_reliability_gating
+
+  baselines:
+    - buy_and_hold
+    - mean_variance
+    - single_agent_llm
+    - multi_agent_no_sim_trading
+    - multi_agent_no_risk_alert
+    - multi_agent_no_memory
+    - multi_agent_no_calibration
+    - multi_agent_no_propagation_audit
+    - full_hybrid_system

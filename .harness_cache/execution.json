@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "passed": 18,
+  "failed": 0,
+  "returncode": 0,
+  "output": "..................                                                       [100%]\n18 passed in 0.02s\n",
+  "tests": [
+    "tests/unit/test_position_sizer.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T10:55:10.501597"
+}

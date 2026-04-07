@@ -1,0 +1,12 @@
+{
+  "status": "pass",
+  "passed": 19,
+  "failed": 0,
+  "returncode": 0,
+  "output": "...................                                                      [100%]\n19 passed in 0.02s\n",
+  "tests": [
+    "tests/unit/test_reliability.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-07T10:55:13.781437"
+}
