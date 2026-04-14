@@ -61,6 +61,14 @@
 - Propagation Audit: tech/consensus 신호 채택률 추적 (dropped_signal_count)
 - Reliability: 5차원 EMA — action_changed / confidence / prop_score 기반 신뢰도 갱신 + Gating
 
+### Phase 6 — 메모리 루프 닫기 ✅ 완료 (2026-04-14)
+- [x] `memory/outcome_filler._update_strategy_memory()` — r_real 채워질 때 `results/strategy_memory.json`도 업데이트 (r_real, performance_score, outcome_reliability)
+- [x] `memory/retrieval/validity_scorer.compute_outcome_reliability()` — r_real_source 기반 신뢰도 + r_real 크기 기반 성과 반영 (r_sim_proxy→0.5, <0→0.65, 0~2%→0.85, ≥2%→1.0)
+- [x] `memory/run_memory._sort_results_verified_first()` — verified(polygon_weighted) 케이스 우선 + r_real 내림차순 정렬 (이미 구현됨)
+- [x] `tests/unit/test_outcome_filler.py` — 6개 테스트 추가 (TestUpdateStrategyMemory)
+- 완료 기준 달성: r_real ≠ r_sim이 실제로 출력됨 (예: 2024-01-05 r_real=0.0643)
+- 전략 성과 기반 메모리 품질 정렬 동작 확인
+
 ### 목표 구조 (최종)
 ```
 [run_loop.py] 날짜 범위 실행
@@ -70,6 +78,8 @@
   └── results/ 저장 → memory/ 로드 ──┘
   ↓
 주간: MAM → SDM → (RAM 조건부)
+  ↓
+T+7 후: outcome_filler → r_real 채우기 → strategy_memory 업데이트
 ```
 
 ## CLAUDE.md 업데이트 원칙

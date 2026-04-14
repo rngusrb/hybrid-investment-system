@@ -94,6 +94,11 @@ def run_one_cycle(run_date: str, tickers: list[str], llm, llm_decision) -> dict:
     한 날짜에 대해 전체 파이프라인(B+C) 실행.
     memory/run_memory.py 에서 이전 주기 컨텍스트를 자동 로드해 Portfolio Manager에 주입.
     """
+    from memory.outcome_filler import fill_pending_outcomes
+    filled = fill_pending_outcomes(run_date)
+    if filled:
+        print(f"    [r_real] {len(filled)}개 결과 업데이트: {list(filled.keys())}")
+
     from scripts.portfolio_pipeline import run_single_stock, run_portfolio_manager
     from memory.run_memory import get_context_prompt, find_prev_dates
 

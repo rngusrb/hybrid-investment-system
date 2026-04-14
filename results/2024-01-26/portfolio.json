@@ -2709,5 +2709,8 @@
     "flags": []
   },
   "errors": [],
-  "prev_date": "2024-01-19"
+  "prev_date": "2024-01-19",
+  "r_real": 0.016369157894736842,
+  "r_real_source": "polygon_weighted",
+  "r_real_eval_date": "2024-12-31"
 }

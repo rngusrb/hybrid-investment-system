@@ -44,15 +44,43 @@ def load_result(run_date: str) -> Optional[dict]:
 
 # ─── 컨텍스트 구성 ───────────────────────────────────────────────────────────
 
-def build_context(prev_results: list[dict]) -> dict:
+def _sort_results_verified_first(prev_results: list[dict]) -> list[dict]:
+    """
+    결과 목록을 verified(r_real 있음) 우선 정렬.
+    - verified: r_real + r_real_source == "polygon_weighted" → r_real 내림차순 (좋은 결과 먼저)
+    - unverified: r_real 없음 → 날짜 내림차순 (기존 동작 유지)
+    최종: verified 먼저, 이후 unverified.
+    """
+    verified = [
+        r for r in prev_results
+        if r.get("r_real") is not None
+        and r.get("r_real_source") == "polygon_weighted"
+    ]
+    unverified = [
+        r for r in prev_results
+        if not (r.get("r_real") is not None
+                and r.get("r_real_source") == "polygon_weighted")
+    ]
+    # verified: r_real 내림차순
+    verified_sorted = sorted(verified, key=lambda r: r.get("r_real", 0), reverse=True)
+    # unverified: 날짜 내림차순 (이미 find_prev_dates가 최신순으로 줌)
+    return verified_sorted + unverified
+
+
+def build_context(prev_results: list[dict], lookback: int = 3) -> dict:
     """
     이전 결과 목록 → 구조화된 컨텍스트.
-    가장 최신 결과를 primary로, 나머지는 trend 파악용.
+    verified(r_real 확인됨) 결과를 우선 배치, 그 다음 unverified를 날짜순으로.
+    가장 앞 결과를 primary로, 나머지는 trend 파악용.
     """
     if not prev_results:
         return {}
 
-    primary = prev_results[0]
+    # verified 우선 정렬 후 lookback 개수 제한
+    sorted_results = _sort_results_verified_first(prev_results)
+    sorted_results = sorted_results[:lookback]
+
+    primary = sorted_results[0]
     portfolio = primary.get("portfolio", {})
     stock_results = primary.get("stock_results", [])
 
@@ -76,7 +104,7 @@ def build_context(prev_results: list[dict]) -> dict:
     for sig in ticker_signals:
         action = ticker_signals[sig]["action"]
         count = 1
-        for old in prev_results[1:]:
+        for old in sorted_results[1:]:
             old_stocks = {r["ticker"]: r for r in old.get("stock_results", [])}
             if sig in old_stocks:
                 old_rm = old_stocks[sig].get("risk_manager", {})
@@ -97,6 +125,8 @@ def build_context(prev_results: list[dict]) -> dict:
         "ticker_signals":  ticker_signals,
         "consecutive":     consecutive,
         "prev_errors":     primary.get("errors", []),
+        "r_real":          primary.get("r_real"),
+        "r_real_source":   primary.get("r_real_source"),
     }
 
 
@@ -124,6 +154,12 @@ def format_context_for_prompt(ctx: dict) -> str:
     lines.append(f"  현금: {cash:.1f}%  헤지: {hedge:.1f}%")
     lines.append(f"  포트폴리오 리스크: {ctx.get('prev_risk_level', '?')}")
     lines.append(f"  시장 전망: {ctx.get('prev_outlook', '?')}")
+
+    # 실제 수익률 표시 (검증된 경우)
+    r_real = ctx.get("r_real")
+    if r_real is not None:
+        sign = "+" if r_real >= 0 else ""
+        lines.append(f"  실제수익률: {sign}{r_real * 100:.1f}% (검증됨)")
 
     changed = [t for t, s in ctx["ticker_signals"].items() if s.get("action_changed")]
     if changed:
@@ -160,7 +196,7 @@ def load_prev_context(current_date: str, lookback: int = 3) -> dict:
         if r:
             prev_results.append(r)
 
-    return build_context(prev_results)
+    return build_context(prev_results, lookback=lookback)
 
 
 def get_context_prompt(current_date: str, lookback: int = 3) -> str:

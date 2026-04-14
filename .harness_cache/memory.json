@@ -1,15 +1,16 @@
 {
   "status": "pass",
-  "passed": 96,
+  "passed": 111,
   "failed": 0,
   "returncode": 0,
-  "output": "........................................................................ [ 75%]\n........................                                                 [100%]\n96 passed in 0.69s\n",
+  "output": "........................................................................ [ 64%]\n.......................................                                  [100%]\n111 passed in 1.26s\n",
   "tests": [
     "tests/unit/test_retrieval.py",
     "tests/unit/test_run_memory.py",
+    "tests/unit/test_outcome_filler.py",
     "tests/integration/test_e2e_fixes.py",
     "tests/integration/test_multicycle.py"
   ],
   "missing": [],
-  "timestamp": "2026-04-14T11:33:29.096189"
+  "timestamp": "2026-04-14T14:03:36.272803"
 }

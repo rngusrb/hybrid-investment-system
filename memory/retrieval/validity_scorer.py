@@ -118,17 +118,46 @@ def compute_data_quality(case: dict) -> float:
 
 def compute_outcome_reliability(case: dict, review_horizon_days: int = 20) -> float:
     """
-    OutcomeReliability: outcome이 review horizon 이후 검증된 case인지.
+    OutcomeReliability: outcome 검증 여부 + 실제 수익률(r_real) 기반 성과 반영.
+
+    Pipeline A (logging_node) r_real_source:
+      "polygon_t1"  → 실제 Polygon T+1 데이터 (신뢰)
+      "r_sim_proxy" → r_sim 대체값 (낮은 신뢰)
+
+    성과 기반 임계값 (outcome_filler.py의 _update_strategy_memory와 동일):
+      r_real >= 0.02 → 1.0  (수익률 2% 이상)
+      r_real >= 0    → 0.85 (소폭 양성)
+      r_real < 0     → 0.65 (손실)
     """
-    outcome = case.get("outcome")
+    case_value = case.get("value", case)
+    # outcome 필드 또는 r_real 필드로 검증 여부 확인
+    r_real_cv = case_value.get("r_real")
+    outcome = case.get("outcome") or r_real_cv
+
     if outcome is None:
         return 0.3  # outcome 없으면 낮은 신뢰
 
-    # outcome이 있고 horizon_closed=True이면 신뢰
-    if case.get("horizon_closed", False):
+    # r_real_source == "r_sim_proxy" → 실제 수익률이 아님, 신뢰 낮춤
+    # "polygon_t1", "polygon_weighted" 등은 실제 데이터로 신뢰 가능
+    r_real_source = case_value.get("r_real_source", "")
+    if r_real_source == "r_sim_proxy":
+        return 0.5  # proxy값으로 채워진 case — 중간 신뢰
+
+    # horizon_closed + r_real 있으면 성과 기반 신뢰도
+    horizon_closed = case.get("horizon_closed", False) or case_value.get("horizon_closed", False)
+    if horizon_closed:
+        r_real = r_real_cv if r_real_cv is not None else case.get("r_real")
+        if r_real is not None:
+            if r_real >= 0.02:
+                return 1.0
+            elif r_real >= 0:
+                return 0.85
+            else:
+                return 0.65
+        # horizon_closed이지만 r_real 없음 — 구 포맷 호환, 기존 동작 유지
         return 1.0
 
-    # outcome이 있지만 검증 안 됨
+    # outcome이 있지만 horizon 미확인
     return 0.6
 
 

@@ -71,6 +71,8 @@ result = memory.get_by_date("2024-01-15")
 | `registry.py` | 싱글톤 인스턴스 중앙 관리 |
 | `retrieval/validity_scorer.py` | 5개 factor 곱 validity score |
 | `retrieval/retriever.py` | top_k 검색, timestamp guard |
+| `run_memory.py` | results/ 기반 루프 메모리 (B/C 파이프라인 전용) |
+| `outcome_filler.py` | 과거 portfolio.json에 r_real 역산 기록 (T+7 확정 후) |
 
 ---
 
@@ -79,6 +81,7 @@ result = memory.get_by_date("2024-01-15")
 ```
 tests/unit/test_retrieval.py
 tests/unit/test_run_memory.py
+tests/unit/test_outcome_filler.py
 tests/integration/test_e2e_fixes.py
 tests/integration/test_multicycle.py
 ```
@@ -96,3 +99,7 @@ python scripts/harness.py memory/
 | 2026-04-06 | strategy_memory.py | _store[key] 날짜 충돌 수정 |
 | 2026-04-06 | market_memory.py | 동일 수정 |
 | 2026-04-14 | run_memory.py | 신규: results/ 기반 루프 메모리 (Phase 2). find_prev_dates / build_context / format_context_for_prompt / get_context_prompt. 24개 테스트 추가 |
+| 2026-04-14 | outcome_filler.py | 신규: 과거 portfolio.json에 r_real 역산 기록. fill_pending_outcomes / compute_portfolio_r_real. point-in-time 안전 (decision_date+7<=run_date). 15개 테스트 추가 |
+| 2026-04-14 | run_memory.py | build_context: verified(r_real 있음) 우선 정렬 + lookback 인자 전달. format_context_for_prompt: r_real 있으면 실제수익률 라인 추가 |
+| 2026-04-14 | outcome_filler.py | Phase 6: _update_strategy_memory() 추가 — r_real 채울 때 results/strategy_memory.json도 업데이트 (r_real/performance_score/outcome_reliability). 6개 테스트 추가 |
+| 2026-04-14 | validity_scorer.py | Phase 6: compute_outcome_reliability() 개선 — r_sim_proxy→0.5, r_real 크기 기반 성과 반영 (<0→0.65, 0~2%→0.85, ≥2%→1.0) |

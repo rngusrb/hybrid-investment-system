@@ -82,7 +82,11 @@
       "data_source": "real"
     },
     "selected_strategy": "mean_reversion",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.03,
+    "performance_score": 0.03,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-01-05": {
     "ticker": "NVDA",
@@ -167,7 +171,11 @@
       "data_source": "real"
     },
     "selected_strategy": "defensive",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.03,
+    "performance_score": 0.03,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-01-12": {
     "ticker": "AAPL",
@@ -252,7 +260,11 @@
       "data_source": "real"
     },
     "selected_strategy": "mean_reversion",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.030561,
+    "performance_score": 0.030561,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-01-12": {
     "ticker": "NVDA",
@@ -337,7 +349,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.030561,
+    "performance_score": 0.030561,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-01-19": {
     "ticker": "AAPL",
@@ -422,7 +438,11 @@
       "data_source": "real"
     },
     "selected_strategy": "mean_reversion",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.00274,
+    "performance_score": 0.00274,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-01-19": {
     "ticker": "NVDA",
@@ -507,7 +527,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.00274,
+    "performance_score": 0.00274,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-01-26": {
     "ticker": "AAPL",
@@ -592,7 +616,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.016369157894736842,
+    "performance_score": 0.016369157894736842,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-01-26": {
     "ticker": "NVDA",
@@ -677,7 +705,11 @@
       "data_source": "real"
     },
     "selected_strategy": "defensive",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.016369157894736842,
+    "performance_score": 0.016369157894736842,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-02-02": {
     "ticker": "AAPL",
@@ -762,7 +794,11 @@
       "data_source": "real"
     },
     "selected_strategy": "defensive",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.047944,
+    "performance_score": 0.047944,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-02-02": {
     "ticker": "NVDA",
@@ -847,7 +883,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.047944,
+    "performance_score": 0.047944,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-02-09": {
     "ticker": "AAPL",
@@ -932,7 +972,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.001594,
+    "performance_score": 0.001594,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-02-09": {
     "ticker": "NVDA",
@@ -1017,7 +1061,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.001594,
+    "performance_score": 0.001594,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-02-16": {
     "ticker": "AAPL",
@@ -1102,7 +1150,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": -0.043532,
+    "performance_score": -0.043532,
+    "outcome_reliability": 0.6,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-02-16": {
     "ticker": "NVDA",
@@ -1187,7 +1239,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": -0.043532,
+    "performance_score": -0.043532,
+    "outcome_reliability": 0.6,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-02-23": {
     "ticker": "AAPL",
@@ -1272,7 +1328,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.003489,
+    "performance_score": 0.003489,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-02-23": {
     "ticker": "NVDA",
@@ -1357,7 +1417,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.003489,
+    "performance_score": 0.003489,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-01": {
     "ticker": "AAPL",
@@ -1442,7 +1506,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.035951,
+    "performance_score": 0.035951,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-03-01": {
     "ticker": "NVDA",
@@ -1527,7 +1595,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.035951,
+    "performance_score": 0.035951,
+    "outcome_reliability": 1.0,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-08": {
     "ticker": "AAPL",
@@ -1612,7 +1684,11 @@
       "data_source": "real"
     },
     "selected_strategy": "defensive",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": -0.020039,
+    "performance_score": -0.020039,
+    "outcome_reliability": 0.6,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-03-08": {
     "ticker": "NVDA",
@@ -1697,7 +1773,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": -0.020039,
+    "performance_score": -0.020039,
+    "outcome_reliability": 0.6,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-15": {
     "ticker": "AAPL",
@@ -1782,7 +1862,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.006900157894736842,
+    "performance_score": 0.006900157894736842,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-03-15": {
     "ticker": "NVDA",
@@ -1867,7 +1951,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.006900157894736842,
+    "performance_score": 0.006900157894736842,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-22": {
     "ticker": "AAPL",
@@ -1952,7 +2040,11 @@
       "data_source": "real"
     },
     "selected_strategy": "defensive",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.005296,
+    "performance_score": 0.005296,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-03-22": {
     "ticker": "NVDA",
@@ -2037,7 +2129,11 @@
       "data_source": "real"
     },
     "selected_strategy": "market_neutral",
-    "data_source": "real"
+    "data_source": "real",
+    "r_real": 0.005296,
+    "performance_score": 0.005296,
+    "outcome_reliability": 0.85,
+    "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-29": {
     "ticker": "AAPL",

@@ -2735,5 +2735,8 @@
     "flags": []
   },
   "errors": [],
-  "prev_date": null
+  "prev_date": null,
+  "r_real": 0.064281,
+  "r_real_source": "polygon_weighted",
+  "r_real_eval_date": "2024-01-14"
 }
