@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "passed": 75,
+  "failed": 0,
+  "returncode": 0,
+  "output": "........................................................................ [ 96%]\n...                                                                      [100%]\n75 passed in 0.08s\n",
+  "tests": [
+    "tests/unit/test_calibration.py",
+    "tests/unit/test_run_calibration.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-14T11:45:02.513530"
+}

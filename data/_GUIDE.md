@@ -45,6 +45,17 @@ result = fetcher.get_ohlcv(...)
 미래 데이터가 포함되면 backtesting lookahead bias 발생.
 **사고 이력**: as_of 없이 호출 시 미래 close 가격이 전략 계산에 포함됨.
 
+### ❌ 뉴스 article dict에서 publisher 필드 누락
+```python
+# ❌ 금지 — 출처가 항상 빈 문자열로 표시됨
+{"title": ..., "article_url": ...}  # publisher 없음
+
+# ✅ publisher 포함 필수
+{"title": ..., "article_url": ...,
+ "publisher": {"name": getattr(getattr(item, "publisher", None), "name", "")}}
+```
+**사고 이력**: polygon_fetcher.py가 publisher 필드 누락 → 대시보드 뉴스 출처 항상 공백.
+
 ### ❌ API 실패 시 예외 발생
 빈 데이터 + 품질 플래그 반환이 원칙. 상위 레이어가 품질 보고 판단하게.
 
@@ -81,3 +92,4 @@ python scripts/harness.py data/
 | 날짜 | 파일 | 변경 내용 |
 |------|------|----------|
 | 2026-04-06 | polygon_fetcher.py | Polygon API key 연결, 실제 데이터 검증 완료 |
+| 2026-04-07 | polygon_fetcher.py | 뉴스 article dict에 publisher 필드 추가 (대시보드 출처 표시 버그 수정) |

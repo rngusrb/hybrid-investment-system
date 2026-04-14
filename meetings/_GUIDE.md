@@ -62,18 +62,34 @@ DebateResolution 구조체로만 저장.
 | 파일 | 역할 |
 |------|------|
 | `base_meeting.py` | SharedLedger 연결, _record_to_ledger, _log_skip |
-| `market_analysis.py` | Bull/Bear 토론, 신호 충돌 감지 |
-| `strategy_development.py` | 전략 검토, BobToExecutionPacket 생성 |
-| `risk_alert.py` | RiskAdjustedUtility, 긴급 조치 |
+| `market_analysis.py` | Pipeline A — Bull/Bear 토론, 신호 충돌 감지 |
+| `strategy_development.py` | Pipeline A — 전략 검토, BobToExecutionPacket 생성 |
+| `risk_alert.py` | Pipeline A — RiskAdjustedUtility, 긴급 조치 |
+| `run_meetings.py` | Pipeline B/C 어댑터 — MAM/SDM/RAM 실행 + 프롬프트 포맷 |
+
+---
+
+## 핵심 패턴 (run_meetings.py)
+
+### RAM은 이벤트 기반 트리거
+```python
+# max_risk_score > RISK_ALERT_THRESHOLD(0.75) 일 때만 triggered=True
+# 매 주기 실행되지만 triggered=False면 emergency_controls=[]
+```
+
+### 시그널 충돌 감지 기준
+- `action_changed=True` → risk_manager override conflict
+- `tech_score ≥ 7 and fund_score ≤ 3` → tech_strong vs fund_weak
+- `tech_score ≤ 3 and fund_score ≥ 7` → tech_weak vs fund_strong
 
 ---
 
 ## 하네스
 
 ```
-tests:
-  - tests/integration/test_weekly_cycle.py
-  - tests/integration/test_risk_alert.py
+tests/unit/test_run_meetings.py
+tests/integration/test_weekly_cycle.py
+tests/integration/test_risk_alert.py
 ```
 
 ```bash
@@ -87,3 +103,4 @@ python scripts/harness.py meetings/
 | 날짜 | 파일 | 변경 내용 |
 |------|------|----------|
 | 2026-04-06 | risk_alert.py | stress test seed 날짜 기반 변경 |
+| 2026-04-14 | run_meetings.py | 신규 (Phase 4): Pipeline B/C용 MAM/SDM/RAM 어댑터. 40개 테스트 |

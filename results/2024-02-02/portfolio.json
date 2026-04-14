@@ -1,0 +1,2716 @@
+{
+  "date": "2024-02-02",
+  "tickers": [
+    "AAPL",
+    "NVDA"
+  ],
+  "stock_results": [
+    {
+      "ticker": "AAPL",
+      "current_price": 185.85,
+      "bars": [
+        {
+          "date": "2023-08-07",
+          "open": 182.13,
+          "high": 183.13,
+          "low": 177.35,
+          "close": 178.85,
+          "volume": 97105069.0,
+          "vwap": 179.0119
+        },
+        {
+          "date": "2023-08-08",
+          "open": 179.69,
+          "high": 180.27,
+          "low": 177.58,
+          "close": 179.8,
+          "volume": 67769003.0,
+          "vwap": 178.9854
+        },
+        {
+          "date": "2023-08-09",
+          "open": 180.87,
+          "high": 180.93,
+          "low": 177.01,
+          "close": 178.19,
+          "volume": 60303492.0,
+          "vwap": 178.4887
+        },
+        {
+          "date": "2023-08-10",
+          "open": 179.48,
+          "high": 180.75,
+          "low": 177.6,
+          "close": 177.97,
+          "volume": 54686851.0,
+          "vwap": 178.7951
+        },
+        {
+          "date": "2023-08-11",
+          "open": 177.32,
+          "high": 178.62,
+          "low": 176.55,
+          "close": 177.79,
+          "volume": 51036672.0,
+          "vwap": 177.8056
+        },
+        {
+          "date": "2023-08-14",
+          "open": 177.97,
+          "high": 179.69,
+          "low": 177.305,
+          "close": 179.46,
+          "volume": 43675627.0,
+          "vwap": 178.9475
+        },
+        {
+          "date": "2023-08-15",
+          "open": 178.88,
+          "high": 179.48,
+          "low": 177.05,
+          "close": 177.45,
+          "volume": 43574863.0,
+          "vwap": 177.9886
+        },
+        {
+          "date": "2023-08-16",
+          "open": 177.13,
+          "high": 178.54,
+          "low": 176.5,
+          "close": 176.57,
+          "volume": 45712957.0,
+          "vwap": 177.4133
+        },
+        {
+          "date": "2023-08-17",
+          "open": 177.14,
+          "high": 177.5054,
+          "low": 173.48,
+          "close": 174,
+          "volume": 66054482.0,
+          "vwap": 174.5857
+        },
+        {
+          "date": "2023-08-18",
+          "open": 172.3,
+          "high": 175.1,
+          "low": 171.96,
+          "close": 174.49,
+          "volume": 60171878.0,
+          "vwap": 173.8904
+        },
+        {
+          "date": "2023-08-21",
+          "open": 175.07,
+          "high": 176.13,
+          "low": 173.735,
+          "close": 175.84,
+          "volume": 46161959.0,
+          "vwap": 175.2221
+        },
+        {
+          "date": "2023-08-22",
+          "open": 177.06,
+          "high": 177.68,
+          "low": 176.25,
+          "close": 177.23,
+          "volume": 42057245.0,
+          "vwap": 177.0098
+        },
+        {
+          "date": "2023-08-23",
+          "open": 178.52,
+          "high": 181.55,
+          "low": 178.325,
+          "close": 181.12,
+          "volume": 52722752.0,
+          "vwap": 180.6482
+        },
+        {
+          "date": "2023-08-24",
+          "open": 180.674,
+          "high": 181.104,
+          "low": 176.01,
+          "close": 176.38,
+          "volume": 54912798.0,
+          "vwap": 177.7035
+        },
+        {
+          "date": "2023-08-25",
+          "open": 177.38,
+          "high": 179.15,
+          "low": 175.82,
+          "close": 178.61,
+          "volume": 51439994.0,
+          "vwap": 177.9075
+        },
+        {
+          "date": "2023-08-28",
+          "open": 180.09,
+          "high": 180.59,
+          "low": 178.545,
+          "close": 180.19,
+          "volume": 43803238.0,
+          "vwap": 179.6595
+        },
+        {
+          "date": "2023-08-29",
+          "open": 179.695,
+          "high": 184.9,
+          "low": 179.5,
+          "close": 184.12,
+          "volume": 52953948.0,
+          "vwap": 183.28
+        },
+        {
+          "date": "2023-08-30",
+          "open": 184.94,
+          "high": 187.85,
+          "low": 184.74,
+          "close": 187.65,
+          "volume": 60803988.0,
+          "vwap": 186.93
+        },
+        {
+          "date": "2023-08-31",
+          "open": 187.84,
+          "high": 189.12,
+          "low": 187.48,
+          "close": 187.87,
+          "volume": 60794467.0,
+          "vwap": 188.1489
+        },
+        {
+          "date": "2023-09-01",
+          "open": 189.485,
+          "high": 189.92,
+          "low": 188.28,
+          "close": 189.46,
+          "volume": 45393903.0,
+          "vwap": 189.0424
+        },
+        {
+          "date": "2023-09-05",
+          "open": 188.28,
+          "high": 189.98,
+          "low": 187.61,
+          "close": 189.7,
+          "volume": 45280027.0,
+          "vwap": 189.1084
+        },
+        {
+          "date": "2023-09-06",
+          "open": 188.4,
+          "high": 188.85,
+          "low": 181.47,
+          "close": 182.91,
+          "volume": 81753366.0,
+          "vwap": 183.786
+        },
+        {
+          "date": "2023-09-07",
+          "open": 175.18,
+          "high": 178.21,
+          "low": 173.54,
+          "close": 177.56,
+          "volume": 112416703.0,
+          "vwap": 176.7332
+        },
+        {
+          "date": "2023-09-08",
+          "open": 178.35,
+          "high": 180.239,
+          "low": 177.79,
+          "close": 178.18,
+          "volume": 65402066.0,
+          "vwap": 179.0663
+        },
+        {
+          "date": "2023-09-11",
+          "open": 180.07,
+          "high": 180.3,
+          "low": 177.34,
+          "close": 179.36,
+          "volume": 58953052.0,
+          "vwap": 178.8465
+        },
+        {
+          "date": "2023-09-12",
+          "open": 179.49,
+          "high": 180.13,
+          "low": 174.82,
+          "close": 176.3,
+          "volume": 90316192.0,
+          "vwap": 176.7048
+        },
+        {
+          "date": "2023-09-13",
+          "open": 176.51,
+          "high": 177.3,
+          "low": 173.98,
+          "close": 174.21,
+          "volume": 84267928.0,
+          "vwap": 175.0352
+        },
+        {
+          "date": "2023-09-14",
+          "open": 174,
+          "high": 176.1,
+          "low": 173.58,
+          "close": 175.74,
+          "volume": 60345757.0,
+          "vwap": 175.3715
+        },
+        {
+          "date": "2023-09-15",
+          "open": 176.48,
+          "high": 176.495,
+          "low": 173.82,
+          "close": 175.01,
+          "volume": 109259461.0,
+          "vwap": 175.0843
+        },
+        {
+          "date": "2023-09-18",
+          "open": 176.48,
+          "high": 179.38,
+          "low": 176.17,
+          "close": 177.97,
+          "volume": 67257573.0,
+          "vwap": 177.8915
+        },
+        {
+          "date": "2023-09-19",
+          "open": 177.52,
+          "high": 179.63,
+          "low": 177.13,
+          "close": 179.07,
+          "volume": 51826941.0,
+          "vwap": 178.4293
+        },
+        {
+          "date": "2023-09-20",
+          "open": 179.26,
+          "high": 179.695,
+          "low": 175.4,
+          "close": 175.49,
+          "volume": 58436181.0,
+          "vwap": 176.9653
+        },
+        {
+          "date": "2023-09-21",
+          "open": 174.55,
+          "high": 176.3,
+          "low": 173.86,
+          "close": 173.93,
+          "volume": 62449116.0,
+          "vwap": 174.8619
+        },
+        {
+          "date": "2023-09-22",
+          "open": 174.67,
+          "high": 177.079,
+          "low": 174.05,
+          "close": 174.79,
+          "volume": 56688985.0,
+          "vwap": 175.4667
+        },
+        {
+          "date": "2023-09-25",
+          "open": 174.2,
+          "high": 176.97,
+          "low": 174.15,
+          "close": 176.08,
+          "volume": 46172740.0,
+          "vwap": 175.6665
+        },
+        {
+          "date": "2023-09-26",
+          "open": 174.82,
+          "high": 175.2,
+          "low": 171.66,
+          "close": 171.96,
+          "volume": 64548945.0,
+          "vwap": 172.7156
+        },
+        {
+          "date": "2023-09-27",
+          "open": 172.62,
+          "high": 173.04,
+          "low": 169.05,
+          "close": 170.43,
+          "volume": 66920708.0,
+          "vwap": 170.5335
+        },
+        {
+          "date": "2023-09-28",
+          "open": 169.34,
+          "high": 172.03,
+          "low": 167.62,
+          "close": 170.69,
+          "volume": 56294419.0,
+          "vwap": 170.297
+        },
+        {
+          "date": "2023-09-29",
+          "open": 172.02,
+          "high": 173.07,
+          "low": 170.341,
+          "close": 171.21,
+          "volume": 51861083.0,
+          "vwap": 171.5997
+        },
+        {
+          "date": "2023-10-02",
+          "open": 171.22,
+          "high": 174.3,
+          "low": 170.93,
+          "close": 173.75,
+          "volume": 52156935.0,
+          "vwap": 173.2879
+        },
+        {
+          "date": "2023-10-03",
+          "open": 172.255,
+          "high": 173.63,
+          "low": 170.82,
+          "close": 172.4,
+          "volume": 49594613.0,
+          "vwap": 172.1342
+        },
+        {
+          "date": "2023-10-04",
+          "open": 171.09,
+          "high": 174.21,
+          "low": 170.97,
+          "close": 173.66,
+          "volume": 53006286.0,
+          "vwap": 172.9437
+        },
+        {
+          "date": "2023-10-05",
+          "open": 173.79,
+          "high": 175.45,
+          "low": 172.68,
+          "close": 174.91,
+          "volume": 48527918.0,
+          "vwap": 174.2297
+        },
+        {
+          "date": "2023-10-06",
+          "open": 173.8,
+          "high": 177.99,
+          "low": 173.18,
+          "close": 177.49,
+          "volume": 57266675.0,
+          "vwap": 176.3366
+        },
+        {
+          "date": "2023-10-09",
+          "open": 176.81,
+          "high": 179.05,
+          "low": 175.8,
+          "close": 178.99,
+          "volume": 42344772.0,
+          "vwap": 177.8683
+        },
+        {
+          "date": "2023-10-10",
+          "open": 178.1,
+          "high": 179.72,
+          "low": 177.95,
+          "close": 178.39,
+          "volume": 43698019.0,
+          "vwap": 178.6901
+        },
+        {
+          "date": "2023-10-11",
+          "open": 178.2,
+          "high": 179.85,
+          "low": 177.6,
+          "close": 179.8,
+          "volume": 47544848.0,
+          "vwap": 178.9503
+        },
+        {
+          "date": "2023-10-12",
+          "open": 180.07,
+          "high": 182.34,
+          "low": 179.04,
+          "close": 180.71,
+          "volume": 56743119.0,
+          "vwap": 180.9482
+        },
+        {
+          "date": "2023-10-13",
+          "open": 181.42,
+          "high": 181.93,
+          "low": 178.14,
+          "close": 178.85,
+          "volume": 51412082.0,
+          "vwap": 179.4154
+        },
+        {
+          "date": "2023-10-16",
+          "open": 176.75,
+          "high": 179.075,
+          "low": 176.51,
+          "close": 178.72,
+          "volume": 52516984.0,
+          "vwap": 178.1478
+        },
+        {
+          "date": "2023-10-17",
+          "open": 176.645,
+          "high": 178.42,
+          "low": 174.8,
+          "close": 177.15,
+          "volume": 57549350.0,
+          "vwap": 176.8623
+        },
+        {
+          "date": "2023-10-18",
+          "open": 175.58,
+          "high": 177.575,
+          "low": 175.11,
+          "close": 175.84,
+          "volume": 54764375.0,
+          "vwap": 176.3501
+        },
+        {
+          "date": "2023-10-19",
+          "open": 176.04,
+          "high": 177.84,
+          "low": 175.19,
+          "close": 175.46,
+          "volume": 59192863.0,
+          "vwap": 176.215
+        },
+        {
+          "date": "2023-10-20",
+          "open": 175.31,
+          "high": 175.42,
+          "low": 172.64,
+          "close": 172.88,
+          "volume": 64211828.0,
+          "vwap": 173.7459
+        },
+        {
+          "date": "2023-10-23",
+          "open": 170.91,
+          "high": 174.01,
+          "low": 169.93,
+          "close": 173,
+          "volume": 55980109.0,
+          "vwap": 172.3829
+        },
+        {
+          "date": "2023-10-24",
+          "open": 173.05,
+          "high": 173.67,
+          "low": 171.45,
+          "close": 173.44,
+          "volume": 43816644.0,
+          "vwap": 172.7333
+        },
+        {
+          "date": "2023-10-25",
+          "open": 171.88,
+          "high": 173.06,
+          "low": 170.65,
+          "close": 171.1,
+          "volume": 57156962.0,
+          "vwap": 171.4932
+        },
+        {
+          "date": "2023-10-26",
+          "open": 170.37,
+          "high": 171.3775,
+          "low": 165.67,
+          "close": 166.89,
+          "volume": 70625258.0,
+          "vwap": 167.5944
+        },
+        {
+          "date": "2023-10-27",
+          "open": 166.91,
+          "high": 168.96,
+          "low": 166.83,
+          "close": 168.22,
+          "volume": 58257129.0,
+          "vwap": 167.9072
+        },
+        {
+          "date": "2023-10-30",
+          "open": 169.02,
+          "high": 171.17,
+          "low": 168.87,
+          "close": 170.29,
+          "volume": 51239218.0,
+          "vwap": 170.0788
+        },
+        {
+          "date": "2023-10-31",
+          "open": 169.35,
+          "high": 170.9,
+          "low": 167.9,
+          "close": 170.77,
+          "volume": 44846017.0,
+          "vwap": 169.9252
+        },
+        {
+          "date": "2023-11-01",
+          "open": 171,
+          "high": 174.23,
+          "low": 170.12,
+          "close": 173.97,
+          "volume": 56934906.0,
+          "vwap": 172.6187
+        },
+        {
+          "date": "2023-11-02",
+          "open": 175.52,
+          "high": 177.78,
+          "low": 175.46,
+          "close": 177.57,
+          "volume": 77292052.0,
+          "vwap": 176.6794
+        },
+        {
+          "date": "2023-11-03",
+          "open": 174.24,
+          "high": 176.82,
+          "low": 173.35,
+          "close": 176.65,
+          "volume": 79829246.0,
+          "vwap": 175.5751
+        },
+        {
+          "date": "2023-11-06",
+          "open": 176.38,
+          "high": 179.43,
+          "low": 176.21,
+          "close": 179.23,
+          "volume": 63841310.0,
+          "vwap": 178.5589
+        },
+        {
+          "date": "2023-11-07",
+          "open": 179.18,
+          "high": 182.44,
+          "low": 178.97,
+          "close": 181.82,
+          "volume": 70529966.0,
+          "vwap": 181.2627
+        },
+        {
+          "date": "2023-11-08",
+          "open": 182.35,
+          "high": 183.45,
+          "low": 181.59,
+          "close": 182.89,
+          "volume": 49340282.0,
+          "vwap": 182.6566
+        },
+        {
+          "date": "2023-11-09",
+          "open": 182.96,
+          "high": 184.12,
+          "low": 181.81,
+          "close": 182.41,
+          "volume": 53631840.0,
+          "vwap": 182.912
+        },
+        {
+          "date": "2023-11-10",
+          "open": 183.97,
+          "high": 186.565,
+          "low": 183.53,
+          "close": 186.4,
+          "volume": 66177922.0,
+          "vwap": 185.4104
+        },
+        {
+          "date": "2023-11-13",
+          "open": 185.82,
+          "high": 186.03,
+          "low": 184.21,
+          "close": 184.8,
+          "volume": 43627519.0,
+          "vwap": 184.8317
+        },
+        {
+          "date": "2023-11-14",
+          "open": 187.7,
+          "high": 188.11,
+          "low": 186.3,
+          "close": 187.44,
+          "volume": 60108378.0,
+          "vwap": 187.2038
+        },
+        {
+          "date": "2023-11-15",
+          "open": 187.845,
+          "high": 189.5,
+          "low": 187.78,
+          "close": 188.01,
+          "volume": 53608999.0,
+          "vwap": 188.4191
+        },
+        {
+          "date": "2023-11-16",
+          "open": 189.57,
+          "high": 190.96,
+          "low": 188.65,
+          "close": 189.71,
+          "volume": 54412915.0,
+          "vwap": 189.7109
+        },
+        {
+          "date": "2023-11-17",
+          "open": 190.25,
+          "high": 190.38,
+          "low": 188.57,
+          "close": 189.69,
+          "volume": 50737404.0,
+          "vwap": 189.6022
+        },
+        {
+          "date": "2023-11-20",
+          "open": 189.89,
+          "high": 191.905,
+          "low": 189.88,
+          "close": 191.45,
+          "volume": 46538614.0,
+          "vwap": 191.2984
+        },
+        {
+          "date": "2023-11-21",
+          "open": 191.41,
+          "high": 191.52,
+          "low": 189.74,
+          "close": 190.64,
+          "volume": 38134485.0,
+          "vwap": 190.51
+        },
+        {
+          "date": "2023-11-22",
+          "open": 191.49,
+          "high": 192.93,
+          "low": 190.825,
+          "close": 191.31,
+          "volume": 39630011.0,
+          "vwap": 191.7223
+        },
+        {
+          "date": "2023-11-24",
+          "open": 190.87,
+          "high": 190.9,
+          "low": 189.25,
+          "close": 189.97,
+          "volume": 24018404.0,
+          "vwap": 189.7899
+        },
+        {
+          "date": "2023-11-27",
+          "open": 189.92,
+          "high": 190.67,
+          "low": 188.9,
+          "close": 189.79,
+          "volume": 40456609.0,
+          "vwap": 189.7974
+        },
+        {
+          "date": "2023-11-28",
+          "open": 189.78,
+          "high": 191.08,
+          "low": 189.4,
+          "close": 190.4,
+          "volume": 38415419.0,
+          "vwap": 190.165
+        },
+        {
+          "date": "2023-11-29",
+          "open": 190.9,
+          "high": 192.09,
+          "low": 188.97,
+          "close": 189.37,
+          "volume": 43014224.0,
+          "vwap": 189.9974
+        },
+        {
+          "date": "2023-11-30",
+          "open": 189.84,
+          "high": 190.32,
+          "low": 188.19,
+          "close": 189.95,
+          "volume": 48744366.0,
+          "vwap": 189.337
+        },
+        {
+          "date": "2023-12-01",
+          "open": 190.33,
+          "high": 191.56,
+          "low": 189.23,
+          "close": 191.24,
+          "volume": 45676673.0,
+          "vwap": 190.8613
+        },
+        {
+          "date": "2023-12-04",
+          "open": 189.98,
+          "high": 190.05,
+          "low": 187.4511,
+          "close": 189.43,
+          "volume": 43389519.0,
+          "vwap": 188.916
+        },
+        {
+          "date": "2023-12-05",
+          "open": 190.21,
+          "high": 194.4,
+          "low": 190.18,
+          "close": 193.42,
+          "volume": 66628398.0,
+          "vwap": 193.1715
+        },
+        {
+          "date": "2023-12-06",
+          "open": 194.45,
+          "high": 194.76,
+          "low": 192.11,
+          "close": 192.32,
+          "volume": 41055862.0,
+          "vwap": 192.8014
+        },
+        {
+          "date": "2023-12-07",
+          "open": 193.63,
+          "high": 195,
+          "low": 193.59,
+          "close": 194.27,
+          "volume": 47413955.0,
+          "vwap": 194.3967
+        },
+        {
+          "date": "2023-12-08",
+          "open": 194.2,
+          "high": 195.99,
+          "low": 193.67,
+          "close": 195.71,
+          "volume": 53383658.0,
+          "vwap": 195.1638
+        },
+        {
+          "date": "2023-12-11",
+          "open": 193.11,
+          "high": 193.49,
+          "low": 191.42,
+          "close": 193.18,
+          "volume": 60943699.0,
+          "vwap": 192.7089
+        },
+        {
+          "date": "2023-12-12",
+          "open": 193.08,
+          "high": 194.72,
+          "low": 191.721,
+          "close": 194.71,
+          "volume": 52696900.0,
+          "vwap": 193.7834
+        },
+        {
+          "date": "2023-12-13",
+          "open": 195.09,
+          "high": 198,
+          "low": 194.85,
+          "close": 197.96,
+          "volume": 70404183.0,
+          "vwap": 196.9085
+        },
+        {
+          "date": "2023-12-14",
+          "open": 198.02,
+          "high": 199.62,
+          "low": 196.16,
+          "close": 198.11,
+          "volume": 66831572.0,
+          "vwap": 198.2872
+        },
+        {
+          "date": "2023-12-15",
+          "open": 197.53,
+          "high": 198.3999,
+          "low": 197,
+          "close": 197.57,
+          "volume": 127387901.0,
+          "vwap": 197.56
+        },
+        {
+          "date": "2023-12-18",
+          "open": 196.09,
+          "high": 196.63,
+          "low": 194.39,
+          "close": 195.89,
+          "volume": 55751861.0,
+          "vwap": 195.6255
+        },
+        {
+          "date": "2023-12-19",
+          "open": 196.16,
+          "high": 196.95,
+          "low": 195.89,
+          "close": 196.94,
+          "volume": 40714051.0,
+          "vwap": 196.5277
+        },
+        {
+          "date": "2023-12-20",
+          "open": 196.9,
+          "high": 197.68,
+          "low": 194.83,
+          "close": 194.83,
+          "volume": 52242815.0,
+          "vwap": 196.142
+        },
+        {
+          "date": "2023-12-21",
+          "open": 196.1,
+          "high": 197.08,
+          "low": 193.5,
+          "close": 194.68,
+          "volume": 46482549.0,
+          "vwap": 194.7425
+        },
+        {
+          "date": "2023-12-22",
+          "open": 195.18,
+          "high": 195.41,
+          "low": 192.97,
+          "close": 193.6,
+          "volume": 37149570.0,
+          "vwap": 194.1013
+        },
+        {
+          "date": "2023-12-26",
+          "open": 193.61,
+          "high": 193.89,
+          "low": 192.83,
+          "close": 193.05,
+          "volume": 28919310.0,
+          "vwap": 193.1713
+        },
+        {
+          "date": "2023-12-27",
+          "open": 192.49,
+          "high": 193.5,
+          "low": 191.09,
+          "close": 193.15,
+          "volume": 48087681.0,
+          "vwap": 192.5679
+        },
+        {
+          "date": "2023-12-28",
+          "open": 194.14,
+          "high": 194.66,
+          "low": 193.17,
+          "close": 193.58,
+          "volume": 34049898.0,
+          "vwap": 193.9222
+        },
+        {
+          "date": "2023-12-29",
+          "open": 193.9,
+          "high": 194.4,
+          "low": 191.725,
+          "close": 192.53,
+          "volume": 42672148.0,
+          "vwap": 192.5761
+        },
+        {
+          "date": "2024-01-02",
+          "open": 187.15,
+          "high": 188.44,
+          "low": 183.885,
+          "close": 185.64,
+          "volume": 81964874.0,
+          "vwap": 185.9465
+        },
+        {
+          "date": "2024-01-03",
+          "open": 184.22,
+          "high": 185.88,
+          "low": 183.43,
+          "close": 184.25,
+          "volume": 58414460.0,
+          "vwap": 184.3226
+        },
+        {
+          "date": "2024-01-04",
+          "open": 182.15,
+          "high": 183.0872,
+          "low": 180.88,
+          "close": 181.91,
+          "volume": 71878670.0,
+          "vwap": 182.0183
+        },
+        {
+          "date": "2024-01-05",
+          "open": 181.99,
+          "high": 182.76,
+          "low": 180.17,
+          "close": 181.18,
+          "volume": 62371161.0,
+          "vwap": 181.474
+        },
+        {
+          "date": "2024-01-08",
+          "open": 182.085,
+          "high": 185.6,
+          "low": 181.5,
+          "close": 185.56,
+          "volume": 59144470.0,
+          "vwap": 184.3702
+        },
+        {
+          "date": "2024-01-09",
+          "open": 183.92,
+          "high": 185.15,
+          "low": 182.73,
+          "close": 185.14,
+          "volume": 42841809.0,
+          "vwap": 184.3706
+        },
+        {
+          "date": "2024-01-10",
+          "open": 184.35,
+          "high": 186.4,
+          "low": 183.92,
+          "close": 186.19,
+          "volume": 46192908.0,
+          "vwap": 185.2509
+        },
+        {
+          "date": "2024-01-11",
+          "open": 186.54,
+          "high": 187.05,
+          "low": 183.62,
+          "close": 185.59,
+          "volume": 49128408.0,
+          "vwap": 185.0604
+        },
+        {
+          "date": "2024-01-12",
+          "open": 186.06,
+          "high": 186.74,
+          "low": 185.19,
+          "close": 185.92,
+          "volume": 40477782.0,
+          "vwap": 185.8199
+        },
+        {
+          "date": "2024-01-16",
+          "open": 182.16,
+          "high": 184.26,
+          "low": 180.934,
+          "close": 183.63,
+          "volume": 65076641.0,
+          "vwap": 182.8866
+        },
+        {
+          "date": "2024-01-17",
+          "open": 181.27,
+          "high": 182.93,
+          "low": 180.3,
+          "close": 182.68,
+          "volume": 47317433.0,
+          "vwap": 181.9201
+        },
+        {
+          "date": "2024-01-18",
+          "open": 186.09,
+          "high": 189.14,
+          "low": 185.83,
+          "close": 188.63,
+          "volume": 77722754.0,
+          "vwap": 187.9358
+        },
+        {
+          "date": "2024-01-19",
+          "open": 189.33,
+          "high": 191.95,
+          "low": 188.82,
+          "close": 191.56,
+          "volume": 68887985.0,
+          "vwap": 190.6149
+        },
+        {
+          "date": "2024-01-22",
+          "open": 192.3,
+          "high": 195.33,
+          "low": 192.26,
+          "close": 193.89,
+          "volume": 60131852.0,
+          "vwap": 193.9891
+        },
+        {
+          "date": "2024-01-23",
+          "open": 195.02,
+          "high": 195.75,
+          "low": 193.8299,
+          "close": 195.18,
+          "volume": 42355590.0,
+          "vwap": 194.8203
+        },
+        {
+          "date": "2024-01-24",
+          "open": 195.42,
+          "high": 196.38,
+          "low": 194.34,
+          "close": 194.5,
+          "volume": 53631316.0,
+          "vwap": 195.2063
+        },
+        {
+          "date": "2024-01-25",
+          "open": 195.22,
+          "high": 196.2675,
+          "low": 193.1125,
+          "close": 194.17,
+          "volume": 54822126.0,
+          "vwap": 194.7337
+        },
+        {
+          "date": "2024-01-26",
+          "open": 194.27,
+          "high": 194.76,
+          "low": 191.94,
+          "close": 192.42,
+          "volume": 44587111.0,
+          "vwap": 193.1207
+        },
+        {
+          "date": "2024-01-29",
+          "open": 192.01,
+          "high": 192.2,
+          "low": 189.58,
+          "close": 191.73,
+          "volume": 47145622.0,
+          "vwap": 191.2954
+        },
+        {
+          "date": "2024-01-30",
+          "open": 190.94,
+          "high": 191.8,
+          "low": 187.47,
+          "close": 188.04,
+          "volume": 55836970.0,
+          "vwap": 188.7927
+        },
+        {
+          "date": "2024-01-31",
+          "open": 187.04,
+          "high": 187.095,
+          "low": 184.35,
+          "close": 184.4,
+          "volume": 55467803.0,
+          "vwap": 185.3525
+        },
+        {
+          "date": "2024-02-01",
+          "open": 183.985,
+          "high": 186.95,
+          "low": 183.82,
+          "close": 186.86,
+          "volume": 64885408.0,
+          "vwap": 185.5688
+        },
+        {
+          "date": "2024-02-02",
+          "open": 179.86,
+          "high": 187.33,
+          "low": 179.25,
+          "close": 185.85,
+          "volume": 102527680.0,
+          "vwap": 184.744
+        }
+      ],
+      "fundamental": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "revenue": 383285000000.0,
+        "net_income": 96995000000.0,
+        "eps": 8.72,
+        "pe_ratio": 21.3,
+        "revenue_growth_yoy": -0.028,
+        "profit_margin": 0.253,
+        "intrinsic_value_signal": "fairly_valued",
+        "fundamental_score": 0.74,
+        "key_risks": [
+          "Revenue decline YoY",
+          "Mature iPhone market",
+          "Macroeconomic headwinds"
+        ],
+        "key_strengths": [
+          "Excellent profit margins",
+          "Strong EPS generation",
+          "Reasonable valuation at 21.3 P/E",
+          "Consistent cash generation"
+        ],
+        "summary": "Apple demonstrates solid fundamental health with strong profitability and reasonable valuation. While revenue declined 2.8% YoY, the company maintains excellent 25.3% profit margins and generates substantial earnings. The P/E ratio of 21.3 suggests fair valuation relative to quality and earnings power."
+      },
+      "sentiment": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "sentiment_score": 0.42,
+        "uncertainty": 0.55,
+        "dominant_emotion": "optimism",
+        "news_volume": 546,
+        "key_themes": [
+          "earnings beat",
+          "revenue growth recovery",
+          "iPhone sales strength",
+          "growth sustainability concerns",
+          "Magnificent Seven valuation questions"
+        ],
+        "summary": "Mixed positive sentiment driven by strong Q1 earnings beat and return to revenue growth, offset by concerns about growth durability and broader Magnificent Seven valuation fatigue. Analyst views are divided on whether the recovery is sustainable."
+      },
+      "news": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "macro_impact": 0.2,
+        "company_events": [
+          "Q1 earnings beat estimates",
+          "Revenue returned to year-over-year growth",
+          "iPhone sales showed improvement"
+        ],
+        "industry_trends": [
+          "Big Tech earnings season strong",
+          "Magnificent Seven showing fatigue signals",
+          "Bond spreads widening indicating risk reassessment"
+        ],
+        "event_risk_level": 0.4,
+        "catalyst_signals": [
+          "Q1 earnings beat with revenue growth resumption",
+          "iPhone sales stabilization positive signal",
+          "Magnificent Seven valuation concerns and bond spread widening creating headwinds",
+          "Fed signaling no March rate cut limiting near-term support"
+        ],
+        "summary": "AAPL delivered Q1 earnings beat with return to revenue growth, a major positive catalyst. However, macro environment shows mixed signals: strong jobs report and Fed hawkishness offset earnings strength. Magnificent Seven fatigue and widening bond spreads suggest sector-wide valuation concerns. Near-term risk elevated despite company-specific positive results."
+      },
+      "technical": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "trend_direction": "down",
+        "trend_strength": 0.72,
+        "rsi": 38.2,
+        "macd_signal": "bearish",
+        "bollinger_position": "lower",
+        "support_level": 183.5,
+        "resistance_level": 190.0,
+        "entry_signal": "sell",
+        "technical_score": 0.28,
+        "summary": "Strong downtrend from $195.18 peak to $185.85 with 4.7% decline over 10 days. RSI at 38.2 indicates weakness but not yet oversold. High volume on 2024-02-02 confirms selling pressure. Price testing lower Bollinger Band. Resistance at 190.0 level."
+      },
+      "researcher": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "bull_thesis": "AAPL has returned to revenue growth with Q1 earnings beat and iPhone sales stabilization, demonstrating resilience in a mature market. Reasonable valuation at 21.3x P/E with excellent profit margins and consistent cash generation provides a solid foundation. Sentiment shows optimism around earnings recovery and growth sustainability, offering upside potential as macroeconomic conditions stabilize.",
+        "bear_thesis": "Technical indicators are decisively bearish with downtrend strength at 0.72, RSI at 38.2 (oversold but declining), and MACD in bearish configuration. Despite fundamental improvements, the stock faces headwinds from Magnificent Seven valuation concerns, bond spread widening, and Fed signaling no March rate cut. Revenue growth remains fragile after YoY decline, and iPhone market maturity limits long-term growth catalysts.",
+        "consensus": "neutral",
+        "conviction": 0.52,
+        "key_debate_points": [
+          "Earnings beat and revenue growth resumption vs. technical downtrend strength",
+          "Fair valuation at 21.3x P/E offset by macro headwinds and rate cut delay",
+          "iPhone stabilization positive but insufficient to overcome mature market dynamics",
+          "Sentiment optimism contradicted by technical weakness and Magnificent Seven rotation risk"
+        ],
+        "risk_reward_ratio": 1.2,
+        "summary": "Mixed signals warrant neutral stance. Fundamental recovery and fair valuation are undermined by strong technical downtrend and macro headwinds. Near-term technical weakness and Fed policy uncertainty outweigh earnings beat momentum. Wait for technical confirmation above resistance before committing to long position."
+      },
+      "trader": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "action": "HOLD",
+        "confidence": 0.52,
+        "position_size_pct": 0.0,
+        "target_price": 190.0,
+        "stop_loss_price": 180.0,
+        "time_horizon": "medium",
+        "reasoning": [
+          "Neutral consensus with low conviction of 0.52 suggests no clear directional edge",
+          "Technical score of 0.28 is bearish with downtrend strength at 0.72 and RSI at 38.2",
+          "Fundamental score of 0.74 is solid but offset by weak technicals and mixed sentiment",
+          "Risk/reward of 1.2 is marginally favorable but insufficient given technical headwinds",
+          "Price near support at $183.5 - wait for either breakdown confirmation or reversal signal"
+        ],
+        "key_signals_used": [
+          "fundamental_score",
+          "technical_score",
+          "sentiment_score",
+          "consensus",
+          "support_level",
+          "entry_signal"
+        ]
+      },
+      "risk_manager": {
+        "ticker": "AAPL",
+        "date": "2024-02-02",
+        "final_action": "HOLD",
+        "action_changed": false,
+        "final_position_size_pct": 0.0,
+        "position_adjustment": 0.0,
+        "hedge_required": false,
+        "hedge_type": "none",
+        "hedge_size_pct": 0.0,
+        "cash_reserve_pct": 0.2,
+        "risk_level": "moderate",
+        "aggressive_view": "Fundamentals at 0.74 are strong - this is a quality name in a temporary pullback. RSI at 38.2 is approaching oversold territory, and we're near support at $183.5. I'd actually start building a small position here. The 1.2 risk/reward isn't great but AAPL rarely stays cheap. Wait for RSI to hit 35 then scale in.",
+        "conservative_view": "Technical score of 0.28 with downtrend strength at 0.72 screams stay away. The trend is clearly down and catching falling knives is how you lose money. Event risk at 0.4 adds uncertainty. HOLD is correct but I'd want 25% cash reserve minimum. Don't touch this until we see a confirmed reversal - MACD crossover or break above the 20-day MA.",
+        "neutral_view": "Trader's HOLD call is appropriate. The fundamental/technical divergence is notable - 0.74 vs 0.28 - but technicals lead in the short term. Conviction at 0.52 is essentially a coin flip. No position is the right position here. Keep 20% cash, wait for either support breakdown below $183.5 or a technical reversal signal before acting.",
+        "consensus_reasoning": "All three personas agree HOLD is correct given the conflicting signals. Strong fundamentals are offset by clear technical weakness and downtrend. RSI approaching oversold but not there yet. No edge exists at current levels - wait for clearer setup either direction.",
+        "risk_flags": [
+          "technical_fundamental_divergence",
+          "low_conviction_entry"
+        ],
+        "adjustment_reasons": [
+          "Technical score 0.28 conflicts with solid fundamental score 0.74",
+          "Conviction 0.52 indicates no clear directional edge",
+          "Downtrend strength 0.72 suggests continued selling pressure"
+        ]
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "current_price": 66.16,
+      "bars": [
+        {
+          "date": "2023-08-07",
+          "open": 45.111,
+          "high": 45.54,
+          "low": 44.5635,
+          "close": 45.4165,
+          "volume": 322153540.0,
+          "vwap": 45.1157
+        },
+        {
+          "date": "2023-08-08",
+          "open": 44.853,
+          "high": 45.242,
+          "low": 44.056,
+          "close": 44.664,
+          "volume": 353843430.0,
+          "vwap": 44.618
+        },
+        {
+          "date": "2023-08-09",
+          "open": 44.274,
+          "high": 44.312,
+          "low": 42.134,
+          "close": 42.554,
+          "volume": 586202570.0,
+          "vwap": 42.9772
+        },
+        {
+          "date": "2023-08-10",
+          "open": 42.16,
+          "high": 43.574,
+          "low": 41.835,
+          "close": 42.388,
+          "volume": 492630300.0,
+          "vwap": 42.6163
+        },
+        {
+          "date": "2023-08-11",
+          "open": 41.751,
+          "high": 42.018,
+          "low": 40.639,
+          "close": 40.855,
+          "volume": 533028060.0,
+          "vwap": 41.1828
+        },
+        {
+          "date": "2023-08-14",
+          "open": 40.486,
+          "high": 43.8,
+          "low": 40.311,
+          "close": 43.753,
+          "volume": 690175430.0,
+          "vwap": 42.6908
+        },
+        {
+          "date": "2023-08-15",
+          "open": 44.56,
+          "high": 45.268,
+          "low": 43.71,
+          "close": 43.94,
+          "volume": 676051510.0,
+          "vwap": 44.3807
+        },
+        {
+          "date": "2023-08-16",
+          "open": 44.52,
+          "high": 44.675,
+          "low": 43.406,
+          "close": 43.486,
+          "volume": 513950680.0,
+          "vwap": 43.9366
+        },
+        {
+          "date": "2023-08-17",
+          "open": 43.97,
+          "high": 44.062,
+          "low": 43.001,
+          "close": 43.3435,
+          "volume": 452355320.0,
+          "vwap": 43.5102
+        },
+        {
+          "date": "2023-08-18",
+          "open": 42.635,
+          "high": 43.578,
+          "low": 41.66,
+          "close": 43.299,
+          "volume": 583742610.0,
+          "vwap": 42.7061
+        },
+        {
+          "date": "2023-08-21",
+          "open": 44.494,
+          "high": 47.065,
+          "low": 44.222,
+          "close": 46.967,
+          "volume": 692558370.0,
+          "vwap": 45.7943
+        },
+        {
+          "date": "2023-08-22",
+          "open": 48.135,
+          "high": 48.187,
+          "low": 45.3331,
+          "close": 45.668,
+          "volume": 755958210.0,
+          "vwap": 46.2698
+        },
+        {
+          "date": "2023-08-23",
+          "open": 45.866,
+          "high": 47.2,
+          "low": 45.208,
+          "close": 47.116,
+          "volume": 778565080.0,
+          "vwap": 47.4753
+        },
+        {
+          "date": "2023-08-24",
+          "open": 50.216,
+          "high": 50.266,
+          "low": 47.159,
+          "close": 47.163,
+          "volume": 1155887340.0,
+          "vwap": 48.3883
+        },
+        {
+          "date": "2023-08-25",
+          "open": 47.012,
+          "high": 47.805,
+          "low": 45.024,
+          "close": 46.018,
+          "volume": 925311520.0,
+          "vwap": 46.0943
+        },
+        {
+          "date": "2023-08-28",
+          "open": 46.482,
+          "high": 46.98,
+          "low": 44.888,
+          "close": 46.835,
+          "volume": 684997430.0,
+          "vwap": 46.1487
+        },
+        {
+          "date": "2023-08-29",
+          "open": 46.666,
+          "high": 49.081,
+          "low": 46.391,
+          "close": 48.784,
+          "volume": 701396990.0,
+          "vwap": 48.3425
+        },
+        {
+          "date": "2023-08-30",
+          "open": 49.044,
+          "high": 49.927,
+          "low": 48.425,
+          "close": 49.264,
+          "volume": 734897980.0,
+          "vwap": 49.3092
+        },
+        {
+          "date": "2023-08-31",
+          "open": 49.38,
+          "high": 49.744,
+          "low": 48.958,
+          "close": 49.355,
+          "volume": 528569770.0,
+          "vwap": 49.4372
+        },
+        {
+          "date": "2023-09-01",
+          "open": 49.762,
+          "high": 49.8,
+          "low": 48.1416,
+          "close": 48.509,
+          "volume": 463726800.0,
+          "vwap": 48.6793
+        },
+        {
+          "date": "2023-09-05",
+          "open": 48.223,
+          "high": 48.8508,
+          "low": 47.86,
+          "close": 48.548,
+          "volume": 382652580.0,
+          "vwap": 48.4553
+        },
+        {
+          "date": "2023-09-06",
+          "open": 48.441,
+          "high": 48.549,
+          "low": 46.58,
+          "close": 47.061,
+          "volume": 468631770.0,
+          "vwap": 47.1461
+        },
+        {
+          "date": "2023-09-07",
+          "open": 45.525,
+          "high": 46.344,
+          "low": 45.152,
+          "close": 46.241,
+          "volume": 433329890.0,
+          "vwap": 45.8289
+        },
+        {
+          "date": "2023-09-08",
+          "open": 45.942,
+          "high": 46.606,
+          "low": 45.271,
+          "close": 45.572,
+          "volume": 473899940.0,
+          "vwap": 45.7668
+        },
+        {
+          "date": "2023-09-11",
+          "open": 46.148,
+          "high": 46.163,
+          "low": 44.312,
+          "close": 45.178,
+          "volume": 473917550.0,
+          "vwap": 44.9381
+        },
+        {
+          "date": "2023-09-12",
+          "open": 44.738,
+          "high": 45.673,
+          "low": 44.531,
+          "close": 44.87,
+          "volume": 349249340.0,
+          "vwap": 45.1759
+        },
+        {
+          "date": "2023-09-13",
+          "open": 44.6,
+          "high": 45.93,
+          "low": 44.503,
+          "close": 45.485,
+          "volume": 398287350.0,
+          "vwap": 45.4121
+        },
+        {
+          "date": "2023-09-14",
+          "open": 45.95,
+          "high": 45.987,
+          "low": 45.131,
+          "close": 45.581,
+          "volume": 370097200.0,
+          "vwap": 45.5761
+        },
+        {
+          "date": "2023-09-15",
+          "open": 45.341,
+          "high": 45.599,
+          "low": 43.808,
+          "close": 43.9,
+          "volume": 505852110.0,
+          "vwap": 44.3172
+        },
+        {
+          "date": "2023-09-18",
+          "open": 42.748,
+          "high": 44.242,
+          "low": 42,
+          "close": 43.966,
+          "volume": 500222790.0,
+          "vwap": 43.5806
+        },
+        {
+          "date": "2023-09-19",
+          "open": 43.833,
+          "high": 43.966,
+          "low": 43.002,
+          "close": 43.52,
+          "volume": 373064240.0,
+          "vwap": 43.4554
+        },
+        {
+          "date": "2023-09-20",
+          "open": 43.6,
+          "high": 43.903,
+          "low": 42.223,
+          "close": 42.239,
+          "volume": 367063690.0,
+          "vwap": 43.1308
+        },
+        {
+          "date": "2023-09-21",
+          "open": 41.583,
+          "high": 42.1,
+          "low": 40.98,
+          "close": 41.017,
+          "volume": 450443960.0,
+          "vwap": 41.4309
+        },
+        {
+          "date": "2023-09-22",
+          "open": 41.572,
+          "high": 42.115,
+          "low": 41.231,
+          "close": 41.61,
+          "volume": 479092310.0,
+          "vwap": 41.7155
+        },
+        {
+          "date": "2023-09-25",
+          "open": 41.591,
+          "high": 42.536,
+          "low": 41.177,
+          "close": 42.222,
+          "volume": 419090960.0,
+          "vwap": 42.0972
+        },
+        {
+          "date": "2023-09-26",
+          "open": 42.001,
+          "high": 42.82,
+          "low": 41.655,
+          "close": 41.911,
+          "volume": 402282090.0,
+          "vwap": 42.1458
+        },
+        {
+          "date": "2023-09-27",
+          "open": 42.33,
+          "high": 42.872,
+          "low": 41.629,
+          "close": 42.468,
+          "volume": 444935200.0,
+          "vwap": 42.2415
+        },
+        {
+          "date": "2023-09-28",
+          "open": 42.46,
+          "high": 43.4463,
+          "low": 42.115,
+          "close": 43.089,
+          "volume": 424662790.0,
+          "vwap": 42.9396
+        },
+        {
+          "date": "2023-09-29",
+          "open": 43.827,
+          "high": 44.144,
+          "low": 43.3069,
+          "close": 43.499,
+          "volume": 397829930.0,
+          "vwap": 43.7037
+        },
+        {
+          "date": "2023-10-02",
+          "open": 44.03,
+          "high": 45.175,
+          "low": 43.861,
+          "close": 44.782,
+          "volume": 433298210.0,
+          "vwap": 44.6532
+        },
+        {
+          "date": "2023-10-03",
+          "open": 44.808,
+          "high": 45.13,
+          "low": 43.246,
+          "close": 43.517,
+          "volume": 470849540.0,
+          "vwap": 44.014
+        },
+        {
+          "date": "2023-10-04",
+          "open": 43.742,
+          "high": 44.143,
+          "low": 43.292,
+          "close": 44.041,
+          "volume": 361820860.0,
+          "vwap": 43.797
+        },
+        {
+          "date": "2023-10-05",
+          "open": 44.05,
+          "high": 44.9,
+          "low": 43.888,
+          "close": 44.688,
+          "volume": 393483090.0,
+          "vwap": 44.4551
+        },
+        {
+          "date": "2023-10-06",
+          "open": 44.193,
+          "high": 45.789,
+          "low": 44.026,
+          "close": 45.762,
+          "volume": 434391020.0,
+          "vwap": 45.1349
+        },
+        {
+          "date": "2023-10-09",
+          "open": 44.842,
+          "high": 45.605,
+          "low": 44.368,
+          "close": 45.273,
+          "volume": 409674720.0,
+          "vwap": 44.9567
+        },
+        {
+          "date": "2023-10-10",
+          "open": 45.31,
+          "high": 46.259,
+          "low": 45.088,
+          "close": 45.798,
+          "volume": 368582080.0,
+          "vwap": 45.8083
+        },
+        {
+          "date": "2023-10-11",
+          "open": 46.196,
+          "high": 46.859,
+          "low": 46.05,
+          "close": 46.806,
+          "volume": 378136890.0,
+          "vwap": 46.441
+        },
+        {
+          "date": "2023-10-12",
+          "open": 46.777,
+          "high": 47.609,
+          "low": 46.33,
+          "close": 46.945,
+          "volume": 481140000.0,
+          "vwap": 47.078
+        },
+        {
+          "date": "2023-10-13",
+          "open": 46.96,
+          "high": 47.116,
+          "low": 45.28,
+          "close": 45.461,
+          "volume": 475350990.0,
+          "vwap": 45.997
+        },
+        {
+          "date": "2023-10-16",
+          "open": 45.063,
+          "high": 46.225,
+          "low": 44.912,
+          "close": 46.095,
+          "volume": 375099240.0,
+          "vwap": 45.8292
+        },
+        {
+          "date": "2023-10-17",
+          "open": 44,
+          "high": 44.754,
+          "low": 42.48,
+          "close": 43.938,
+          "volume": 812180320.0,
+          "vwap": 43.8716
+        },
+        {
+          "date": "2023-10-18",
+          "open": 42.591,
+          "high": 43.219,
+          "low": 41.825,
+          "close": 42.196,
+          "volume": 627267940.0,
+          "vwap": 42.4139
+        },
+        {
+          "date": "2023-10-19",
+          "open": 42.811,
+          "high": 43.297,
+          "low": 41.882,
+          "close": 42.101,
+          "volume": 500287080.0,
+          "vwap": 42.5616
+        },
+        {
+          "date": "2023-10-20",
+          "open": 41.89,
+          "high": 42.47,
+          "low": 41.078,
+          "close": 41.387,
+          "volume": 477069860.0,
+          "vwap": 41.6152
+        },
+        {
+          "date": "2023-10-23",
+          "open": 41.229,
+          "high": 43.248,
+          "low": 40.945,
+          "close": 42.975,
+          "volume": 478512490.0,
+          "vwap": 42.4645
+        },
+        {
+          "date": "2023-10-24",
+          "open": 43.077,
+          "high": 43.697,
+          "low": 42.691,
+          "close": 43.663,
+          "volume": 401463370.0,
+          "vwap": 43.2149
+        },
+        {
+          "date": "2023-10-25",
+          "open": 43.398,
+          "high": 43.65,
+          "low": 41.555,
+          "close": 41.779,
+          "volume": 398259220.0,
+          "vwap": 42.3943
+        },
+        {
+          "date": "2023-10-26",
+          "open": 41.853,
+          "high": 42.2556,
+          "low": 39.8802,
+          "close": 40.326,
+          "volume": 541001320.0,
+          "vwap": 40.7003
+        },
+        {
+          "date": "2023-10-27",
+          "open": 41.13,
+          "high": 41.206,
+          "low": 40.015,
+          "close": 40.5,
+          "volume": 416784410.0,
+          "vwap": 40.579
+        },
+        {
+          "date": "2023-10-30",
+          "open": 41.087,
+          "high": 42.282,
+          "low": 40.481,
+          "close": 41.161,
+          "volume": 388042130.0,
+          "vwap": 41.0835
+        },
+        {
+          "date": "2023-10-31",
+          "open": 40.45,
+          "high": 40.879,
+          "low": 39.23,
+          "close": 40.78,
+          "volume": 517938700.0,
+          "vwap": 40.1835
+        },
+        {
+          "date": "2023-11-01",
+          "open": 40.884,
+          "high": 42.381,
+          "low": 40.869,
+          "close": 42.325,
+          "volume": 437592900.0,
+          "vwap": 41.7702
+        },
+        {
+          "date": "2023-11-02",
+          "open": 43.328,
+          "high": 43.884,
+          "low": 42.894,
+          "close": 43.506,
+          "volume": 409144370.0,
+          "vwap": 43.3724
+        },
+        {
+          "date": "2023-11-03",
+          "open": 44.02,
+          "high": 45.309,
+          "low": 43.723,
+          "close": 45.005,
+          "volume": 424609590.0,
+          "vwap": 44.6275
+        },
+        {
+          "date": "2023-11-06",
+          "open": 45.2845,
+          "high": 45.935,
+          "low": 44.899,
+          "close": 45.751,
+          "volume": 400733350.0,
+          "vwap": 45.5043
+        },
+        {
+          "date": "2023-11-07",
+          "open": 45.719,
+          "high": 46.218,
+          "low": 45.1575,
+          "close": 45.955,
+          "volume": 343165470.0,
+          "vwap": 45.891
+        },
+        {
+          "date": "2023-11-08",
+          "open": 46.1,
+          "high": 46.867,
+          "low": 45.968,
+          "close": 46.574,
+          "volume": 346718940.0,
+          "vwap": 46.4494
+        },
+        {
+          "date": "2023-11-09",
+          "open": 47.467,
+          "high": 48.23,
+          "low": 46.75,
+          "close": 46.95,
+          "volume": 540345970.0,
+          "vwap": 47.4962
+        },
+        {
+          "date": "2023-11-10",
+          "open": 47.5,
+          "high": 48.472,
+          "low": 47.283,
+          "close": 48.335,
+          "volume": 422441560.0,
+          "vwap": 47.9785
+        },
+        {
+          "date": "2023-11-13",
+          "open": 48.32,
+          "high": 49.116,
+          "low": 48.099,
+          "close": 48.62,
+          "volume": 384133700.0,
+          "vwap": 48.7254
+        },
+        {
+          "date": "2023-11-14",
+          "open": 49.68,
+          "high": 49.834,
+          "low": 49.04,
+          "close": 49.656,
+          "volume": 416725870.0,
+          "vwap": 49.5321
+        },
+        {
+          "date": "2023-11-15",
+          "open": 49.935,
+          "high": 49.96,
+          "low": 48.2,
+          "close": 48.888,
+          "volume": 474997350.0,
+          "vwap": 49.0032
+        },
+        {
+          "date": "2023-11-16",
+          "open": 48.679,
+          "high": 49.5247,
+          "low": 48.33,
+          "close": 49.48,
+          "volume": 339756240.0,
+          "vwap": 48.978
+        },
+        {
+          "date": "2023-11-17",
+          "open": 49.524,
+          "high": 49.717,
+          "low": 49.007,
+          "close": 49.298,
+          "volume": 325800910.0,
+          "vwap": 49.369
+        },
+        {
+          "date": "2023-11-20",
+          "open": 49.312,
+          "high": 50.548,
+          "low": 49.181,
+          "close": 50.409,
+          "volume": 416142600.0,
+          "vwap": 49.9569
+        },
+        {
+          "date": "2023-11-21",
+          "open": 50.126,
+          "high": 50.517,
+          "low": 49.222,
+          "close": 49.944,
+          "volume": 565725270.0,
+          "vwap": 49.7739
+        },
+        {
+          "date": "2023-11-22",
+          "open": 49.852,
+          "high": 50.3349,
+          "low": 47.69,
+          "close": 48.716,
+          "volume": 890642330.0,
+          "vwap": 48.8055
+        },
+        {
+          "date": "2023-11-24",
+          "open": 48.47,
+          "high": 48.921,
+          "low": 47.745,
+          "close": 47.776,
+          "volume": 294644640.0,
+          "vwap": 48.1534
+        },
+        {
+          "date": "2023-11-27",
+          "open": 47.8,
+          "high": 48.53,
+          "low": 47.652,
+          "close": 48.242,
+          "volume": 395586300.0,
+          "vwap": 48.1839
+        },
+        {
+          "date": "2023-11-28",
+          "open": 48.236,
+          "high": 48.3229,
+          "low": 47.473,
+          "close": 47.821,
+          "volume": 401490850.0,
+          "vwap": 47.8173
+        },
+        {
+          "date": "2023-11-29",
+          "open": 48.379,
+          "high": 48.762,
+          "low": 47.86,
+          "close": 48.14,
+          "volume": 382004650.0,
+          "vwap": 48.241
+        },
+        {
+          "date": "2023-11-30",
+          "open": 48.024,
+          "high": 48.11,
+          "low": 46.422,
+          "close": 46.77,
+          "volume": 526246630.0,
+          "vwap": 46.9674
+        },
+        {
+          "date": "2023-12-01",
+          "open": 46.525,
+          "high": 47.2,
+          "low": 46.187,
+          "close": 46.765,
+          "volume": 369317010.0,
+          "vwap": 46.7447
+        },
+        {
+          "date": "2023-12-04",
+          "open": 46.077,
+          "high": 46.077,
+          "low": 45.01,
+          "close": 45.51,
+          "volume": 437543440.0,
+          "vwap": 45.4364
+        },
+        {
+          "date": "2023-12-05",
+          "open": 45.466,
+          "high": 46.6,
+          "low": 45.271,
+          "close": 46.566,
+          "volume": 371717620.0,
+          "vwap": 46.1555
+        },
+        {
+          "date": "2023-12-06",
+          "open": 47.2145,
+          "high": 47.387,
+          "low": 45.412,
+          "close": 45.503,
+          "volume": 380589550.0,
+          "vwap": 46.2359
+        },
+        {
+          "date": "2023-12-07",
+          "open": 45.7,
+          "high": 46.629,
+          "low": 45.604,
+          "close": 46.596,
+          "volume": 350822550.0,
+          "vwap": 46.2735
+        },
+        {
+          "date": "2023-12-08",
+          "open": 46.595,
+          "high": 47.7409,
+          "low": 46.55,
+          "close": 47.506,
+          "volume": 359223700.0,
+          "vwap": 47.3927
+        },
+        {
+          "date": "2023-12-11",
+          "open": 47.491,
+          "high": 47.531,
+          "low": 45.83,
+          "close": 46.627,
+          "volume": 509728090.0,
+          "vwap": 46.5326
+        },
+        {
+          "date": "2023-12-12",
+          "open": 46.046,
+          "high": 47.666,
+          "low": 46.046,
+          "close": 47.657,
+          "volume": 372386860.0,
+          "vwap": 47.1444
+        },
+        {
+          "date": "2023-12-13",
+          "open": 47.629,
+          "high": 48.594,
+          "low": 47.608,
+          "close": 48.088,
+          "volume": 447791860.0,
+          "vwap": 48.1782
+        },
+        {
+          "date": "2023-12-14",
+          "open": 48.39,
+          "high": 48.67,
+          "low": 47.422,
+          "close": 48.35,
+          "volume": 391231740.0,
+          "vwap": 48.1291
+        },
+        {
+          "date": "2023-12-15",
+          "open": 48.194,
+          "high": 49.404,
+          "low": 48.12,
+          "close": 48.89,
+          "volume": 479133580.0,
+          "vwap": 48.9406
+        },
+        {
+          "date": "2023-12-18",
+          "open": 49.4,
+          "high": 50.433,
+          "low": 49.15,
+          "close": 50.077,
+          "volume": 411087170.0,
+          "vwap": 49.8968
+        },
+        {
+          "date": "2023-12-19",
+          "open": 49.424,
+          "high": 49.7,
+          "low": 48.895,
+          "close": 49.604,
+          "volume": 464444460.0,
+          "vwap": 49.3148
+        },
+        {
+          "date": "2023-12-20",
+          "open": 49.655,
+          "high": 49.999,
+          "low": 48.098,
+          "close": 48.111,
+          "volume": 397894390.0,
+          "vwap": 49.1798
+        },
+        {
+          "date": "2023-12-21",
+          "open": 48.811,
+          "high": 49.095,
+          "low": 48.419,
+          "close": 48.99,
+          "volume": 300347350.0,
+          "vwap": 48.7442
+        },
+        {
+          "date": "2023-12-22",
+          "open": 49.195,
+          "high": 49.383,
+          "low": 48.467,
+          "close": 48.83,
+          "volume": 252276760.0,
+          "vwap": 48.9789
+        },
+        {
+          "date": "2023-12-26",
+          "open": 48.968,
+          "high": 49.6,
+          "low": 48.96,
+          "close": 49.279,
+          "volume": 243147520.0,
+          "vwap": 49.3569
+        },
+        {
+          "date": "2023-12-27",
+          "open": 49.511,
+          "high": 49.68,
+          "low": 49.085,
+          "close": 49.417,
+          "volume": 233647980.0,
+          "vwap": 49.3587
+        },
+        {
+          "date": "2023-12-28",
+          "open": 49.643,
+          "high": 49.884,
+          "low": 49.412,
+          "close": 49.522,
+          "volume": 246587480.0,
+          "vwap": 49.6423
+        },
+        {
+          "date": "2023-12-29",
+          "open": 49.813,
+          "high": 49.997,
+          "low": 48.751,
+          "close": 49.522,
+          "volume": 388693300.0,
+          "vwap": 49.5195
+        },
+        {
+          "date": "2024-01-02",
+          "open": 49.244,
+          "high": 49.295,
+          "low": 47.595,
+          "close": 48.168,
+          "volume": 411170220.0,
+          "vwap": 48.0662
+        },
+        {
+          "date": "2024-01-03",
+          "open": 47.485,
+          "high": 48.1841,
+          "low": 47.32,
+          "close": 47.569,
+          "volume": 320822670.0,
+          "vwap": 47.6677
+        },
+        {
+          "date": "2024-01-04",
+          "open": 47.767,
+          "high": 48.5,
+          "low": 47.508,
+          "close": 47.998,
+          "volume": 305489390.0,
+          "vwap": 48.0888
+        },
+        {
+          "date": "2024-01-05",
+          "open": 48.462,
+          "high": 49.547,
+          "low": 48.306,
+          "close": 49.097,
+          "volume": 409571270.0,
+          "vwap": 49.0192
+        },
+        {
+          "date": "2024-01-08",
+          "open": 49.512,
+          "high": 52.275,
+          "low": 49.479,
+          "close": 52.253,
+          "volume": 642509900.0,
+          "vwap": 51.3375
+        },
+        {
+          "date": "2024-01-09",
+          "open": 52.401,
+          "high": 54.325,
+          "low": 51.69,
+          "close": 53.14,
+          "volume": 772959260.0,
+          "vwap": 53.1155
+        },
+        {
+          "date": "2024-01-10",
+          "open": 53.616,
+          "high": 54.6,
+          "low": 53.489,
+          "close": 54.35,
+          "volume": 533749760.0,
+          "vwap": 54.1639
+        },
+        {
+          "date": "2024-01-11",
+          "open": 54.999,
+          "high": 55.346,
+          "low": 53.56,
+          "close": 54.822,
+          "volume": 596737270.0,
+          "vwap": 54.5998
+        },
+        {
+          "date": "2024-01-12",
+          "open": 54.62,
+          "high": 54.97,
+          "low": 54.3301,
+          "close": 54.71,
+          "volume": 352418800.0,
+          "vwap": 54.6709
+        },
+        {
+          "date": "2024-01-16",
+          "open": 55.018,
+          "high": 56.835,
+          "low": 54.9,
+          "close": 56.382,
+          "volume": 449486130.0,
+          "vwap": 56.1219
+        },
+        {
+          "date": "2024-01-17",
+          "open": 56.347,
+          "high": 56.4707,
+          "low": 54.74,
+          "close": 56.053,
+          "volume": 474394440.0,
+          "vwap": 55.6716
+        },
+        {
+          "date": "2024-01-18",
+          "open": 57.26,
+          "high": 57.6,
+          "low": 56.107,
+          "close": 57.107,
+          "volume": 491650360.0,
+          "vwap": 57.0793
+        },
+        {
+          "date": "2024-01-19",
+          "open": 57.989,
+          "high": 59.5,
+          "low": 57.225,
+          "close": 59.491,
+          "volume": 543304230.0,
+          "vwap": 58.5409
+        },
+        {
+          "date": "2024-01-22",
+          "open": 60.049,
+          "high": 60.331,
+          "low": 59.07,
+          "close": 59.654,
+          "volume": 452753830.0,
+          "vwap": 59.7767
+        },
+        {
+          "date": "2024-01-23",
+          "open": 59.57,
+          "high": 59.91,
+          "low": 58.585,
+          "close": 59.873,
+          "volume": 294574450.0,
+          "vwap": 59.4725
+        },
+        {
+          "date": "2024-01-24",
+          "open": 60.304,
+          "high": 62.849,
+          "low": 59.938,
+          "close": 61.362,
+          "volume": 560270640.0,
+          "vwap": 61.7176
+        },
+        {
+          "date": "2024-01-25",
+          "open": 62.35,
+          "high": 62.719,
+          "low": 60.85,
+          "close": 61.617,
+          "volume": 482551840.0,
+          "vwap": 61.9052
+        },
+        {
+          "date": "2024-01-26",
+          "open": 60.96,
+          "high": 61.783,
+          "low": 60.573,
+          "close": 61.031,
+          "volume": 389742590.0,
+          "vwap": 61.1517
+        },
+        {
+          "date": "2024-01-29",
+          "open": 61.232,
+          "high": 62.489,
+          "low": 60.907,
+          "close": 62.465,
+          "volume": 348703480.0,
+          "vwap": 61.8646
+        },
+        {
+          "date": "2024-01-30",
+          "open": 62.9,
+          "high": 63.493,
+          "low": 62.26,
+          "close": 62.774,
+          "volume": 410709050.0,
+          "vwap": 62.8595
+        },
+        {
+          "date": "2024-01-31",
+          "open": 61.44,
+          "high": 62.269,
+          "low": 60.7,
+          "close": 61.527,
+          "volume": 453794870.0,
+          "vwap": 61.5108
+        },
+        {
+          "date": "2024-02-01",
+          "open": 62.1,
+          "high": 63.191,
+          "low": 61.65,
+          "close": 63.027,
+          "volume": 369145790.0,
+          "vwap": 62.4717
+        },
+        {
+          "date": "2024-02-02",
+          "open": 63.974,
+          "high": 66.6,
+          "low": 63.69,
+          "close": 66.16,
+          "volume": 476527650.0,
+          "vwap": 65.6028
+        }
+      ],
+      "fundamental": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "revenue": 26974000000.0,
+        "net_income": 4368000000.0,
+        "eps": 19.68,
+        "pe_ratio": 3.4,
+        "revenue_growth_yoy": 0.002,
+        "profit_margin": 0.162,
+        "intrinsic_value_signal": "undervalued",
+        "fundamental_score": 0.68,
+        "key_risks": [
+          "Declining profitability year-over-year",
+          "Net income down 55% despite flat revenue",
+          "Margin compression concerns"
+        ],
+        "key_strengths": [
+          "Extremely low P/E ratio of 3.4",
+          "Strong absolute revenue base",
+          "Significant upside potential if profitability recovers"
+        ],
+        "summary": "NVDA trades at an exceptionally low P/E of 3.4 despite solid revenue, suggesting undervaluation. However, profitability declined sharply with net income falling 55% YoY while revenue remained flat, indicating operational challenges. The valuation appears attractive for contrarian investors betting on margin recovery, but near-term fundamentals show deterioration."
+      },
+      "sentiment": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "sentiment_score": 0.68,
+        "uncertainty": 0.45,
+        "dominant_emotion": "optimism",
+        "news_volume": 640,
+        "key_themes": [
+          "AI leadership",
+          "B100 accelerator launch",
+          "Meta AI spending",
+          "Valuation concerns",
+          "Long-term growth potential"
+        ],
+        "summary": "Strong positive sentiment driven by Nvidia's clear dominance in AI semiconductor market and Meta's increased AI spending. Optimism tempered by valuation concerns regarding Magnificent Seven bubble risk and questions about AI revenue materialization in 2024."
+      },
+      "news": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "macro_impact": 0.6,
+        "company_events": [
+          "B100 accelerator launch upcoming",
+          "Meta AI spending acceleration benefiting NVDA",
+          "Strong earnings beat expectations anticipated"
+        ],
+        "industry_trends": [
+          "AI chip demand surge continuing",
+          "Magnificent Seven valuation concerns emerging",
+          "Meta's AI capex expansion driving semiconductor demand"
+        ],
+        "event_risk_level": 0.5,
+        "catalyst_signals": [
+          "B100 accelerator product launch imminent",
+          "Meta AI infrastructure spending acceleration",
+          "Earnings beat probability high",
+          "Valuation bubble concerns mounting",
+          "Bond spread widening signals Mag 7 fatigue"
+        ],
+        "summary": "Macro environment moderately positive with strong AI capex cycle supporting NVDA. Key near-term catalyst is B100 accelerator launch and Meta's AI spending rush. Significant upside from product innovation and customer capex acceleration, but offset by growing valuation concerns and Magnificent Seven fatigue signals. Earnings beat likely but execution risk on maintaining growth trajectory."
+      },
+      "technical": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "trend_direction": "up",
+        "trend_strength": 0.72,
+        "rsi": 68.5,
+        "macd_signal": "bullish",
+        "bollinger_position": "upper",
+        "support_level": 61.5,
+        "resistance_level": 68.0,
+        "entry_signal": "buy",
+        "technical_score": 0.71,
+        "summary": "Strong uptrend with 10.9% gain over 10 days. Price near resistance at $68. RSI at 68.5 shows strength without overbought extremes. Volume elevated on breakout day. MACD momentum positive. Support established at $61.50."
+      },
+      "researcher": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "bull_thesis": "NVDA presents a compelling value opportunity with an extremely low P/E of 3.4 despite its AI leadership position. Strong technical momentum (RSI 68.5, bullish MACD, uptrend at 0.72 strength) combined with positive sentiment around AI dominance supports continued upside. Near-term catalysts including B100 accelerator launch, Meta's accelerating AI spending, and anticipated earnings beats provide multiple drivers for multiple expansion. The market is repricing AI infrastructure leaders, and NVDA's absolute revenue base remains strong with significant upside if profitability recovers.",
+        "bear_thesis": "Profitability has deteriorated sharply with net income down 55% year-over-year despite flat revenue, signaling serious margin compression concerns. The extremely low P/E of 3.4 may reflect justified skepticism about earnings quality and sustainability rather than a bargain. RSI at 68.5 indicates overbought conditions with technical exhaustion risk. Valuation bubble concerns are mounting with bond spreads widening, suggesting Magnificent 7 fatigue. Event risk of 0.5 and macro headwinds could trigger a sharp correction, particularly if earnings fail to meet elevated expectations.",
+        "consensus": "bullish",
+        "conviction": 0.68,
+        "key_debate_points": [
+          "Valuation paradox: 3.4 P/E is either a deep value opportunity or reflects justified profitability concerns",
+          "Margin compression vs. AI revenue acceleration: which trend dominates forward earnings?",
+          "Technical overbought conditions (RSI 68.5) vs. strong uptrend momentum and bullish MACD",
+          "Catalyst timing: B100 launch and Meta spending could reignite growth or disappoint if already priced in",
+          "Macro risk: bond spread widening signals potential Mag 7 rotation despite AI fundamentals"
+        ],
+        "risk_reward_ratio": 2.1,
+        "summary": "Moderately bullish with elevated conviction. NVDA's AI leadership, strong technical setup, and extreme valuation discount outweigh profitability deterioration concerns near-term. Multiple expansion catalysts (B100, Meta spending, earnings beats) provide asymmetric upside, but overbought technicals and macro fatigue signals warrant position sizing discipline. Profitability recovery is the critical variable determining sustainability of gains."
+      },
+      "trader": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "action": "BUY",
+        "confidence": 0.68,
+        "position_size_pct": 0.06,
+        "target_price": 74.5,
+        "stop_loss_price": 61.0,
+        "time_horizon": "medium",
+        "reasoning": [
+          "Bullish consensus with 0.68 conviction and favorable 2.1 risk/reward ratio",
+          "Technical entry signal confirmed with strong uptrend (0.72 strength) and bullish MACD",
+          "Fundamental score 0.68 supports quality despite margin compression concerns",
+          "Near-term catalysts (B100 launch, Meta AI spending, earnings) provide upside drivers",
+          "Position sized conservatively at 6% due to elevated event risk (0.5) and RSI near overbought"
+        ],
+        "key_signals_used": [
+          "fundamental_score",
+          "technical_score",
+          "sentiment_score",
+          "consensus",
+          "support_resistance",
+          "entry_signal"
+        ]
+      },
+      "risk_manager": {
+        "ticker": "NVDA",
+        "date": "2024-02-02",
+        "final_action": "BUY",
+        "action_changed": false,
+        "final_position_size_pct": 0.05,
+        "position_adjustment": -0.01,
+        "hedge_required": false,
+        "hedge_type": "none",
+        "hedge_size_pct": 0.0,
+        "cash_reserve_pct": 0.1,
+        "risk_level": "moderate",
+        "aggressive_view": "This is a textbook BUY setup. All three scores above 0.65, strong uptrend at 0.72, MACD bullish, and a 2.1 risk/reward ratio. RSI at 68.5 is elevated but not overbought - we have room to run. B100 launch and Meta AI spending are massive catalysts. I'd actually push to 8% position size. The event risk at 0.5 is manageable given the quality of the setup.",
+        "conservative_view": "I'm concerned about multiple factors here. RSI at 68.5 is approaching overbought territory - we're chasing momentum. Event risk at 0.5 is elevated with earnings coming. The stock has already run significantly. I'd reduce to 4% maximum and set a tighter stop. We should also consider a small put hedge given the event risk. Better to protect gains than chase the last 10%.",
+        "neutral_view": "Both have valid points. The setup is genuinely strong - aligned fundamentals, technicals, and sentiment with a favorable risk/reward. However, Clara's right that RSI is getting warm and event risk is notable. Compromise: trim position from 6% to 5%, maintain the BUY signal, keep the stop at $61. No hedge needed yet since we're reducing size. Hold 10% cash reserve for potential pullback entry.",
+        "consensus_reasoning": "The BUY signal is supported by strong alignment across all three analytical dimensions with a 2.1 risk/reward ratio. However, RSI approaching 70 and 0.5 event risk warrant modest position reduction. Reducing from 6% to 5% provides buffer while maintaining meaningful exposure to the upside catalysts. Stop loss at $61 provides adequate downside protection.",
+        "risk_flags": [
+          "elevated_event_risk",
+          "rsi_approaching_overbought"
+        ],
+        "adjustment_reasons": [
+          "RSI 68.5 approaching overbought threshold of 70",
+          "Event risk 0.5 elevated ahead of earnings and product launches",
+          "Prudent to reduce size slightly while maintaining bullish exposure"
+        ]
+      }
+    }
+  ],
+  "portfolio": {
+    "date": "2024-02-02",
+    "tickers_analyzed": [
+      "AAPL",
+      "NVDA"
+    ],
+    "allocations": [
+      {
+        "ticker": "AAPL",
+        "weight": 0.0,
+        "action": "HOLD",
+        "rationale": "Technical weakness (RSI 38.2, downtrend) with low conviction (0.52). Technical-fundamental divergence flag. Wait for technical improvement before entry."
+      },
+      {
+        "ticker": "NVDA",
+        "weight": 0.25,
+        "action": "BUY",
+        "rationale": "Maintaining core position. Strong Sharpe (2.42), bullish consensus, undervalued fundamentals. Trimming from 28% due to RSI approaching overbought (68.5) and elevated event risk."
+      }
+    ],
+    "total_equity_pct": 0.25,
+    "cash_pct": 0.7,
+    "hedge_pct": 0.05,
+    "hedge_instrument": "put_option",
+    "portfolio_risk_level": "moderate",
+    "concentration_risk": false,
+    "diversification_score": 0.4,
+    "rebalance_urgency": "this_week",
+    "entry_style": "staggered",
+    "market_outlook": "Mixed market regime with neutral bias. NVDA remains sole conviction position but approaching overbought warrants position trim. AAPL technical deterioration prevents new allocation. Elevated cash reflects low conviction environment.",
+    "key_risks": [
+      "Single stock concentration in NVDA",
+      "RSI overbought risk on NVDA",
+      "Elevated event risk",
+      "Low diversification with only one active position"
+    ],
+    "reasoning": [
+      "AAPL: HOLD signal with 0.52 conviction insufficient for allocation. Technical score (0.28) weak despite fair fundamental value. Exiting previous 10% position.",
+      "NVDA: Reducing from 28% to 25% - still core position but RSI 68.5 and event risk flags warrant trim. 4-week consecutive BUY streak but approaching overbought.",
+      "Cash increased to 70% from 57% reflecting: (1) AAPL exit, (2) NVDA trim, (3) mixed market regime, (4) low conviction signals overall.",
+      "Maintaining 5% hedge via put options given elevated event risk flag and single-stock concentration.",
+      "Diversification score low (0.40) due to single active position - monitoring for AAPL technical improvement to add second leg."
+    ]
+  },
+  "meetings": {
+    "mam": {
+      "date": "2024-02-02",
+      "market_regime": "mixed",
+      "market_bias": "neutral",
+      "bull_tickers": [
+        "NVDA"
+      ],
+      "bear_tickers": [],
+      "neutral_tickers": [
+        "AAPL"
+      ],
+      "signal_conflicts": [],
+      "debate_skipped": false,
+      "consensus_score": 0.5
+    },
+    "sdm": {
+      "date": "2024-02-02",
+      "strategy_recommendations": {
+        "AAPL": {
+          "selected_strategy": "defensive",
+          "sharpe": 0.4458,
+          "mdd": 0.0186,
+          "execution_hints": []
+        },
+        "NVDA": {
+          "selected_strategy": "market_neutral",
+          "sharpe": 2.4165,
+          "mdd": 0.0146,
+          "execution_hints": []
+        }
+      },
+      "dominant_strategy": "defensive",
+      "high_turnover_warnings": [],
+      "low_sharpe_warnings": [],
+      "strategy_distribution": {
+        "defensive": 1,
+        "market_neutral": 1
+      }
+    },
+    "ram": {
+      "date": "2024-02-02",
+      "triggered": false,
+      "avg_risk_score": 0.5,
+      "max_risk_score": 0.5,
+      "high_risk_tickers": [],
+      "emergency_controls": [],
+      "all_risk_flags": [
+        "elevated_event_risk",
+        "low_conviction_entry",
+        "rsi_approaching_overbought",
+        "technical_fundamental_divergence"
+      ]
+    },
+    "ram_triggered": false
+  },
+  "calibration": {
+    "date": "2024-02-02",
+    "calibrated_scores": {
+      "AAPL": {
+        "technical.technical_score": 0.1101,
+        "fundamental.fundamental_score": 0.5015,
+        "sentiment.sentiment_score": 0.8044,
+        "researcher.risk_reward_ratio": 0.3302
+      },
+      "NVDA": {
+        "technical.technical_score": 0.3302,
+        "fundamental.fundamental_score": 0.5,
+        "sentiment.sentiment_score": 0.5252,
+        "researcher.risk_reward_ratio": 0.2689
+      }
+    },
+    "propagation_audit": {
+      "AAPL": {
+        "date": "2024-02-02",
+        "tech_adoption_rate": 0.0,
+        "consensus_adoption_rate": 1.0,
+        "action_changed": false,
+        "dropped_signal_count": 1,
+        "propagation_score": 0.5
+      },
+      "NVDA": {
+        "date": "2024-02-02",
+        "tech_adoption_rate": 0.0,
+        "consensus_adoption_rate": 1.0,
+        "action_changed": false,
+        "dropped_signal_count": 1,
+        "propagation_score": 0.5
+      }
+    },
+    "reliability_scores": {
+      "fundamental": 0.6023805,
+      "sentiment": 0.6023805,
+      "news": 0.6023805,
+      "technical": 0.6023805,
+      "researcher": 0.6023805,
+      "trader": 0.6023805,
+      "risk_manager": 0.6023805
+    },
+    "gating_decisions": {
+      "fundamental": "full",
+      "sentiment": "full",
+      "news": "full",
+      "technical": "full",
+      "researcher": "full",
+      "trader": "full",
+      "risk_manager": "full"
+    },
+    "flags": []
+  },
+  "errors": [],
+  "prev_date": "2024-01-26"
+}

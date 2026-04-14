@@ -1,12 +1,13 @@
 {
   "status": "pass",
-  "passed": 40,
+  "passed": 70,
   "failed": 0,
   "returncode": 0,
-  "output": "........................................                                 [100%]\n40 passed in 0.08s\n",
+  "output": "......................................................................   [100%]\n70 passed in 0.11s\n",
   "tests": [
-    "tests/unit/test_simulation.py"
+    "tests/unit/test_simulation.py",
+    "tests/unit/test_backtester.py"
   ],
   "missing": [],
-  "timestamp": "2026-04-07T10:55:10.124243"
+  "timestamp": "2026-04-14T11:33:27.931717"
 }

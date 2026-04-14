@@ -73,6 +73,10 @@ DEFAULT_MAP = {
         "tests/unit/test_calibration.py",
         "tests/unit/test_simulation.py",
     ],
+    "calibration": [
+        "tests/unit/test_calibration.py",
+        "tests/unit/test_run_calibration.py",
+    ],
     "reliability": [
         "tests/unit/test_reliability.py",
     ],
@@ -83,8 +87,16 @@ DEFAULT_MAP = {
         "tests/unit/test_tools.py",
     ],
     "meetings": [
+        "tests/unit/test_run_meetings.py",
         "tests/integration/test_weekly_cycle.py",
         "tests/integration/test_risk_alert.py",
+    ],
+    "scripts": [
+        "tests/unit/test_stock_pipeline.py",
+        "tests/unit/test_run_loop.py",
+    ],
+    "dashboard": [
+        "tests/unit/test_dashboard_utils.py",
     ],
 }
 

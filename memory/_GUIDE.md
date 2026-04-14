@@ -77,10 +77,10 @@ result = memory.get_by_date("2024-01-15")
 ## 하네스
 
 ```
-tests:
-  - tests/unit/test_retrieval.py
-  - tests/integration/test_e2e_fixes.py
-  - tests/integration/test_multicycle.py
+tests/unit/test_retrieval.py
+tests/unit/test_run_memory.py
+tests/integration/test_e2e_fixes.py
+tests/integration/test_multicycle.py
 ```
 
 ```bash
@@ -95,3 +95,4 @@ python scripts/harness.py memory/
 |------|------|----------|
 | 2026-04-06 | strategy_memory.py | _store[key] 날짜 충돌 수정 |
 | 2026-04-06 | market_memory.py | 동일 수정 |
+| 2026-04-14 | run_memory.py | 신규: results/ 기반 루프 메모리 (Phase 2). find_prev_dates / build_context / format_context_for_prompt / get_context_prompt. 24개 테스트 추가 |

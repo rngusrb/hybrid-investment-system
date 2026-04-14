@@ -248,6 +248,9 @@ class PolygonFetcher:
                 "title": getattr(item, "title", None),
                 "description": getattr(item, "description", None),
                 "article_url": getattr(item, "article_url", None),
+                "publisher": {
+                    "name": getattr(getattr(item, "publisher", None), "name", ""),
+                },
             }
             for item in raw_news
         ]

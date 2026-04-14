@@ -48,24 +48,48 @@ def fetch_data(ticker: str, date: str) -> dict:
     # 현재 주가 (최신 봉)
     current_price = bars[-1]["close"] if bars else None
 
-    # 재무제표 (Polygon vX)
+    def _financials_available(item, cutoff: str) -> bool:
+        """기준일에 공시된 재무제표인지 확인.
+        - filing_date 있고 cutoff 이후이면 제외 (미공시)
+        - end_date(분기말)가 cutoff 이후이면 제외 (분기 미종료)
+        - filing_date=None인 항목은 end_date만으로 판단 (Polygon 일부 분기 데이터)
+        """
+        filing = str(getattr(item, "filing_date", None) or "")
+        end    = str(getattr(item, "end_date",    None) or "")
+        if filing and filing > cutoff:
+            return False   # 기준일 이후 공시
+        if end and end > cutoff:
+            return False   # 분기 아직 미종료
+        return True
+
+    # 재무제표 (Polygon vX) — 분석 기준일(date) 이전 공시만 사용
     financials = []
     try:
-        items = list(client.vx.list_stock_financials(ticker=ticker, limit=4, timeframe="annual"))
-        for item in items[:2]:  # 최근 2년
+        raw_annual = list(client.vx.list_stock_financials(
+            ticker=ticker, timeframe="annual",
+            period_of_report_date_lte=date,   # 1차: 분기말 기준 컷
+        ))
+        # 2차: filing_date 알려진 경우 기준일 이후 공시 제외
+        raw_annual = [i for i in raw_annual if _financials_available(i, date)]
+        for item in raw_annual[:2]:  # 최근 2년
             inc = item.financials.income_statement
             financials.append({
                 "period": f"{item.start_date} ~ {item.end_date}",
+                "filed":      str(getattr(item, "filing_date", "")),
                 "revenue":    getattr(inc.revenues,     "value", None) if hasattr(inc, "revenues")     else None,
                 "net_income": getattr(inc.net_income_loss, "value", None) if hasattr(inc, "net_income_loss") else None,
             })
     except Exception as e:
         financials = [{"error": str(e)}]
 
-    # EPS + PE
+    # EPS + PE — 동일하게 기준일 이전 분기 데이터만
     eps, pe_ratio = None, None
     try:
-        items = list(client.vx.list_stock_financials(ticker=ticker, limit=4, timeframe="quarterly"))
+        raw_quarterly = list(client.vx.list_stock_financials(
+            ticker=ticker, timeframe="quarterly",
+            period_of_report_date_lte=date,   # 1차: 분기말 기준 컷
+        ))
+        items = [i for i in raw_quarterly if _financials_available(i, date)]
         if items and current_price:
             inc = items[0].financials.income_statement
             shares = getattr(items[0].financials.balance_sheet.equity, "value", None) if hasattr(items[0].financials, "balance_sheet") else None
@@ -97,8 +121,11 @@ def fetch_data(ticker: str, date: str) -> dict:
 # LLM 호출 공통
 # ──────────────────────────────────────────
 
-def call_llm(llm, system_prompt: str, user_content: str, schema_class):
-    """LLM 호출 → schema 파싱 → dict 반환."""
+def call_llm(llm, system_prompt: str, user_content: str, schema_class,
+             return_raw: bool = False):
+    """LLM 호출 → schema 파싱 → dict 반환.
+    return_raw=True 시 (dict, raw_text, user_prompt) 튜플 반환.
+    """
     import re
 
     for attempt in range(3):
@@ -106,17 +133,21 @@ def call_llm(llm, system_prompt: str, user_content: str, schema_class):
             messages=[{"role": "user", "content": user_content}],
             system=system_prompt,
         )
-        # JSON 추출
-        text = raw if isinstance(raw, str) else str(raw)
+        text  = raw if isinstance(raw, str) else str(raw)
         match = re.search(r"\{.*\}", text, re.DOTALL)
         if not match:
             continue
         try:
             data = json.loads(match.group())
             obj  = schema_class(**data)
-            return obj.model_dump()
+            result = obj.model_dump()
+            if return_raw:
+                return result, text, user_content
+            return result
         except Exception:
             continue
+    if return_raw:
+        return {}, "", user_content
     return {}
 
 
@@ -124,7 +155,7 @@ def call_llm(llm, system_prompt: str, user_content: str, schema_class):
 # 4개 Analyst
 # ──────────────────────────────────────────
 
-def run_fundamental(llm, data: dict) -> dict:
+def run_fundamental(llm, data: dict, return_raw: bool = False):
     from schemas.stock_schemas import FundamentalAnalystOutput
     system = Path(ROOT / "prompts/fundamental_system.md").read_text().replace("{ticker}", data["ticker"])
 
@@ -141,10 +172,10 @@ Financial Statements (recent 2 years):
 
 Analyze and return JSON.
 """
-    return call_llm(llm, system, user, FundamentalAnalystOutput)
+    return call_llm(llm, system, user, FundamentalAnalystOutput, return_raw=return_raw)
 
 
-def run_sentiment(llm, data: dict) -> dict:
+def run_sentiment(llm, data: dict, return_raw: bool = False):
     from schemas.stock_schemas import SentimentAnalystOutput
     system = Path(ROOT / "prompts/sentiment_system.md").read_text().replace("{ticker}", data["ticker"])
 
@@ -161,10 +192,10 @@ Recent headlines:
 
 Analyze sentiment and return JSON.
 """
-    return call_llm(llm, system, user, SentimentAnalystOutput)
+    return call_llm(llm, system, user, SentimentAnalystOutput, return_raw=return_raw)
 
 
-def run_news(llm, data: dict) -> dict:
+def run_news(llm, data: dict, return_raw: bool = False):
     from schemas.stock_schemas import NewsAnalystOutput
     system = Path(ROOT / "prompts/news_system.md").read_text().replace("{ticker}", data["ticker"])
 
@@ -180,7 +211,7 @@ News Articles:
 
 Analyze macro impact and company events, return JSON.
 """
-    return call_llm(llm, system, user, NewsAnalystOutput)
+    return call_llm(llm, system, user, NewsAnalystOutput, return_raw=return_raw)
 
 
 def run_technical(llm, data: dict) -> dict:
@@ -304,11 +335,50 @@ Make BUY/SELL/HOLD decision and return JSON.
 
 
 # ──────────────────────────────────────────
+# Risk Manager
+# ──────────────────────────────────────────
+
+def run_risk_manager(llm_decision, ticker: str, date: str, current_price: float,
+                     trader: dict, fundamental: dict, sentiment: dict,
+                     news: dict, technical: dict, researcher: dict) -> dict:
+    from schemas.stock_schemas import RiskManagerOutput
+    system = Path(ROOT / "prompts/risk_manager_system.md").read_text().replace("{ticker}", ticker)
+
+    user = f"""
+Ticker: {ticker}
+Date: {date}
+Current Price: ${current_price}
+
+=== TRADER DECISION ===
+Action: {trader.get('action')}
+Confidence: {trader.get('confidence')}
+Position Size: {trader.get('position_size_pct', 0)*100:.1f}%
+Target Price: ${trader.get('target_price')}
+Stop Loss: ${trader.get('stop_loss_price')}
+Time Horizon: {trader.get('time_horizon')}
+Reasoning: {trader.get('reasoning')}
+
+=== RISK INPUTS ===
+Fundamental Score: {fundamental.get('fundamental_score')}
+Technical Score:   {technical.get('technical_score')}
+Sentiment Score:   {sentiment.get('sentiment_score')}
+Event Risk Level:  {news.get('event_risk_level')}
+RSI:               {technical.get('rsi')}
+Trend Direction:   {technical.get('trend_direction')}
+Researcher Conviction: {researcher.get('conviction')}
+Risk/Reward Ratio: {researcher.get('risk_reward_ratio')}
+
+Conduct 3-persona debate (Aggressive Rick / Conservative Clara / Neutral Nathan) and return risk-adjusted JSON.
+"""
+    return call_llm(llm_decision, system, user, RiskManagerOutput)
+
+
+# ──────────────────────────────────────────
 # 출력
 # ──────────────────────────────────────────
 
 def print_results(ticker, date, current_price, fundamental, sentiment,
-                  news, technical, researcher, trader, verbose=False):
+                  news, technical, researcher, trader, risk_manager, verbose=False):
 
     def sep(title):
         print(f"\n{'='*60}")
@@ -343,18 +413,48 @@ def print_results(ticker, date, current_price, fundamental, sentiment,
         print(f"\n  [Bear] {researcher.get('bear_thesis')}")
         print(f"\n  핵심 토론: {researcher.get('key_debate_points')}")
 
-    sep("STEP 3 — Trader 최종 결정")
-    action = trader.get('action', 'HOLD')
-    action_icon = {"BUY": "🟢 BUY", "SELL": "🔴 SELL", "HOLD": "🟡 HOLD"}.get(action, action)
-    print(f"\n  결정:         {action_icon}")
+    sep("STEP 3 — Trader 초안 결정")
+    t_action = trader.get('action', 'HOLD')
+    t_icon = {"BUY": "🟢 BUY", "SELL": "🔴 SELL", "HOLD": "🟡 HOLD"}.get(t_action, t_action)
+    print(f"\n  결정:         {t_icon}")
     print(f"  확신도:       {trader.get('confidence')}")
     print(f"  포지션 비중:  {trader.get('position_size_pct', 0)*100:.1f}%")
     print(f"  목표주가:     ${trader.get('target_price')}")
     print(f"  손절가:       ${trader.get('stop_loss_price')}")
     print(f"  투자 기간:    {trader.get('time_horizon')}")
-    print(f"\n  판단 근거:")
-    for r in trader.get("reasoning", []):
-        print(f"    → {r}")
+    if verbose:
+        print(f"\n  판단 근거:")
+        for r in trader.get("reasoning", []):
+            print(f"    → {r}")
+
+    sep("STEP 4 — Risk Manager 최종 조정")
+    r_action = risk_manager.get('final_action', 'HOLD')
+    r_icon = {"BUY": "🟢 BUY", "SELL": "🔴 SELL", "HOLD": "🟡 HOLD"}.get(r_action, r_action)
+    changed = risk_manager.get('action_changed', False)
+    change_tag = " ← 변경됨!" if changed else ""
+
+    print(f"\n  ┌─ 3인 토론 ─────────────────────────────────────────")
+    print(f"  │ [Aggressive Rick]  {risk_manager.get('aggressive_view', '')}")
+    print(f"  │ [Conservative Clara] {risk_manager.get('conservative_view', '')}")
+    print(f"  │ [Neutral Nathan]   {risk_manager.get('neutral_view', '')}")
+    print(f"  └────────────────────────────────────────────────────")
+
+    flags = risk_manager.get('risk_flags', [])
+    if flags:
+        print(f"\n  ⚠️  리스크 플래그: {', '.join(flags)}")
+
+    print(f"\n  최종 결정:    {r_icon}{change_tag}")
+    print(f"  리스크 수준:  {risk_manager.get('risk_level', 'moderate').upper()}")
+    adj = risk_manager.get('position_adjustment', 0)
+    adj_str = f"+{adj*100:.1f}%" if adj >= 0 else f"{adj*100:.1f}%"
+    print(f"  최종 포지션:  {risk_manager.get('final_position_size_pct', 0)*100:.1f}%  (조정: {adj_str})")
+    print(f"  현금 보유:    {risk_manager.get('cash_reserve_pct', 0)*100:.1f}%")
+    hedge = risk_manager.get('hedge_type', 'none')
+    if hedge and hedge != 'none':
+        print(f"  헤지:         {hedge}  ({risk_manager.get('hedge_size_pct', 0)*100:.1f}%)")
+    else:
+        print(f"  헤지:         없음")
+    print(f"\n  합의 근거:    {risk_manager.get('consensus_reasoning', '')}")
 
     print(f"\n{'='*60}\n")
 
@@ -397,15 +497,21 @@ def main():
     print(f"\n[Researcher] Bull/Bear 토론 중...")
     researcher = run_researcher(llm, ticker, date, fundamental, sentiment, news, technical)
 
-    print(f"[Trader] 최종 결정 중...")
+    print(f"[Trader] 초안 결정 중...")
     trader = run_trader(
         llm_decision, ticker, date, data["current_price"],
         fundamental, sentiment, news, technical, researcher
     )
 
+    print(f"[Risk Manager] 3인 토론 및 최종 조정 중...")
+    risk_manager = run_risk_manager(
+        llm_decision, ticker, date, data["current_price"],
+        trader, fundamental, sentiment, news, technical, researcher
+    )
+
     print_results(ticker, date, data["current_price"],
                   fundamental, sentiment, news, technical,
-                  researcher, trader, verbose=args.verbose)
+                  researcher, trader, risk_manager, verbose=args.verbose)
 
 
 if __name__ == "__main__":

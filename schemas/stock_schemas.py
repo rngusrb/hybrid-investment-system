@@ -85,7 +85,7 @@ class TraderOutput(BaseModel):
     date: str
     action: Literal["BUY", "SELL", "HOLD"] = "HOLD"
     confidence: float = Field(0.5, ge=0, le=1)
-    position_size_pct: float = Field(0.0, ge=0, le=1) # 포트폴리오 대비 비중
+    position_size_pct: float = Field(0.0, ge=0)       # 포트폴리오 대비 비중 (validator가 clamp)
     target_price: Optional[float] = None               # 목표주가
     stop_loss_price: Optional[float] = None            # 손절가
     time_horizon: Literal["short", "medium", "long"] = "medium"  # 단기/중기/장기
@@ -95,4 +95,40 @@ class TraderOutput(BaseModel):
     @field_validator("position_size_pct")
     @classmethod
     def validate_position(cls, v):
+        return round(min(max(v, 0.0), 1.0), 4)
+
+
+# ──────────────────────────────────────────
+# Risk Manager Output
+# ──────────────────────────────────────────
+
+class RiskManagerOutput(BaseModel):
+    ticker: str
+    date: str
+    # 최종 결정 (Trader 결정을 조정하거나 유지)
+    final_action: Literal["BUY", "SELL", "HOLD"] = "HOLD"
+    action_changed: bool = False                           # Trader 결정 변경 여부
+    # 포지션 조정
+    final_position_size_pct: float = Field(0.0, ge=0)        # 최종 포지션 비중 (validator가 clamp)
+    position_adjustment: float = Field(0.0, ge=-1, le=1)     # 조정량 (+증가 / -감소)
+    # 헤지 권고
+    hedge_required: bool = False
+    hedge_type: Optional[Literal["put_option", "inverse_etf", "stop_order", "none"]] = "none"
+    hedge_size_pct: float = Field(0.0, ge=0)                 # 헤지 비중 (validator가 clamp)
+    # 현금 비중
+    cash_reserve_pct: float = Field(0.0, ge=0)               # 현금 보유 권고 (validator가 clamp)
+    # 리스크 분류
+    risk_level: Literal["low", "moderate", "high", "extreme"] = "moderate"
+    # 3인 토론 요약 (Aggressive / Conservative / Neutral)
+    aggressive_view: str = ""
+    conservative_view: str = ""
+    neutral_view: str = ""
+    consensus_reasoning: str = ""
+    # 조정 근거
+    risk_flags: List[str] = Field(default_factory=list)      # 감지된 리스크 요인
+    adjustment_reasons: List[str] = Field(default_factory=list)
+
+    @field_validator("final_position_size_pct", "hedge_size_pct", "cash_reserve_pct")
+    @classmethod
+    def validate_pct(cls, v):
         return round(min(max(v, 0.0), 1.0), 4)

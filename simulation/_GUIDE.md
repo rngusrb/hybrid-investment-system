@@ -63,8 +63,8 @@ return {"mdd": 0.08}    # 8% drawdown
 ## 하네스
 
 ```
-tests:
-  - tests/unit/test_simulation.py
+tests/unit/test_simulation.py
+tests/unit/test_backtester.py
 ```
 
 ```bash
@@ -79,3 +79,4 @@ python scripts/harness.py simulation/
 |------|------|----------|
 | 2026-04-06 | trading_engine.py | data_source 필드 추가 |
 | 2026-04-06 | strategy_executor.py | mean_reversion z-score rolling window 수정 |
+| 2026-04-14 | backtester.py | 신규 (Phase 3 Bob): bars_to_returns / backtest_all / save_sim_result / format_sim_for_prompt. close=0 falsy 버그 수정. 30개 테스트 추가 |

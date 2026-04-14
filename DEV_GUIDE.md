@@ -24,9 +24,170 @@
 **루프 기본값: 전부 통과할 때까지 반복. 중간에 묻지 않음.**
 **특히 6번 _GUIDE.md 갱신이 핵심 — 같은 실수가 반복되는 유일한 이유는 규칙이 안 쌓였기 때문.**
 
+> ⚠️ **_GUIDE.md / DEV_GUIDE.md 업데이트 원칙**
+> - 해당 파일에 **실제 변경사항(버그 수정, 금지 규칙 추가, 새 파일/기능 추가)이 있을 때만** 업데이트.
+> - 작업 완료 인사, 점검만 한 경우, 코드 내용 재확인만 한 경우에는 업데이트 금지.
+> - 이유: 불필요한 업데이트가 반복되면 "최근 변경" 섹션이 오염되어 실제 변경 추적이 불가능해짐.
+
 ---
 
-## 데이터 흐름 지도
+## 시스템 전체 구조 (2026-04-07 기준)
+
+이 프로젝트는 **2개의 독립적인 파이프라인**이 공존한다.
+
+---
+
+### 파이프라인 A — SPY 포트폴리오 시스템 (LangGraph 기반)
+
+```
+[Polygon API]
+     │ OHLCV + News (SPY 고정)
+     ▼
+[ingest node]  ← graph/nodes/ingest.py
+     │ raw_market_data (SystemState 경유)
+     ▼
+[Emily Agent]  ← agents/emily.py, schemas/emily_schema.py
+     │ EmilyOutput: market_regime, technical_confidence, reversal_risk
+     │ emily_to_bob_packet (transforms/emily_to_bob.py)
+     ▼
+[Bob Agent]    ← agents/bob.py, schemas/bob_schema.py
+     │ BobOutput: candidate_strategies + simulation/
+     │ bob_to_dave_packet (transforms/bob_to_dave.py)
+     ▼
+[Dave Agent]   ← agents/dave.py, schemas/dave_schema.py
+     │ DaveOutput: risk_score, risk_components (컴포넌트 가중합으로 강제 덮어씀)
+     ▼
+[all_to_otto]  ← transforms/all_to_otto.py (raw data 하드 차단)
+     ▼
+[Otto Agent]   ← agents/otto.py, schemas/otto_schema.py
+     │ OttoOutput:
+     │   allocation: {equities, hedge, cash}  ← 포트폴리오 비중
+     │   execution_plan: {entry_style, rebalance_frequency, stop_loss}
+     │   approval_status: approved / rejected / conditional
+     ▼
+[policy node]  ← graph/nodes/policy.py, utils/utility.py
+     │ utility_score, otto_policy_packet
+     ▼
+[order node]   ← graph/nodes/order.py, execution/position_sizer.py
+     │ OrderPlan: shares, stop_loss, slippage
+     ▼
+[logging node] ← graph/nodes/logging_node.py, utils/forward_return.py
+     │ r_sim, r_real → strategy_memory (memory/strategy_memory.py)
+     ▼
+[memory]       ← memory/ (in-memory, 재시작 시 초기화)
+     └─ market_memory, strategy_memory, decision_journal, reports_memory
+```
+
+**진입점**: `orchestrator.py`
+**LLM 주입**: `use_real_llm=True` 시 `_llm_analyst`, `_llm_decision`, `_polygon_fetcher`를 SystemState에 주입
+**테스트 기본값**: `use_real_llm=False` (API 호출 없음)
+
+---
+
+### 파이프라인 B — 개별 종목 TradingAgents 시스템
+
+```
+[Polygon API]
+     │ OHLCV(180일) + News(30일) + 재무제표(2년) + EPS/PE
+     ▼
+fetch_data()   ← scripts/stock_pipeline.py
+     │ ticker, bars, articles, financials, eps, pe_ratio
+     ▼
+┌─────────────────────────────────────────────────────────┐
+│  4개 Analyst (순차 실행)                                 │
+│                                                         │
+│  [Fundamental Analyst]  ← prompts/fundamental_system.md │
+│       FundamentalAnalystOutput: score, intrinsic_value  │
+│                                                         │
+│  [Sentiment Analyst]    ← prompts/sentiment_system.md   │
+│       SentimentAnalystOutput: score, dominant_emotion   │
+│                                                         │
+│  [News Analyst]         ← prompts/news_system.md        │
+│       NewsAnalystOutput: macro_impact, event_risk       │
+│                                                         │
+│  [Technical Analyst]    ← prompts/technical_system.md   │
+│       TechnicalAnalystOutput: score, RSI, MACD, signal  │
+└─────────────────────────────────────────────────────────┘
+     ▼
+[Researcher]  ← prompts/researcher_system.md
+     │ Bull/Bear 토론 → consensus, conviction, risk_reward_ratio
+     ▼
+[Trader]      ← prompts/trader_system.md
+     │ action: BUY/SELL/HOLD (초안)
+     │ confidence, position_size_pct, target_price, stop_loss_price
+     ▼
+[Risk Manager] ← prompts/risk_manager_system.md
+     │ 3인 토론 (Aggressive Rick / Conservative Clara / Neutral Nathan)
+     │ final_action, final_position_size_pct, cash_reserve_pct
+     │ hedge_type, risk_level, risk_flags
+     ▼
+print_results() (터미널 출력)
+```
+
+**진입점**: `scripts/stock_pipeline.py AAPL --date 2024-01-15 --verbose`
+**스키마**: `schemas/stock_schemas.py` (7개: Fundamental/Sentiment/News/Technical/Researcher/Trader/RiskManager)
+**LLM**: `llm/factory.py create_provider(node_role=...)` (analyst / decision 분리)
+
+---
+
+### 파이프라인 C — 멀티 종목 포트폴리오 시스템
+
+```
+python scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15
+
+  AAPL → [파이프라인 B 전체] → signal (risk_manager output 포함)
+  NVDA → [파이프라인 B 전체] → signal          ↓
+  TSLA → [파이프라인 B 전체] → signal          ↓
+                                               ↓
+                              [Portfolio Manager]  ← prompts/portfolio_manager_system.md
+                                               ↓
+                              PortfolioManagerOutput:
+                                allocations: [{ticker, weight, action}, ...]
+                                total_equity_pct / cash_pct / hedge_pct
+                                hedge_instrument, portfolio_risk_level
+                                rebalance_urgency, entry_style
+```
+
+**진입점**: `scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15 --verbose`
+**스키마**: `schemas/portfolio_schemas.py` (StockAllocation, PortfolioManagerOutput)
+**재사용**: `portfolio_pipeline.py`가 `stock_pipeline.py` 함수를 import해서 재사용 (코드 중복 없음)
+
+---
+
+### 세 파이프라인 비교
+
+| 항목 | A (SPY 포트폴리오) | B (개별 종목) | C (멀티 종목) |
+|------|-------------------|---------------|---------------|
+| 대상 | SPY 고정 | 임의 single ticker | 임의 N개 ticker |
+| 에이전트 | Emily→Bob→Dave→Otto | 4 Analysts→Researcher→Trader→RiskMgr | B × N + Portfolio Manager |
+| 출력 | equities/hedge/cash % | BUY/SELL/HOLD + 리스크 조정 | 종목별 배분 + 현금/헤지 % |
+| 현금/헤지 | Otto 결정 | RiskManager 권고 (개별) | Portfolio Manager 결정 (통합) |
+| 메모리 | strategy_memory 누적 | 없음 (1회성) | 없음 (1회성) |
+| 실행 방식 | LangGraph 상태 그래프 | 함수 순차 호출 | 함수 순차 호출 (B 재사용) |
+| 진입점 | `orchestrator.py` | `scripts/stock_pipeline.py` | `scripts/portfolio_pipeline.py` |
+
+---
+
+### 미완성/의도적 제외 영역
+
+| 영역 | 현재 상태 | 다음 단계 |
+|------|----------|----------|
+| ~~**실행 루프**~~ | ✅ `scripts/run_loop.py` (2026-04-14) | — |
+| ~~**결과 저장**~~ | ✅ `results/YYYY-MM-DD/portfolio.json` (2026-04-14) | — |
+| ~~**B/C 메모리**~~ | ✅ `memory/run_memory.py` — 이전 주기 컨텍스트 주입 (2026-04-14) | — |
+| ~~**Bob 시뮬레이션**~~ | ✅ `simulation/backtester.py` — 6개 전략 Pool 백테스트 (2026-04-14) | — |
+| ~~**3 Meetings**~~ | ✅ `meetings/run_meetings.py` — MAM/SDM/RAM (2026-04-14) | — |
+| **A↔B/C 통합** | 미연결 | Phase 5 이후 |
+| Memory 영속성 (A) | in-memory dict | Phase 5 이후 DB 연결 |
+| FAISS dense retrieval | token overlap 기반 | Phase 5 이후 |
+| `r_real` T+1 업데이트 | r_sim proxy | 실시간 모드에서 T+1 미확정 |
+| 브로커 연결 | position_sizer까지만 | API 계정 필요 |
+| ticker 동적화 (A) | SPY 고정 | Phase 5 에이전트 통합 시 |
+| 종목 간 상관관계 | 미구현 | Portfolio Manager 개선 시 |
+
+---
+
+## 데이터 흐름 지도 (파이프라인 A 상세)
 
 ```
 [Polygon API]
@@ -132,20 +293,6 @@ validated = bob._validate_output(raw_llm_output)
 
 ---
 
-## 현재 의도적 미완성 영역 (건드리지 말 것)
-
-| 영역 | 현재 상태 | 이유 |
-|------|----------|------|
-| `r_real` T+1 업데이트 | Polygon 조회 시도, 미래면 r_sim proxy | 실시간 모드에서 T+1 미확정 |
-| Memory 영속성 | in-memory dict | DB 연결 미구현, 재시작 시 초기화됨 |
-| FAISS dense retrieval | token overlap 기반 | sentence-transformer 미연결 |
-| 브로커 연결 | position_sizer까지만, 실제 주문 미전송 | API 계정 필요 |
-| Emily 4분할 | 단일 Emily | 스키마 파괴적 변경 필요 |
-| 실제 스케줄러 | is_week_end() 구현됨 | 연결 미완 |
-| ticker 동적화 | SPY 고정 | 멀티 ticker 미구현 |
-
----
-
 ## 폴더별 _GUIDE.md 위치
 
 | 폴더 | 가이드 |
@@ -161,6 +308,8 @@ validated = bob._validate_output(raw_llm_output)
 | `llm/` | `llm/_GUIDE.md` |
 | `data/` | `data/_GUIDE.md` |
 | `evaluation/` | `evaluation/_GUIDE.md` |
+| `scripts/` | `scripts/_GUIDE.md` |
+| `dashboard/` | `dashboard/_GUIDE.md` |
 
 ---
 
@@ -184,4 +333,4 @@ python scripts/harness.py all
 
 ---
 
-*마지막 갱신: 2026-04-07*
+*마지막 갱신: 2026-04-14 — 단계별 구현 로드맵 수립. Phase 1(루프) → Phase 2(메모리) → Phase 3(Bob 시뮬) → Phase 4(LangGraph+Meetings) → Phase 5(Calibration/Audit). 미완성 영역 표 업데이트.*

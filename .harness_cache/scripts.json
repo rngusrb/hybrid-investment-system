@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "passed": 52,
+  "failed": 0,
+  "returncode": 0,
+  "output": "....................................................                     [100%]\n52 passed in 0.05s\n",
+  "tests": [
+    "tests/unit/test_stock_pipeline.py",
+    "tests/unit/test_run_loop.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-14T11:33:29.507986"
+}
