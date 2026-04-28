@@ -233,3 +233,104 @@ class TestLoadPrevContext:
         monkeypatch.setattr("memory.run_memory.RESULTS_DIR", tmp_path)
         prompt = get_context_prompt("2024-01-05")
         assert prompt == ""
+
+
+# ─── build_context validity scoring ──────────────────────────────────────────
+
+class TestBuildContextValidityScoring:
+    """build_context()에 as_of + current_regime 전달 시 validity scoring 적용 검증."""
+
+    def test_as_of_none_uses_legacy_behavior(self):
+        """as_of=None이면 기존 동작과 동일."""
+        r = make_result("2024-01-12", ["AAPL"], actions={"AAPL": "BUY"})
+        ctx_legacy = build_context([r], lookback=3)
+        ctx_no_asof = build_context([r], lookback=3, as_of=None, current_regime="mixed")
+        assert ctx_legacy == ctx_no_asof
+
+    def test_validity_scoring_filters_old_results(self):
+        """오래된 결과(recency decay 매우 낮음)는 validity scoring으로 필터링됨."""
+        # 최근 결과 (2024-06-01 기준 최근) + r_real로 outcome_reliability 확보
+        r_recent = make_result("2024-05-25", ["AAPL"], actions={"AAPL": "BUY"})
+        r_recent["portfolio"]["market_outlook"] = "risk_on"
+        r_recent["r_real"] = 0.03
+        r_recent["r_real_source"] = "polygon_weighted"
+
+        # 매우 오래된 결과 (recency decay → ~0) + r_real 있어도 recency가 0
+        r_old = make_result("2020-01-01", ["NVDA"], actions={"NVDA": "HOLD"})
+        r_old["portfolio"]["market_outlook"] = "risk_on"
+        r_old["r_real"] = 0.05
+        r_old["r_real_source"] = "polygon_weighted"
+
+        ctx = build_context(
+            [r_old, r_recent], lookback=1,
+            as_of="2024-06-01", current_regime="risk_on",
+        )
+        # lookback=1이므로 1개만 반환, 최근 결과가 선택되어야 함
+        assert ctx["prev_date"] == "2024-05-25"
+
+    def test_validity_scoring_prefers_matching_regime(self):
+        """동일 regime 결과가 validity score 높아서 우선 선택됨."""
+        r_match = make_result("2024-05-20", ["AAPL"], actions={"AAPL": "BUY"})
+        r_match["portfolio"]["market_outlook"] = "risk_on"
+        r_match["r_real"] = 0.03
+        r_match["r_real_source"] = "polygon_weighted"
+
+        r_mismatch = make_result("2024-05-25", ["NVDA"], actions={"NVDA": "HOLD"})
+        r_mismatch["portfolio"]["market_outlook"] = "risk_off"
+        r_mismatch["r_real"] = 0.03
+        r_mismatch["r_real_source"] = "polygon_weighted"
+
+        ctx = build_context(
+            [r_mismatch, r_match], lookback=1,
+            as_of="2024-06-01", current_regime="risk_on",
+        )
+        # regime 매치가 높아서 r_match 선택 (날짜는 r_mismatch가 더 최근이지만)
+        assert ctx["prev_date"] == "2024-05-20"
+
+    def test_all_below_threshold_falls_back(self):
+        """모든 후보가 threshold 미만이면 기존 방식 fallback."""
+        # 매우 오래된 결과들만 (validity score 거의 0)
+        r1 = make_result("2015-01-01", ["AAPL"], actions={"AAPL": "BUY"})
+        r2 = make_result("2015-02-01", ["NVDA"], actions={"NVDA": "HOLD"})
+
+        ctx = build_context(
+            [r1, r2], lookback=1,
+            as_of="2024-06-01", current_regime="risk_on",
+        )
+        # fallback이므로 결과가 반환되어야 함 (빈 dict 아님)
+        assert ctx != {}
+        assert "prev_date" in ctx
+
+    def test_return_format_unchanged(self):
+        """validity scoring 적용해도 반환 포맷은 기존과 동일."""
+        r = make_result("2024-05-25", ["AAPL"], actions={"AAPL": "BUY"})
+        r["portfolio"]["market_outlook"] = "risk_on"
+
+        ctx = build_context(
+            [r], lookback=3,
+            as_of="2024-06-01", current_regime="risk_on",
+        )
+        # 기존 반환 포맷의 필수 키 확인
+        expected_keys = {
+            "prev_date", "prev_allocation", "prev_cash_pct", "prev_hedge_pct",
+            "prev_risk_level", "prev_outlook", "ticker_signals", "consecutive",
+            "prev_errors", "r_real", "r_real_source",
+        }
+        assert expected_keys.issubset(set(ctx.keys()))
+
+    def test_verified_result_scores_higher(self):
+        """r_real 있는 verified 결과가 validity score에서 유리."""
+        r_verified = make_result("2024-05-20", ["AAPL"], actions={"AAPL": "BUY"})
+        r_verified["portfolio"]["market_outlook"] = "risk_on"
+        r_verified["r_real"] = 0.03
+        r_verified["r_real_source"] = "polygon_weighted"
+
+        r_unverified = make_result("2024-05-22", ["NVDA"], actions={"NVDA": "HOLD"})
+        r_unverified["portfolio"]["market_outlook"] = "risk_on"
+
+        ctx = build_context(
+            [r_unverified, r_verified], lookback=1,
+            as_of="2024-06-01", current_regime="risk_on",
+        )
+        # verified 결과가 outcome reliability 높아서 선택됨
+        assert ctx["prev_date"] == "2024-05-20"

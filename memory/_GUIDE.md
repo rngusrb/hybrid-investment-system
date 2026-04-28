@@ -103,3 +103,4 @@ python scripts/harness.py memory/
 | 2026-04-14 | run_memory.py | build_context: verified(r_real 있음) 우선 정렬 + lookback 인자 전달. format_context_for_prompt: r_real 있으면 실제수익률 라인 추가 |
 | 2026-04-14 | outcome_filler.py | Phase 6: _update_strategy_memory() 추가 — r_real 채울 때 results/strategy_memory.json도 업데이트 (r_real/performance_score/outcome_reliability). 6개 테스트 추가 |
 | 2026-04-14 | validity_scorer.py | Phase 6: compute_outcome_reliability() 개선 — r_sim_proxy→0.5, r_real 크기 기반 성과 반영 (<0→0.65, 0~2%→0.85, ≥2%→1.0) |
+| 2026-04-28 | run_memory.py | B-004: build_context()에 as_of/current_regime 파라미터 추가. validity scoring 적용 — 후보 2N개 로드→score 필터(threshold=0.3)→상위 N개 반환. 전부 미달시 기존 방식 fallback. _result_to_case(), _apply_validity_filter() 헬퍼 추가. 6개 테스트 추가 |

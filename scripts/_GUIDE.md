@@ -75,6 +75,7 @@ from scripts.stock_pipeline import fetch_data, run_fundamental, ...
 ```
 tests/unit/test_stock_pipeline.py
 tests/unit/test_run_loop.py
+tests/unit/test_portfolio_pipeline.py
 ```
 
 ```bash
@@ -102,3 +103,5 @@ python scripts/run_loop.py AAPL --start 2024-01-01 --end 2024-06-30 --freq daily
 | 2026-04-07 | portfolio_pipeline.py 추가 (멀티 종목 → Portfolio Manager) |
 | 2026-04-07 | fetch_data() 재무제표 이중 필터 적용: period_of_report_date_lte(API) + _financials_available(Python). filing_date=None 우회 버그 수정 |
 | 2026-04-14 | run_loop.py 추가 (Phase 1 루프): 날짜 범위 반복 실행 + results/ 저장 + resume/dry-run 지원. 26개 단위 테스트 추가 |
+| 2026-04-17 | portfolio_pipeline.py: exception logging 추가 (try/except 3곳 — JSON없음/파싱실패). 14개 단위 테스트(test_portfolio_pipeline.py) 추가 |
+| 2026-04-17 | prompts/portfolio_manager_system.md: ## Historical Performance Context 섹션 추가 — r_real 해석 지침, streak 경고, action_changed 처리, reasoning 의무 언급 |

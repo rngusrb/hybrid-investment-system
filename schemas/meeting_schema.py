@@ -24,6 +24,16 @@ class DebateResolution(BaseModel):
     regime_confidence_adjustment: float = Field(ge=-0.5, le=0.5)
 
 
+class MAMDebateResolution(BaseModel):
+    """MAM(Pipeline B/C) 구조화된 토론 결과."""
+    meeting_type: str = "MAM"
+    date: str = ""
+    consensus: Literal["bullish", "bearish", "neutral", "split"] = "neutral"
+    key_risks: List[str] = []
+    recommended_bias: Literal["risk_on", "risk_off", "neutral"] = "neutral"
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+
+
 class ConflictItem(BaseModel):
     signal_a: str
     signal_b: str

@@ -1,0 +1,65 @@
+{
+  "fundamental": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "sentiment": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "news": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "technical": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "researcher": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "trader": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  },
+  "risk_manager": {
+    "score": 0.541,
+    "update_count": 1,
+    "decay_factor": 0.9,
+    "floor": 0.35,
+    "history": [
+      0.541
+    ]
+  }
+}

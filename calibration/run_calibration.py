@@ -16,8 +16,18 @@ run_loop.py의 run_one_cycle 내에서:
 Pipeline A(Emily/Bob/Dave/Otto)와 무관하게 B/C 파이프라인 전용으로 동작.
 """
 
+import json
+import logging
+from pathlib import Path
+
 from calibration.calibrator import AgentCalibrator
 from reliability.agent_reliability import AgentReliabilityManager, GatingDecision
+
+logger = logging.getLogger(__name__)
+
+ROOT = Path(__file__).parent.parent
+RESULTS_DIR = ROOT / "results"
+RELIABILITY_STATE_PATH = RESULTS_DIR / "reliability_state.json"
 
 # ─── 모듈 레벨 상태 (run_loop 세션 내 누적) ──────────────────────────────────
 
@@ -29,6 +39,9 @@ _BC_AGENTS = ["fundamental", "sentiment", "news", "technical", "researcher", "tr
 
 # 세션 공유 reliability manager (모든 ticker 공통)
 _reliability_manager: AgentReliabilityManager | None = None
+
+# reset_session_state() 호출 시 파일 로드를 건너뜀 (테스트 격리)
+_skip_file_load: bool = False
 
 
 def _get_calibrator(ticker: str) -> AgentCalibrator:
@@ -43,19 +56,85 @@ def _get_calibrator(ticker: str) -> AgentCalibrator:
     return _calibrators[ticker]
 
 
+def _load_reliability_state() -> dict:
+    """
+    results/reliability_state.json 로드.
+    파일 없거나 손상된 경우 빈 dict 반환 (에러 없이).
+    """
+    try:
+        if not RELIABILITY_STATE_PATH.exists():
+            return {}
+        return json.loads(RELIABILITY_STATE_PATH.read_text())
+    except Exception as e:
+        logger.warning(f"reliability_state.json 로드 실패 (초기 상태 사용): {e}")
+        return {}
+
+
+def _save_reliability_state(manager: AgentReliabilityManager) -> None:
+    """
+    AgentReliabilityManager 상태를 results/reliability_state.json에 직렬화 저장.
+    저장 실패 시 로그만 남기고 계속 진행 (Silent Failure 방지).
+    """
+    try:
+        RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+        state_data = {}
+        for name, state in manager.states.items():
+            state_data[name] = {
+                "score": round(state.score, 6),
+                "update_count": state.update_count,
+                "decay_factor": state.decay_factor,
+                "floor": state.floor,
+                "history": state.history[-20:],  # 최근 20개만 (메모리 절약)
+            }
+        RELIABILITY_STATE_PATH.write_text(
+            json.dumps(state_data, indent=2, ensure_ascii=False)
+        )
+    except Exception as e:
+        logger.warning(f"reliability_state.json 저장 실패: {e}")
+
+
 def _get_reliability_manager() -> AgentReliabilityManager:
-    """세션 공유 AgentReliabilityManager — 최초 1회 초기화."""
-    global _reliability_manager
+    """
+    세션 공유 AgentReliabilityManager — 최초 1회 초기화.
+    results/reliability_state.json에서 이전 상태 복원 (프로세스 재시작 후에도 유지).
+
+    _skip_file_load=True이면 파일 로드 건너뜀 (reset_session_state() 직후 테스트 격리용).
+    """
+    global _reliability_manager, _skip_file_load
     if _reliability_manager is None:
         _reliability_manager = AgentReliabilityManager(_BC_AGENTS)
+        if not _skip_file_load:
+            saved = _load_reliability_state()
+            if saved:
+                for name, state_data in saved.items():
+                    if name in _reliability_manager.states:
+                        s = _reliability_manager.states[name]
+                        s.score = float(state_data.get("score", 0.5))
+                        s.update_count = int(state_data.get("update_count", 0))
+                        s.history = list(state_data.get("history", []))
+        _skip_file_load = False  # 다음 호출부터 정상 로드
     return _reliability_manager
 
 
 def reset_session_state():
-    """테스트용 세션 상태 초기화."""
-    global _calibrators, _reliability_manager
+    """
+    테스트용 세션 상태 초기화.
+    reliability_state.json은 삭제하지 않음.
+    다음 _get_reliability_manager() 호출 시 파일 로드를 건너뜀 (cold start 보장).
+    """
+    global _calibrators, _reliability_manager, _skip_file_load
     _calibrators = {}
     _reliability_manager = None
+    _skip_file_load = True
+
+
+def get_current_gating() -> dict[str, str]:
+    """
+    현재 reliability 상태 기반 gating decisions 반환.
+    반환: {agent_role → "full"|"downweight"|"hard_gate"}
+    """
+    mgr = _get_reliability_manager()
+    return {name: decision.value for name, decision in mgr.get_gating_decisions().items()}
 
 
 # ─── Calibration ─────────────────────────────────────────────────────────────
@@ -262,6 +341,9 @@ def update_bc_reliability(
             outcome_alignment=outcome_proxy,
             noise_penalty=avg_noise,
         )
+
+    # 업데이트 후 상태 영속화 (프로세스 재시작 후에도 EMA 유지)
+    _save_reliability_state(mgr)
 
     return mgr.get_reliability_summary()
 

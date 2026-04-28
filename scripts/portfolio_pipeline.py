@@ -8,10 +8,13 @@ portfolio_pipeline.py — 멀티 종목 포트폴리오 분석 파이프라인
 """
 import argparse
 import json
+import logging
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -31,26 +34,69 @@ from scripts.stock_pipeline import (
 # 단일 종목 전체 파이프라인 실행
 # ──────────────────────────────────────────
 
-def run_single_stock(ticker: str, date: str, llm, llm_decision) -> dict:
+def _apply_downweight(result: dict, role: str) -> dict:
+    """downweight gating: score 필드를 중립(5.0) 방향으로 수렴 (factor=0.5)."""
+    if not result:
+        return result
+    # 0~10 범위 score 필드 매핑
+    _SCORE_KEYS = {
+        "technical":   ["technical_score"],
+        "fundamental": ["fundamental_score"],
+        "sentiment":   ["sentiment_score", "bullish_score", "bearish_score"],
+        "researcher":  ["conviction_score", "risk_reward_ratio"],
+    }
+    for field in _SCORE_KEYS.get(role, []):
+        if field in result:
+            try:
+                score = float(result[field])
+                result[field] = round(score + (5.0 - score) * 0.5, 4)
+            except (TypeError, ValueError):
+                pass
+    return result
+
+
+def run_single_stock(ticker: str, date: str, llm, llm_decision,
+                     gating: dict | None = None) -> dict:
     """한 종목에 대해 전체 파이프라인(fetch → Risk Manager)을 실행하고 결과 반환."""
     print(f"  [{ticker}] 데이터 수집 중...")
     data = fetch_data(ticker, date)
     print(f"    OHLCV {len(data['bars'])}봉 | 뉴스 {len(data['articles'])}건 | 재무 {len(data['financials'])}년")
 
-    print(f"  [{ticker}] Fundamental Analyst...")
-    fundamental = run_fundamental(llm, data)
+    # 각 analyst role에 대해 gating 적용
+    _analyst_roles = {
+        "fundamental": lambda: run_fundamental(llm, data),
+        "sentiment":   lambda: run_sentiment(llm, data),
+        "news":        lambda: run_news(llm, data),
+        "technical":   lambda: run_technical(llm, data),
+    }
 
-    print(f"  [{ticker}] Sentiment Analyst...")
-    sentiment = run_sentiment(llm, data)
+    results = {}
+    for role, run_fn in _analyst_roles.items():
+        gate = (gating or {}).get(role)
+        if gate == "hard_gate":
+            print(f"  [{ticker}] {role.title()} — HARD_GATE (스킵)")
+            results[role] = {}
+            continue
+        print(f"  [{ticker}] {role.title()} Analyst...")
+        results[role] = run_fn()
+        if gate == "downweight":
+            results[role] = _apply_downweight(results[role], role)
 
-    print(f"  [{ticker}] News Analyst...")
-    news = run_news(llm, data)
+    fundamental = results["fundamental"]
+    sentiment   = results["sentiment"]
+    news        = results["news"]
+    technical   = results["technical"]
 
-    print(f"  [{ticker}] Technical Analyst...")
-    technical = run_technical(llm, data)
-
-    print(f"  [{ticker}] Researcher (Bull/Bear)...")
-    researcher = run_researcher(llm, ticker, date, fundamental, sentiment, news, technical)
+    # researcher gating
+    researcher_gate = (gating or {}).get("researcher")
+    if researcher_gate == "hard_gate":
+        print(f"  [{ticker}] Researcher — HARD_GATE (스킵)")
+        researcher = {}
+    else:
+        print(f"  [{ticker}] Researcher (Bull/Bear)...")
+        researcher = run_researcher(llm, ticker, date, fundamental, sentiment, news, technical)
+        if researcher_gate == "downweight":
+            researcher = _apply_downweight(researcher, "researcher")
 
     print(f"  [{ticker}] Trader...")
     trader = run_trader(llm_decision, ticker, date, data["current_price"],
@@ -82,7 +128,9 @@ def run_portfolio_manager(llm_decision, date: str, stock_results: list[dict],
                           memory_context: str = "",
                           sim_context: str = "",
                           meetings_context: str = "",
-                          calibration_context: str = "") -> dict:
+                          calibration_context: str = "",
+                          emily_context: str = "",
+                          otto_feedback: str = "") -> dict:
     from schemas.portfolio_schemas import PortfolioManagerOutput
 
     system = (ROOT / "prompts/portfolio_manager_system.md").read_text().replace(
@@ -109,13 +157,15 @@ Researcher:    consensus={r['researcher'].get('consensus')} | conviction={r['res
 """)
 
     memory_section      = f"\n{memory_context}\n"      if memory_context      else ""
+    emily_section       = f"\n{emily_context}\n"       if emily_context       else ""
     sim_section         = f"\n{sim_context}\n"         if sim_context         else ""
     meetings_section    = f"\n{meetings_context}\n"    if meetings_context    else ""
     calibration_section = f"\n{calibration_context}\n" if calibration_context else ""
+    otto_section        = f"\n{otto_feedback}\n"       if otto_feedback       else ""
     user = f"""
 Date: {date}
 Tickers: {[r['ticker'] for r in stock_results]}
-{memory_section}{sim_section}{meetings_section}{calibration_section}
+{memory_section}{emily_section}{sim_section}{meetings_section}{calibration_section}{otto_section}
 === INDIVIDUAL STOCK SIGNALS ===
 {"".join(signals)}
 
@@ -130,12 +180,14 @@ Allocate the portfolio across these stocks, cash, and hedge. Return JSON.
         text = raw if isinstance(raw, str) else str(raw)
         match = re.search(r"\{.*\}", text, re.DOTALL)
         if not match:
+            logger.warning(f"portfolio_manager JSON 없음 (attempt {attempt+1}): {text[:80]!r}")
             continue
         try:
             data = json.loads(match.group())
             obj  = PortfolioManagerOutput(**data)
             return obj.model_dump()
-        except Exception:
+        except Exception as e:
+            logger.warning(f"portfolio_manager 파싱 실패 (attempt {attempt+1}): {e}")
             continue
     return {}
 

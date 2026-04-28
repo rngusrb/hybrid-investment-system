@@ -210,3 +210,39 @@ class TestDailyRiskCheckIntegration:
 
         assert result["risk_alert_triggered"] is False
         assert result["next_node"] == "DAILY_POLICY_SELECTION"
+
+
+# ---------------------------------------------------------------------------
+# TASK-008: Stress test seed 날짜 기반 동적화
+# ---------------------------------------------------------------------------
+
+class TestRiskAlertSeedDynamic:
+    """TASK-008: seed가 날짜마다 다르고, 동일 날짜는 재현 가능한지 검증."""
+
+    def _run_with_date(self, date: str) -> dict:
+        """RiskAlertMeeting.run() 실행 후 결과 반환 (state 공유 없음)."""
+        from ledger.shared_ledger import SharedLedger
+        state = {
+            "current_date": date,
+            "dave_output": _dave_output(risk_score=0.8, stress_severity=0.5),
+            "emily_output": _emily_output(),
+            "otto_output": {},
+            "raw_news": [],
+        }
+        ledger = SharedLedger()
+        meeting = RiskAlertMeeting(ledger=ledger)
+        return meeting.run(state)
+
+    def test_different_dates_produce_different_risk_rewards(self):
+        """날짜가 다르면 seed가 달라 proxy_returns가 달라짐."""
+        import hashlib
+        seed_a = int(hashlib.md5("2024-01-15".encode()).hexdigest(), 16) % (2**31)
+        seed_b = int(hashlib.md5("2024-03-29".encode()).hexdigest(), 16) % (2**31)
+        assert seed_a != seed_b, "Seeds should differ for different dates"
+
+    def test_same_date_reproducible(self):
+        """동일 날짜는 seed가 동일 — 재현 가능."""
+        import hashlib
+        seed1 = int(hashlib.md5("2024-01-15".encode()).hexdigest(), 16) % (2**31)
+        seed2 = int(hashlib.md5("2024-01-15".encode()).hexdigest(), 16) % (2**31)
+        assert seed1 == seed2

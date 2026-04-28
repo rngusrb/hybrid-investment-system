@@ -1153,7 +1153,7 @@
     "data_source": "real",
     "r_real": -0.043532,
     "performance_score": -0.043532,
-    "outcome_reliability": 0.6,
+    "outcome_reliability": 0.65,
     "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-02-16": {
@@ -1242,7 +1242,7 @@
     "data_source": "real",
     "r_real": -0.043532,
     "performance_score": -0.043532,
-    "outcome_reliability": 0.6,
+    "outcome_reliability": 0.65,
     "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-02-23": {
@@ -1687,7 +1687,7 @@
     "data_source": "real",
     "r_real": -0.020039,
     "performance_score": -0.020039,
-    "outcome_reliability": 0.6,
+    "outcome_reliability": 0.65,
     "r_real_source": "polygon_weighted"
   },
   "NVDA_2024-03-08": {
@@ -1776,7 +1776,7 @@
     "data_source": "real",
     "r_real": -0.020039,
     "performance_score": -0.020039,
-    "outcome_reliability": 0.6,
+    "outcome_reliability": 0.65,
     "r_real_source": "polygon_weighted"
   },
   "AAPL_2024-03-15": {

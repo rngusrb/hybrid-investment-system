@@ -177,12 +177,14 @@ python scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15
 | ~~**B/C 메모리**~~ | ✅ `memory/run_memory.py` — 이전 주기 컨텍스트 주입 (2026-04-14) | — |
 | ~~**Bob 시뮬레이션**~~ | ✅ `simulation/backtester.py` — 6개 전략 Pool 백테스트 (2026-04-14) | — |
 | ~~**3 Meetings**~~ | ✅ `meetings/run_meetings.py` — MAM/SDM/RAM (2026-04-14) | — |
-| **A↔B/C 통합** | 미연결 | Phase 5 이후 |
-| Memory 영속성 (A) | in-memory dict | Phase 5 이후 DB 연결 |
-| FAISS dense retrieval | token overlap 기반 | Phase 5 이후 |
-| `r_real` T+1 업데이트 | r_sim proxy | 실시간 모드에서 T+1 미확정 |
+| ~~**r_real 피드백 루프**~~ | ✅ `memory/outcome_filler.py` — T+7 역산 + strategy_memory 업데이트 (2026-04-17) | — |
+| **A↔B/C 통합** | 진행 중 — `integration/` 폴더 신규 (TASKS.md TASK-001~005 참조) | Emily→Portfolio Manager, Dave→리스크 검증, Otto→승인 게이트 |
+| **Reliability 영속화** | module-level dict (재시작 시 초기화) | TASKS.md TASK-007 — results/reliability_state.json |
+| **backtester regime-aware** | Sharpe 기반만 | TASKS.md TASK-006 — Emily regime 연동 |
+| **compute_adaptive_weights()** | otto.py에 구현됨, 호출 안 됨 | TASK-003 완료 후 otto_gate.py에서 연결 |
+| FAISS dense retrieval | token overlap 기반 | 추후 |
+| `r_real` T+1 업데이트 | T+7 guard | 실시간 모드 시 T+1 미확정 |
 | 브로커 연결 | position_sizer까지만 | API 계정 필요 |
-| ticker 동적화 (A) | SPY 고정 | Phase 5 에이전트 통합 시 |
 | 종목 간 상관관계 | 미구현 | Portfolio Manager 개선 시 |
 
 ---
@@ -246,6 +248,25 @@ python scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15
 | 메모리 저장/조회 | `memory/{type}_memory.py` |
 | 신뢰도 gating | `reliability/agent_reliability.py` |
 | 프롬프트 수정 | `prompts/{agent}_system.md` (스키마 변경 시 반드시 함께) |
+
+---
+
+## Dual Reward 수식 (참조)
+
+```
+CombinedReward = w_sim * r_sim + w_real * r_real
+w_sim = sigmoid( Σr_sim / Σ(r_sim + r_real + ε) )  — 이동 윈도우
+
+Utility = CombinedReward
+        - λ1(0.3) * RiskScore
+        - λ2(0.2) * ConstraintViolation
+        - λ3(0.15) * MarketAlignmentPenalty
+        - λ4(0.2) * ExecutionFeasibilityPenalty
+        - λ5(0.15) * AgentReliabilityPenalty
+```
+
+구현 위치: `agents/otto.py::compute_adaptive_weights()`, `utils/utility.py::compute_utility()`
+현재 상태: 수식은 구현됨, `compute_adaptive_weights()`가 실제 reward_history로 호출되지 않음 (TASKS.md TASK-003 참조)
 
 ---
 
@@ -333,4 +354,4 @@ python scripts/harness.py all
 
 ---
 
-*마지막 갱신: 2026-04-14 — 단계별 구현 로드맵 수립. Phase 1(루프) → Phase 2(메모리) → Phase 3(Bob 시뮬) → Phase 4(LangGraph+Meetings) → Phase 5(Calibration/Audit). 미완성 영역 표 업데이트.*
+*마지막 갱신: 2026-04-17 — A↔B/C 통합 진행 중 (integration/ 폴더 신규). Reliability 영속화, backtester regime-aware 추가. 미완성 영역 표 업데이트.*

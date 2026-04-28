@@ -1,14 +1,14 @@
 {
   "status": "pass",
-  "passed": 59,
+  "passed": 82,
   "failed": 0,
   "returncode": 0,
-  "output": "...........................................................              [100%]\n59 passed in 0.91s\n",
+  "output": "........................................................................ [ 87%]\n..........                                                               [100%]\n82 passed in 1.56s\n",
   "tests": [
     "tests/unit/test_run_meetings.py",
     "tests/integration/test_weekly_cycle.py",
     "tests/integration/test_risk_alert.py"
   ],
   "missing": [],
-  "timestamp": "2026-04-14T11:33:30.941337"
+  "timestamp": "2026-04-28T16:41:28.849585"
 }

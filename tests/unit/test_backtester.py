@@ -13,8 +13,12 @@ from simulation.backtester import (
     save_sim_result,
     load_sim_history,
     format_sim_for_prompt,
+    _adjust_for_r_real,
+    _adjust_for_regime,
+    _adjust_for_risk_mode,
     STRATEGY_TYPES,
     MIN_BARS,
+    REGIME_STRATEGY_PREFERENCE,
 )
 
 
@@ -260,3 +264,295 @@ class TestFormatSimForPrompt:
         }
         text = format_sim_for_prompt(sims)
         assert "AAPL" in text and "NVDA" in text
+
+
+# ─── TestAdjustForRReal ───────────────────────────────────────────────────────
+
+class TestAdjustForRReal:
+    """_adjust_for_r_real 단위 테스트 (strategy_memory mock 사용)."""
+
+    def _make_ranked(self, strategies_sharpes: list[tuple]) -> list[dict]:
+        """[(strategy, sharpe), ...] → ranked list."""
+        return [
+            {"strategy": s, "sharpe": sh, "mdd": 0.05, "return": 0.01,
+             "win_rate": 0.55, "turnover": 0.2, "n_bars": 60}
+            for s, sh in strategies_sharpes
+        ]
+
+    def test_no_history_no_adjustment(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        ranked = self._make_ranked([("momentum", 1.2), ("defensive", 0.8)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is False
+        assert result[0]["strategy"] == "momentum"  # 순서 그대로
+
+    def test_positive_r_real_bonus_applied(self, tmp_path, monkeypatch):
+        """r_real >= 0.02: 이전 선택 전략 sharpe +10%."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        # 이전 기록: momentum 선택, r_real=+5%
+        save_sim_result({
+            "ticker": "AAPL", "as_of": "2024-06-20",
+            "selected_strategy": "momentum",
+            "r_real": 0.05,
+            "best": {}, "results": [], "data_source": "real",
+        })
+        ranked = self._make_ranked([("momentum", 1.0), ("defensive", 0.95)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is True
+        momentum_entry = next(r for r in result if r["strategy"] == "momentum")
+        assert momentum_entry["sharpe"] == pytest.approx(1.0 * 1.10, rel=1e-4)
+
+    def test_negative_r_real_penalty_applied(self, tmp_path, monkeypatch):
+        """r_real < 0: 이전 선택 전략 sharpe -15%."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        save_sim_result({
+            "ticker": "AAPL", "as_of": "2024-06-20",
+            "selected_strategy": "momentum",
+            "r_real": -0.03,
+            "best": {}, "results": [], "data_source": "real",
+        })
+        ranked = self._make_ranked([("momentum", 1.2), ("defensive", 1.1)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is True
+        momentum_entry = next(r for r in result if r["strategy"] == "momentum")
+        assert momentum_entry["sharpe"] == pytest.approx(1.2 * 0.85, rel=1e-4)
+
+    def test_negative_penalty_can_change_winner(self, tmp_path, monkeypatch):
+        """패널티로 2위 전략이 1위로 올라올 수 있음."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        save_sim_result({
+            "ticker": "AAPL", "as_of": "2024-06-20",
+            "selected_strategy": "momentum",
+            "r_real": -0.04,
+            "best": {}, "results": [], "data_source": "real",
+        })
+        # momentum 1.0, defensive 0.9 → 패널티 후 momentum=0.85 < defensive=0.9
+        ranked = self._make_ranked([("momentum", 1.0), ("defensive", 0.9)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is True
+        assert result[0]["strategy"] == "defensive"  # 역전
+
+    def test_neutral_r_real_no_adjustment(self, tmp_path, monkeypatch):
+        """0 <= r_real < 0.02: 조정 없음."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        save_sim_result({
+            "ticker": "AAPL", "as_of": "2024-06-20",
+            "selected_strategy": "momentum",
+            "r_real": 0.01,
+            "best": {}, "results": [], "data_source": "real",
+        })
+        ranked = self._make_ranked([("momentum", 1.2), ("defensive", 0.8)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is False
+
+    def test_no_r_real_in_history_no_adjustment(self, tmp_path, monkeypatch):
+        """이전 기록에 r_real 없으면 조정 없음 (T+7 미경과)."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        save_sim_result({
+            "ticker": "AAPL", "as_of": "2024-06-20",
+            "selected_strategy": "momentum",
+            # r_real 없음
+            "best": {}, "results": [], "data_source": "real",
+        })
+        ranked = self._make_ranked([("momentum", 1.2), ("defensive", 0.8)])
+        result, adjusted = _adjust_for_r_real(ranked, "AAPL", "2024-06-30")
+        assert adjusted is False
+
+
+class TestBacktestAllRRealAdjusted:
+    """backtest_all에 r_real_adjusted 필드 추가 검증."""
+
+    def test_r_real_adjusted_field_present(self):
+        bars = make_bars(60)
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30")
+        assert "r_real_adjusted" in result
+
+    def test_r_real_adjusted_false_without_history(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        bars = make_bars(60)
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30")
+        assert result["r_real_adjusted"] is False
+
+
+# ─── _adjust_for_regime 테스트 (TASK-006) ───────────────────────────────────
+
+def make_ranked(strategies: list[str], base_sharpe: float = 1.0) -> list[dict]:
+    """테스트용 ranked 전략 목록."""
+    return [
+        {"strategy": s, "sharpe": base_sharpe, "mdd": 0.1,
+         "return": 0.1, "win_rate": 0.5, "data_source": "real"}
+        for s in strategies
+    ]
+
+
+class TestAdjustForRegime:
+    def test_risk_on_boosts_momentum(self):
+        ranked = make_ranked(["momentum", "defensive", "mean_reversion"])
+        emily = {"market_regime": "risk_on", "reversal_risk": 0.2}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is True
+        momentum_row = next(r for r in result if r["strategy"] == "momentum")
+        assert momentum_row["sharpe"] > 1.0
+
+    def test_risk_off_boosts_defensive(self):
+        ranked = make_ranked(["defensive", "momentum", "directional"])
+        emily = {"market_regime": "risk_off", "reversal_risk": 0.2}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is True
+        defensive_row = next(r for r in result if r["strategy"] == "defensive")
+        assert defensive_row["sharpe"] > 1.0
+
+    def test_mixed_regime_no_adjustment(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "mixed", "reversal_risk": 0.2}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is False
+        # sharpe 값 변경 없음
+        for r in result:
+            assert r["sharpe"] == 1.0
+
+    def test_reversal_risk_above_06_boosts_defensive(self):
+        ranked = make_ranked(["momentum", "defensive", "mean_reversion"])
+        emily = {"market_regime": "mixed", "reversal_risk": 0.75}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is True
+        defensive_row = next(r for r in result if r["strategy"] == "defensive")
+        assert defensive_row["sharpe"] > 1.0
+
+    def test_reversal_risk_below_06_no_extra_boost(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "mixed", "reversal_risk": 0.4}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is False
+
+    def test_result_reranked_after_adjustment(self):
+        """risk_off에서 defensive가 momentum보다 높은 Sharpe를 갖도록 재정렬."""
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "risk_off", "reversal_risk": 0.2}
+        result, _ = _adjust_for_regime(ranked, emily)
+        # defensive가 1.15 보너스, momentum은 1.0 → defensive가 1등
+        assert result[0]["strategy"] == "defensive"
+
+    def test_factor_bounded_max_20pct(self):
+        """Sharpe 보정이 최대 20% 이내."""
+        ranked = make_ranked(["defensive"])
+        emily = {"market_regime": "risk_off", "reversal_risk": 0.9}
+        result, _ = _adjust_for_regime(ranked, emily)
+        defensive = next(r for r in result if r["strategy"] == "defensive")
+        assert defensive["sharpe"] <= 1.0 * 1.20 + 1e-6
+
+    def test_unknown_regime_no_adjustment(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "unknown_regime", "reversal_risk": 0.1}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is False
+
+    def test_missing_reversal_risk_graceful(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "risk_on"}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        # risk_on prefs가 있으므로 adjusted=True
+        assert adjusted is True
+
+    def test_technical_signal_state_nested_reversal_risk(self):
+        """emily_output 전체 구조에서 technical_signal_state.reversal_risk 읽기."""
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {
+            "market_regime": "mixed",
+            "technical_signal_state": {"reversal_risk": 0.8},
+        }
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is True  # reversal_risk > 0.6 → defensive boost
+
+    def test_transition_regime_no_adjustment(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        emily = {"market_regime": "transition", "reversal_risk": 0.2}
+        result, adjusted = _adjust_for_regime(ranked, emily)
+        assert adjusted is False
+
+    def test_backtest_all_no_emily_backward_compat(self, tmp_path, monkeypatch):
+        """emily_context=None이면 기존 동작과 완전히 동일."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        bars = make_bars(60)
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30")
+        assert result["regime_adjusted"] is False
+        assert "selected_strategy" in result
+
+    def test_backtest_all_with_emily_context(self, tmp_path, monkeypatch):
+        """emily_context 전달 시 regime_adjusted 필드 존재."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        bars = make_bars(60)
+        emily = {"market_regime": "risk_off", "reversal_risk": 0.3}
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30", emily_context=emily)
+        assert "regime_adjusted" in result
+        assert result["regime_adjusted"] is True
+
+
+# ─── TestAdjustForRiskMode ────────────────────────────────────────────────────
+
+class TestAdjustForRiskMode:
+    def test_defensive_penalizes_momentum(self):
+        ranked = make_ranked(["momentum", "defensive", "directional"])
+        result, adjusted = _adjust_for_risk_mode(ranked, "defensive")
+        assert adjusted is True
+        momentum_row = next(r for r in result if r["strategy"] == "momentum")
+        assert momentum_row["sharpe"] == pytest.approx(1.0 * 0.80, abs=1e-4)
+
+    def test_defensive_penalizes_directional(self):
+        ranked = make_ranked(["momentum", "directional", "defensive"])
+        result, adjusted = _adjust_for_risk_mode(ranked, "defensive")
+        directional_row = next(r for r in result if r["strategy"] == "directional")
+        assert directional_row["sharpe"] == pytest.approx(1.0 * 0.85, abs=1e-4)
+
+    def test_defensive_does_not_change_other_strategies(self):
+        ranked = make_ranked(["defensive", "mean_reversion", "hedged"])
+        result, _ = _adjust_for_risk_mode(ranked, "defensive")
+        for r in result:
+            if r["strategy"] not in ("momentum", "directional"):
+                assert r["sharpe"] == pytest.approx(1.0, abs=1e-4)
+
+    def test_defensive_reranks_result(self):
+        """defensive 모드에서 momentum이 패널티 받아 defensive가 1등으로 올라옴."""
+        ranked = make_ranked(["momentum", "defensive"])
+        result, _ = _adjust_for_risk_mode(ranked, "defensive")
+        # momentum(0.80) < defensive(1.0) → defensive가 1등
+        assert result[0]["strategy"] == "defensive"
+
+    def test_normal_mode_no_adjustment(self):
+        ranked = make_ranked(["momentum", "directional", "defensive"])
+        result, adjusted = _adjust_for_risk_mode(ranked, "normal")
+        assert adjusted is False
+        for r in result:
+            assert r["sharpe"] == pytest.approx(1.0, abs=1e-4)
+
+    def test_unknown_risk_mode_no_adjustment(self):
+        ranked = make_ranked(["momentum", "defensive"])
+        result, adjusted = _adjust_for_risk_mode(ranked, "unknown_mode")
+        assert adjusted is False
+
+    def test_backtest_all_defensive_mode(self, tmp_path, monkeypatch):
+        """backtest_all(risk_mode='defensive') 시 risk_mode_adjusted 필드 반환."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        bars = make_bars(60)
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30", risk_mode="defensive")
+        assert result["risk_mode_adjusted"] is True
+        assert result["risk_mode"] == "defensive"
+
+    def test_backtest_all_normal_mode_default(self, tmp_path, monkeypatch):
+        """risk_mode 기본값 'normal' → risk_mode_adjusted=False."""
+        monkeypatch.setattr("simulation.backtester.STRATEGY_MEM_PATH",
+                            tmp_path / "strategy_memory.json")
+        bars = make_bars(60)
+        result = backtest_all(bars, ticker="AAPL", as_of="2024-06-30")
+        assert result["risk_mode_adjusted"] is False
+        assert result["risk_mode"] == "normal"

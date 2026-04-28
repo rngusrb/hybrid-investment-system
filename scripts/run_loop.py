@@ -91,115 +91,93 @@ def list_saved_dates() -> list[str]:
 
 def run_one_cycle(run_date: str, tickers: list[str], llm, llm_decision) -> dict:
     """
-    한 날짜에 대해 전체 파이프라인(B+C) 실행.
-    memory/run_memory.py 에서 이전 주기 컨텍스트를 자동 로드해 Portfolio Manager에 주입.
+    한 날짜에 대해 전체 파이프라인 실행 — B/C LangGraph 상태 기계 사용.
+
+    실행 순서 (bc_graph.py):
+      Emily → StockAnalysis → Backtester → Meetings → Calibration
+      → PortfolioManager → Dave
+      → [Dave risk>0.7] → Backtester(defensive) → PortfolioManager → Dave
+      → Otto
+      → [Otto rejected, retry<2] → PortfolioManager → Dave → Otto
+      → END
     """
     from memory.outcome_filler import fill_pending_outcomes
+    from memory.run_memory import get_context_prompt, find_prev_dates, load_prev_context
+    from calibration.run_calibration import get_current_gating
+    from graph.bc_state import make_initial_bc_state
+    from graph.bc_graph import compile_bc_graph
+
+    # ── r_real 업데이트 (T+7 역산) ──────────────────────────────────────────
     filled = fill_pending_outcomes(run_date)
     if filled:
         print(f"    [r_real] {len(filled)}개 결과 업데이트: {list(filled.keys())}")
 
-    from scripts.portfolio_pipeline import run_single_stock, run_portfolio_manager
-    from memory.run_memory import get_context_prompt, find_prev_dates
-
-    # 이전 주기 컨텍스트 로드 (results/ 기반)
+    # ── 이전 주기 컨텍스트 로드 ──────────────────────────────────────────────
     memory_context = get_context_prompt(run_date, lookback=3)
-    prev_dates = find_prev_dates(run_date, n=1)
-    prev_date  = prev_dates[0] if prev_dates else None
+    prev_ctx   = load_prev_context(run_date, lookback=1)
+    prev_r_real = prev_ctx.get("r_real") if prev_ctx else None
+    prev_dates  = find_prev_dates(run_date, n=1)
+    prev_date   = prev_dates[0] if prev_dates else None
+
+    w_real = 0.5
+    if prev_date:
+        prev_result = load_result(prev_date)
+        if prev_result:
+            prev_otto = prev_result.get("otto", {}) or {}
+            w_real = prev_otto.get("adaptive_weights", {}).get("w_real", 0.5)
 
     if memory_context:
-        print(f"    [Memory] 이전 주기 {prev_date} 컨텍스트 로드됨")
+        print(f"    [Memory] 이전 주기 {prev_date} 로드됨 (w_real={w_real:.2f})")
     else:
-        print(f"    [Memory] 이전 주기 없음 (첫 실행)")
+        print(f"    [Memory] 첫 실행")
 
-    from simulation.backtester import backtest_all, save_sim_result, format_sim_for_prompt
-    from meetings.run_meetings import run_all_meetings, format_meetings_for_prompt
-    from calibration.run_calibration import run_calibration_audit, format_calibration_for_prompt
+    gating = get_current_gating()
+    hard_gated = [a for a, g in gating.items() if g == "hard_gate"]
+    if hard_gated:
+        print(f"    [Gating] HARD_GATE: {hard_gated}")
 
-    stock_results = []
-    errors = []
+    # ── 초기 State 구성 + 그래프 실행 ───────────────────────────────────────
+    initial_state = make_initial_bc_state(
+        current_date=run_date,
+        tickers=tickers,
+        llm_analyst=llm,
+        llm_decision=llm_decision,
+        memory_context=memory_context,
+        prev_r_real=prev_r_real,
+        w_real=w_real,
+        gating=gating,
+    )
 
-    for ticker in tickers:
-        try:
-            result = run_single_stock(ticker, run_date, llm, llm_decision)
-            stock_results.append(result)
-        except Exception as e:
-            errors.append({"ticker": ticker, "error": str(e)})
-            print(f"    [{ticker}] ❌ {str(e)[:80]}")
+    bc = compile_bc_graph()
+    final_state = bc.invoke(initial_state)
 
-    # Bob 시뮬레이션 — 각 종목 bars로 전략 Pool 백테스트
-    sim_results = {}
-    for r in stock_results:
-        ticker = r["ticker"]
-        bars   = r.get("bars", [])
-        try:
-            sim = backtest_all(bars, ticker=ticker, as_of=run_date)
-            save_sim_result(sim)
-            sim_results[ticker] = sim
-            strat = sim["selected_strategy"]
-            sharpe = sim["best"].get("sharpe", 0)
-            print(f"    [Bob/{ticker}] {strat}  Sharpe={sharpe:.2f}")
-        except Exception as e:
-            errors.append({"ticker": f"sim_{ticker}", "error": str(e)})
-            print(f"    [Bob/{ticker}] ❌ {str(e)[:80]}")
+    # ── 결과 추출 ────────────────────────────────────────────────────────────
+    errors      = final_state.get("errors", [])
+    otto_output = final_state.get("otto_output", {})
+    dave_output = final_state.get("dave_output", {})
+    portfolio   = final_state.get("portfolio", {})
+    meetings    = final_state.get("meetings", {})
+    cal_result  = final_state.get("calibration", {})
+    emily_out   = final_state.get("emily_output", {})
 
-    sim_context = format_sim_for_prompt(sim_results)
-
-    # 3 Meetings (MAM/SDM/RAM)
-    meetings = {}
-    meetings_context = ""
-    try:
-        meetings = run_all_meetings(stock_results, sim_results, run_date)
-        meetings_context = format_meetings_for_prompt(meetings)
-        ram = meetings.get("ram", {})
-        if meetings.get("ram_triggered"):
-            print(f"    [RAM] ⚠️  리스크 경보: {ram.get('high_risk_tickers')}  "
-                  f"조치: {ram.get('emergency_controls')}")
-        else:
-            print(f"    [RAM] 정상 (max_risk={ram.get('max_risk_score', 0):.2f})")
-    except Exception as e:
-        errors.append({"ticker": "meetings", "error": str(e)})
-        print(f"    [Meetings] ❌ {str(e)[:80]}")
-
-    # Calibration / Audit / Reliability (Phase 5)
-    cal_result = {}
-    calibration_context = ""
-    try:
-        cal_result = run_calibration_audit(stock_results, sim_results, run_date)
-        calibration_context = format_calibration_for_prompt(cal_result)
-        flags = cal_result.get("flags", [])
-        gating = cal_result.get("gating_decisions", {})
-        hard_gated = [a for a, g in gating.items() if g == "hard_gate"]
-        if hard_gated:
-            print(f"    [CAL] ⚠️  HARD_GATE: {hard_gated}")
-        if flags:
-            for flag in flags[:3]:
-                print(f"    [CAL] {flag}")
-    except Exception as e:
-        errors.append({"ticker": "calibration", "error": str(e)})
-        print(f"    [CAL] ❌ {str(e)[:80]}")
-
-    portfolio = {}
-    if stock_results:
-        try:
-            portfolio = run_portfolio_manager(
-                llm_decision, run_date, stock_results,
-                memory_context=memory_context,
-                sim_context=sim_context,
-                meetings_context=meetings_context,
-                calibration_context=calibration_context,
-            )
-        except Exception as e:
-            errors.append({"ticker": "portfolio", "error": str(e)})
-            print(f"    [Portfolio] ❌ {str(e)[:80]}")
+    # 요약 출력
+    if errors:
+        print(f"    ⚠️  {len(errors)}개 에러: {[e.get('node','?') for e in errors]}")
+    if otto_output:
+        print(f"    [Otto] {otto_output.get('approval_status','?')}  "
+              f"retry={final_state.get('otto_retry_count',0)}  "
+              f"dave_rerun={final_state.get('dave_rerun_triggered',False)}")
 
     return {
         "date":          run_date,
         "tickers":       tickers,
-        "stock_results": stock_results,
+        "stock_results": final_state.get("stock_results", []),
         "portfolio":     portfolio,
         "meetings":      meetings,
         "calibration":   cal_result,
+        "emily":         emily_out,
+        "dave":          dave_output,
+        "otto":          otto_output,
         "errors":        errors,
         "prev_date":     prev_date,
     }

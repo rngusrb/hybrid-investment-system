@@ -40,6 +40,7 @@ DEFAULT_MAP = {
         "tests/integration/test_multicycle.py",
     ],
     "graph/nodes": [
+        "tests/unit/test_graph_calibration_node.py",
         "tests/integration/test_daily_cycle.py",
         "tests/integration/test_e2e_fixes.py",
         "tests/integration/test_multicycle.py",
@@ -60,6 +61,7 @@ DEFAULT_MAP = {
         "tests/unit/test_position_sizer.py",
     ],
     "utils": [
+        "tests/unit/test_forward_return.py",
         "tests/integration/test_e2e_fixes.py",
         "tests/integration/test_multicycle.py",
     ],
@@ -80,9 +82,6 @@ DEFAULT_MAP = {
     "reliability": [
         "tests/unit/test_reliability.py",
     ],
-    "calibration": [
-        "tests/unit/test_calibration.py",
-    ],
     "tools": [
         "tests/unit/test_tools.py",
     ],
@@ -97,6 +96,11 @@ DEFAULT_MAP = {
     ],
     "dashboard": [
         "tests/unit/test_dashboard_utils.py",
+    ],
+    "integration": [
+        "tests/unit/test_integration_emily.py",
+        "tests/unit/test_integration_dave.py",
+        "tests/unit/test_integration_otto.py",
     ],
 }
 
@@ -357,6 +361,8 @@ def main():
     tests = get_tests(folder_key, guide_path)
     print(f"\n  대상 폴더: {folder_key}")
     print(f"  가이드:   {guide_path.relative_to(ROOT) if guide_path.exists() else '없음 ⚠️'}")
+    if not tests:
+        print(f"  ⚠️  등록된 테스트 없음 — DEFAULT_MAP에 '{folder_key}' 추가 또는 _GUIDE.md 하네스 섹션 작성 필요")
     print(f"  테스트:   {len(tests)}개 파일\n")
 
     result = run_tests(tests)

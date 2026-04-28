@@ -86,14 +86,17 @@ def daily_signal_calibration(state: SystemState) -> SystemState:
     dave = state.get("dave_output")
     if isinstance(dave, dict):
         dave_copy = dict(dave)
-        dave_risk_score = float(dave_copy.get("risk_score") or 0.5)
-        dave_confidence = min(0.5 + abs(dave_risk_score - 0.5), 0.9)
+        # stress_severity 기반 confidence: 높은 stress → 낮은 confidence → 중립 방향으로 더 강하게 수축
+        stress_severity = float(
+            (dave_copy.get("stress_test") or {}).get("severity_score") or 0.5
+        )
+        dave_confidence = max(0.1, min(0.9, 1.0 - stress_severity))
         for field in ("risk_score", "signal_conflict_risk"):
             val = dave_copy.get(field)
             if val is not None:
                 cal_val, log_val = _calibrators["dave"].calibrate(
                     field, float(val), current_date,
-                    confidence=dave_confidence, method="clipping"
+                    confidence=dave_confidence, method="shrinkage"
                 )
                 dave_copy[field] = cal_val
                 new_cal_logs.append(log_val.model_dump())

@@ -1,9 +1,12 @@
 """Dave — Risk Control Analyst agent."""
 import json
+import logging
 from typing import List
 from agents.base_agent import BaseAgent
 from schemas.dave_schema import DaveOutput
 from pydantic import ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 class DaveAgent(BaseAgent):
@@ -25,10 +28,26 @@ class DaveAgent(BaseAgent):
     def _validate_output(self, output: dict) -> dict:
         output = dict(output)
 
-        # 1. risk_score → 컴포넌트 가중합으로 덮어씀 (LLM 수치 신뢰 안 함)
+        # 1. risk_score 허용 오차 ±0.05 검증 (컴포넌트 가중합 기준)
         components = output.get("risk_components") or {}
         if components:
-            output["risk_score"] = self.compute_risk_score(components)
+            computed = self.compute_risk_score(components)
+            reported = output.get("risk_score")
+            if reported is not None:
+                try:
+                    delta = abs(float(reported) - computed)
+                    if delta > 0.05:
+                        logger.warning(
+                            "Dave risk_score delta %.4f > 0.05 "
+                            "(reported=%.4f, computed=%.4f); overwriting.",
+                            delta, float(reported), computed,
+                        )
+                        output["risk_score"] = computed
+                    # else: LLM 값이 컴포넌트 합과 근접 — 그대로 유지
+                except (TypeError, ValueError):
+                    output["risk_score"] = computed
+            else:
+                output["risk_score"] = computed
 
         # 2. risk_level 대소문자 정규화 (LLM이 'MODERATE', 'LOW' 등 반환 시 처리)
         rl = output.get("risk_level", "")

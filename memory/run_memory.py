@@ -8,9 +8,12 @@ results/ 디렉토리에 저장된 이전 주기 결과를 로드하여
 이 모듈은 run_loop.py → portfolio_pipeline.py 경로에서만 사용.
 """
 import json
+import logging
 from datetime import date as _date
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 RESULTS_DIR = Path(__file__).parent.parent / "results"
@@ -67,18 +70,93 @@ def _sort_results_verified_first(prev_results: list[dict]) -> list[dict]:
     return verified_sorted + unverified
 
 
-def build_context(prev_results: list[dict], lookback: int = 3) -> dict:
+def _result_to_case(result: dict) -> dict:
+    """portfolio result dict → validity_scorer case 형식으로 변환."""
+    portfolio = result.get("portfolio", {})
+    return {
+        "date": result.get("date", ""),
+        "value": {
+            "market_regime": portfolio.get("market_outlook", ""),
+            "selected_policy": portfolio.get("portfolio_risk_level", ""),
+            "r_real": result.get("r_real"),
+            "r_real_source": result.get("r_real_source"),
+        },
+        "regime": portfolio.get("market_outlook", ""),
+        "tags": ["portfolio_result"],
+        "outcome": result.get("r_real"),
+        "horizon_closed": result.get("r_real") is not None,
+    }
+
+
+def _apply_validity_filter(
+    prev_results: list[dict],
+    lookback: int,
+    as_of: str,
+    current_regime: str,
+    threshold: float = 0.3,
+) -> list[dict]:
+    """
+    후보 2N개에 validity score 적용 → threshold 이상만 상위 lookback개 반환.
+    전부 미달이면 기존 방식(verified 우선 정렬) fallback.
+    """
+    from memory.retrieval.validity_scorer import compute_validity_score
+
+    # 후보 2N개
+    candidates = _sort_results_verified_first(prev_results)[:lookback * 2]
+
+    # query: 현재 regime 기반
+    query = {"market_regime": current_regime}
+
+    scored = []
+    for r in candidates:
+        case = _result_to_case(r)
+        score = compute_validity_score(
+            query=query,
+            case=case,
+            as_of=as_of,
+            current_regime=current_regime,
+            floor=0.0,  # floor=0 으로 전부 점수 계산, threshold로 직접 필터
+        )
+        scored.append((score if score is not None else 0.0, r))
+
+    filtered = [(s, r) for s, r in scored if s >= threshold]
+    if filtered:
+        filtered.sort(key=lambda x: x[0], reverse=True)
+        return [r for _, r in filtered[:lookback]]
+
+    # fallback: 전부 미달이면 기존 방식
+    logger.debug("validity filter: all candidates below threshold %.2f, falling back", threshold)
+    return _sort_results_verified_first(prev_results)[:lookback]
+
+
+def build_context(
+    prev_results: list[dict],
+    lookback: int = 3,
+    as_of: Optional[str] = None,
+    current_regime: Optional[str] = None,
+) -> dict:
     """
     이전 결과 목록 → 구조화된 컨텍스트.
-    verified(r_real 확인됨) 결과를 우선 배치, 그 다음 unverified를 날짜순으로.
+    as_of + current_regime 제공 시 validity scoring 적용.
+    미제공 시 기존 동작(verified 우선 정렬).
     가장 앞 결과를 primary로, 나머지는 trend 파악용.
     """
     if not prev_results:
         return {}
 
-    # verified 우선 정렬 후 lookback 개수 제한
-    sorted_results = _sort_results_verified_first(prev_results)
-    sorted_results = sorted_results[:lookback]
+    # validity scoring 적용 여부
+    if as_of and current_regime and len(prev_results) > 0:
+        try:
+            sorted_results = _apply_validity_filter(
+                prev_results, lookback, as_of, current_regime,
+            )
+        except Exception:
+            logger.warning("validity filter failed, falling back to default", exc_info=True)
+            sorted_results = _sort_results_verified_first(prev_results)[:lookback]
+    else:
+        # 기존 동작: verified 우선 정렬 후 lookback 개수 제한
+        sorted_results = _sort_results_verified_first(prev_results)
+        sorted_results = sorted_results[:lookback]
 
     primary = sorted_results[0]
     portfolio = primary.get("portfolio", {})

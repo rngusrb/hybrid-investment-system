@@ -104,6 +104,166 @@ def _empty_metrics(strategy_type: str) -> dict:
     }
 
 
+# ─── r_real 기반 전략 점수 조정 ──────────────────────────────────────────────
+
+def _adjust_for_r_real(
+    ranked: list[dict],
+    ticker: str,
+    as_of: str,
+    w_real: float = 0.5,
+) -> tuple[list[dict], bool]:
+    """
+    이전 주기 r_real(실제 수익률)로 전략 Sharpe 점수 조정 후 재정렬.
+
+    w_real: 듀얼 리워드 가중치 [0.1, 0.9] (클램프). 높을수록 보정 강도 증가.
+      - w_real=0.5 → bonus=+10%, penalty=-15% (기존 동작 호환)
+      - w_real=0.7 → bonus=+14%, penalty=-21%
+
+    - r_real >= 0.02 (성공): 이전 선택 전략 Sharpe 보너스 (같은 방향 신뢰)
+    - r_real <  0   (손실): 이전 선택 전략 Sharpe 패널티 (전략 재검토)
+    - 0 <= r_real < 0.02  : 조정 없음
+
+    Returns:
+        (재정렬된 ranked, 조정 여부)
+    """
+    w_real = max(0.1, min(0.9, w_real))  # 클램프
+
+    history = load_sim_history(ticker, as_of, n=1)
+    if not history:
+        return ranked, False
+
+    latest = history[0]
+    r_real = latest.get("r_real")
+    if r_real is None:
+        return ranked, False
+
+    prev_strategy = latest.get("selected_strategy")
+    if not prev_strategy:
+        return ranked, False
+
+    bonus   = 1.0 + w_real * 0.20   # w_real=0.5 → +10%, w_real=0.7 → +14%
+    penalty = 1.0 - w_real * 0.30   # w_real=0.5 → -15%, w_real=0.7 → -21%
+
+    if r_real >= 0.02:
+        factor = bonus
+    elif r_real < 0:
+        factor = penalty
+    else:
+        return ranked, False  # 소폭 양성 — 조정 안 함
+
+    adjusted = []
+    for r in ranked:
+        if r["strategy"] == prev_strategy:
+            r = dict(r)
+            r["sharpe"] = round(r["sharpe"] * factor, 4)
+            r["r_real_adjusted"] = True
+        adjusted.append(r)
+
+    # 조정 후 재정렬 (sharpe 내림차순, mdd 오름차순)
+    adjusted.sort(key=lambda r: (r["sharpe"], -r["mdd"]), reverse=True)
+    return adjusted, True
+
+
+# ─── Dave 리스크 모드 기반 전략 패널티 ──────────────────────────────────────
+
+# Dave risk_score > 0.7 트리거 시 공격적 전략 Sharpe 패널티
+_RISK_MODE_PENALTY: dict[str, dict[str, float]] = {
+    "defensive": {
+        "momentum":    0.80,   # -20%
+        "directional": 0.85,   # -15%
+    },
+}
+
+
+def _adjust_for_risk_mode(
+    ranked: list[dict],
+    risk_mode: str,
+) -> tuple[list[dict], bool]:
+    """
+    Dave risk_score > 0.7 트리거 시 공격적 전략에 Sharpe 패널티 적용 후 재정렬.
+
+    risk_mode="defensive" → momentum/directional 전략 Sharpe 20/15% 감소.
+    결과적으로 defensive/hedged/market_neutral 전략이 상위로 이동.
+
+    Returns:
+        (재정렬된 ranked, 조정 여부)
+    """
+    penalties = _RISK_MODE_PENALTY.get(risk_mode, {})
+    if not penalties:
+        return ranked, False
+
+    adjusted = []
+    for r in ranked:
+        factor = penalties.get(r["strategy"])
+        if factor is not None:
+            r = dict(r)
+            r["sharpe"] = round(r["sharpe"] * factor, 4)
+            r["risk_mode_adjusted"] = True
+        adjusted.append(r)
+
+    adjusted.sort(key=lambda r: (r["sharpe"], -r["mdd"]), reverse=True)
+    return adjusted, True
+
+
+# ─── Emily 레짐 기반 전략 점수 조정 ─────────────────────────────────────────
+
+# 레짐별 전략 Sharpe 보정 계수 (최대 ±20% 이내)
+REGIME_STRATEGY_PREFERENCE: dict[str, dict[str, float]] = {
+    "risk_on":         {"momentum": 1.15, "directional": 1.10},
+    "risk_off":        {"defensive": 1.15, "mean_reversion": 1.10, "market_neutral": 1.05},
+    "mixed":           {},
+    "fragile_rebound": {"defensive": 1.10, "hedged": 1.10},
+    "transition":      {},
+}
+
+
+def _adjust_for_regime(
+    ranked: list[dict],
+    emily_context: dict,
+) -> tuple[list[dict], bool]:
+    """
+    Emily의 market_regime 기반으로 Sharpe 점수 보정 후 재정렬.
+
+    emily_context: {"market_regime": "risk_off", "reversal_risk": 0.7, ...}
+      (integration/emily_context.py의 emily_output 또는 technical_signal_state 구조 모두 허용)
+
+    reversal_risk > 0.6이면 방어 전략에 추가 +5% 보너스.
+    보정 계수는 ±20% 이내로 제한.
+
+    Returns:
+        (재정렬된 ranked, 조정 여부)
+    """
+    # emily_output 직접 또는 technical_signal_state nested 구조 모두 허용
+    regime = emily_context.get("market_regime", "mixed")
+    ts = emily_context.get("technical_signal_state") or {}
+    reversal_risk = float(
+        emily_context.get("reversal_risk")
+        or ts.get("reversal_risk")
+        or 0.0
+    )
+
+    prefs = dict(REGIME_STRATEGY_PREFERENCE.get(regime, {}))
+
+    # reversal_risk > 0.6이면 방어 전략 추가 보너스
+    if reversal_risk > 0.6:
+        for s in ("defensive", "mean_reversion", "market_neutral"):
+            prefs[s] = min(prefs.get(s, 1.0) * 1.05, 1.20)
+
+    if not prefs:
+        return ranked, False
+
+    adjusted = []
+    for r in ranked:
+        factor = prefs.get(r["strategy"])
+        if factor is not None:
+            r = dict(r)
+            r["sharpe"] = round(r["sharpe"] * factor, 4)
+        adjusted.append(r)
+
+    adjusted.sort(key=lambda r: (r["sharpe"], -r["mdd"]), reverse=True)
+    return adjusted, True
+
+
 # ─── 전체 전략 Pool 백테스트 ─────────────────────────────────────────────────
 
 def backtest_all(
@@ -111,6 +271,9 @@ def backtest_all(
     ticker: str,
     as_of: str,
     lookback: int = 20,
+    emily_context: Optional[dict] = None,
+    w_real: float = 0.5,
+    risk_mode: str = "normal",
 ) -> dict:
     """
     모든 전략 타입 백테스트 → 최적 전략 선택.
@@ -146,15 +309,33 @@ def backtest_all(
         key=lambda r: (r["sharpe"], -r["mdd"]),
         reverse=True,
     )
+
+    # r_real 기반 전략 점수 조정 (이전 실제 수익률 반영, w_real로 강도 조절)
+    ranked, r_real_adjusted = _adjust_for_r_real(ranked, ticker, as_of, w_real=w_real)
+
+    # Emily 레짐 기반 전략 점수 조정 (emily_context=None이면 기존 동작 유지)
+    regime_adjusted = False
+    if emily_context:
+        ranked, regime_adjusted = _adjust_for_regime(ranked, emily_context)
+
+    # Dave 리스크 모드 기반 패널티 (risk_mode="normal"이면 스킵)
+    risk_mode_adjusted = False
+    if risk_mode != "normal":
+        ranked, risk_mode_adjusted = _adjust_for_risk_mode(ranked, risk_mode)
+
     best = ranked[0]
 
     return {
-        "ticker":            ticker,
-        "as_of":             as_of,
-        "results":           ranked,
-        "best":              best,
-        "selected_strategy": best["strategy"],
-        "data_source":       best.get("data_source", "real"),
+        "ticker":             ticker,
+        "as_of":              as_of,
+        "results":            ranked,
+        "best":               best,
+        "selected_strategy":  best["strategy"],
+        "data_source":        best.get("data_source", "real"),
+        "r_real_adjusted":    r_real_adjusted,
+        "regime_adjusted":    regime_adjusted,
+        "risk_mode_adjusted": risk_mode_adjusted,
+        "risk_mode":          risk_mode,
     }
 
 

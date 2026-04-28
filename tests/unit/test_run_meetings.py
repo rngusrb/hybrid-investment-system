@@ -340,3 +340,161 @@ class TestFormatMeetingsForPrompt:
         meetings = run_all_meetings(results, sim, "2024-06-30")
         text = format_meetings_for_prompt(meetings)
         assert "충돌" in text or "conflict" in text.lower()
+
+
+# ─── TestRunMAMWithRReal ──────────────────────────────────────────────────────
+
+class TestRunMAMWithRReal:
+    def test_no_r_real_fields_none(self):
+        r = run_mam([], {}, "2024-06-30")
+        assert r["prior_r_real"] is None
+        assert r["prior_performance"] is None
+
+    def test_positive_large_r_real_prior_gain(self):
+        r = run_mam([], {}, "2024-06-30", r_real=0.036)
+        assert r["prior_r_real"] == pytest.approx(0.036)
+        assert r["prior_performance"] == "prior_gain"
+
+    def test_positive_small_r_real_prior_neutral(self):
+        r = run_mam([], {}, "2024-06-30", r_real=0.005)
+        assert r["prior_performance"] == "prior_neutral"
+
+    def test_zero_r_real_prior_neutral(self):
+        r = run_mam([], {}, "2024-06-30", r_real=0.0)
+        assert r["prior_performance"] == "prior_neutral"
+
+    def test_negative_r_real_prior_loss(self):
+        r = run_mam([], {}, "2024-06-30", r_real=-0.021)
+        assert r["prior_performance"] == "prior_loss"
+
+    def test_boundary_exactly_002_prior_gain(self):
+        r = run_mam([], {}, "2024-06-30", r_real=0.02)
+        assert r["prior_performance"] == "prior_gain"
+
+
+class TestRunAllMeetingsWithRReal:
+    def test_r_real_propagates_to_mam(self):
+        results = [make_stock_result("AAPL")]
+        r = run_all_meetings(results, {}, "2024-06-30", r_real=0.05)
+        assert r["mam"]["prior_r_real"] == pytest.approx(0.05)
+        assert r["mam"]["prior_performance"] == "prior_gain"
+
+    def test_r_real_none_by_default(self):
+        results = [make_stock_result("AAPL")]
+        r = run_all_meetings(results, {}, "2024-06-30")
+        assert r["mam"]["prior_r_real"] is None
+
+    def test_negative_r_real_loss_label(self):
+        results = [make_stock_result("AAPL")]
+        r = run_all_meetings(results, {}, "2024-06-30", r_real=-0.015)
+        assert r["mam"]["prior_performance"] == "prior_loss"
+
+
+class TestFormatMeetingsRReal:
+    def _meetings_with_r_real(self, r_real: float | None) -> dict:
+        results = [make_stock_result("AAPL")]
+        return run_all_meetings(results, {}, "2024-06-30", r_real=r_real)
+
+    def test_positive_r_real_shown_in_prompt(self):
+        text = format_meetings_for_prompt(self._meetings_with_r_real(0.036))
+        assert "+3.6%" in text or "3.6" in text
+
+    def test_negative_r_real_shown_in_prompt(self):
+        text = format_meetings_for_prompt(self._meetings_with_r_real(-0.021))
+        assert "-2.1%" in text or "2.1" in text
+
+    def test_no_r_real_no_prior_line(self):
+        text = format_meetings_for_prompt(self._meetings_with_r_real(None))
+        assert "이전 주기 실제수익률" not in text
+
+    def test_prior_gain_label_in_prompt(self):
+        text = format_meetings_for_prompt(self._meetings_with_r_real(0.05))
+        assert "이전 전략 효과적" in text
+
+    def test_prior_loss_label_in_prompt(self):
+        text = format_meetings_for_prompt(self._meetings_with_r_real(-0.03))
+        assert "손실" in text
+
+
+# ─── TestLLMDebate ────────────────────────────────────────────────────────────
+
+class MockLLM:
+    """LLM 호출 mock — 고정 JSON 반환."""
+    def __init__(self, response: str):
+        self._response = response
+
+    def chat(self, messages, system=""):
+        return self._response
+
+
+class TestRunMAMLLMDebate:
+    def _mixed_results(self):
+        """50:50 mixed → debate_skipped=False."""
+        return [
+            make_stock_result("AAPL", "BUY", "bullish"),
+            make_stock_result("NVDA", "SELL", "bearish"),
+        ]
+
+    def test_llm_none_backward_compat(self):
+        """llm=None이면 기존 heuristic resolution 사용."""
+        r = run_mam(self._mixed_results(), {}, "2024-06-30", llm=None)
+        assert r["llm_debate_used"] is False
+        assert r["resolution"] != {}
+
+    def test_debate_skipped_llm_not_called(self):
+        """debate_skipped=True → llm 있어도 호출 안 됨."""
+        results = [make_stock_result(t, "BUY", "bullish") for t in ["A", "B", "C"]]
+        called = []
+
+        class TrackingLLM:
+            def chat(self, messages, system=""):
+                called.append(True)
+                return '{"consensus": "bullish", "recommended_bias": "risk_on", "confidence": 0.9, "key_risks": [], "debate_summary": "test"}'
+
+        r = run_mam(results, {}, "2024-06-30", llm=TrackingLLM())
+        assert r["debate_skipped"] is True
+        assert len(called) == 0
+        assert r["llm_debate_used"] is False
+
+    def test_llm_debate_result_used_when_successful(self):
+        """llm 성공 시 resolution이 LLM 결과로 교체됨."""
+        llm = MockLLM(
+            '{"consensus": "bearish", "recommended_bias": "risk_off", '
+            '"confidence": 0.72, "key_risks": ["macro risk"], "debate_summary": "bears win"}'
+        )
+        r = run_mam(self._mixed_results(), {}, "2024-06-30", llm=llm)
+        assert r["llm_debate_used"] is True
+        assert r["resolution"]["consensus"] == "bearish"
+        assert r["resolution"]["recommended_bias"] == "risk_off"
+        assert r["resolution"].get("llm_debate") is True
+
+    def test_llm_failure_fallback_to_heuristic(self):
+        """llm 실패(빈 응답) → heuristic fallback."""
+        llm = MockLLM("no json here")
+        r = run_mam(self._mixed_results(), {}, "2024-06-30", llm=llm)
+        assert r["llm_debate_used"] is False
+        assert r["resolution"] != {}  # heuristic resolution 반환됨
+
+    def test_llm_missing_required_fields_fallback(self):
+        """llm 응답에 필수 필드 없으면 fallback."""
+        llm = MockLLM('{"confidence": 0.5}')  # consensus/recommended_bias 없음
+        r = run_mam(self._mixed_results(), {}, "2024-06-30", llm=llm)
+        assert r["llm_debate_used"] is False
+
+    def test_run_all_meetings_passes_llm(self):
+        """run_all_meetings llm 파라미터가 run_mam으로 전달됨."""
+        called = []
+
+        class TrackingLLM:
+            def chat(self, messages, system=""):
+                called.append(True)
+                return '{"consensus": "neutral", "recommended_bias": "neutral", "confidence": 0.6, "key_risks": [], "debate_summary": "test"}'
+
+        r = run_all_meetings(self._mixed_results(), {}, "2024-06-30", llm=TrackingLLM())
+        assert r["mam"]["llm_debate_used"] is True
+        assert len(called) == 1
+
+    def test_run_all_meetings_llm_none_default(self):
+        """llm=None이 기본값 — 기존 테스트 하위 호환."""
+        r = run_all_meetings(self._mixed_results(), {}, "2024-06-30")
+        assert r["mam"]["llm_debate_used"] is False

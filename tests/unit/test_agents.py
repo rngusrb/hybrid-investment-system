@@ -615,3 +615,54 @@ def test_otto_should_retry_missing_selected_policy():
     should_retry, reason = agent._should_retry(bad_output, attempt=0)
     assert should_retry is True
     assert "selected_policy" in reason
+
+
+# ===========================================================================
+# TASK-009: Dave risk_score tolerance ±0.05
+# ===========================================================================
+
+def test_dave_tolerance_large_delta_overwrites():
+    """computed=0.50, reported=0.74 → delta=0.24 > 0.05 → overwrite to computed."""
+    from agents.dave import DaveAgent
+
+    # components = {beta:0.5, illiquidity:0.5, sector_concentration:0.5, volatility:0.5}
+    # → computed = 0.3*0.5 + 0.25*0.5 + 0.25*0.5 + 0.2*0.5 = 0.50
+    components = {"beta": 0.5, "illiquidity": 0.5, "sector_concentration": 0.5, "volatility": 0.5}
+    output = {
+        **VALID_DAVE_OUTPUT,
+        "risk_score": 0.74,
+        "risk_components": components,
+    }
+    agent = DaveAgent(llm=make_mock_llm({}), config=BASE_CONFIG)
+    result = agent._validate_output(output)
+    assert abs(result["risk_score"] - 0.50) < 1e-4, (
+        f"Expected overwrite to 0.50, got {result['risk_score']}"
+    )
+
+
+def test_dave_tolerance_small_delta_keeps_llm_value():
+    """computed=0.50, reported=0.52 → delta=0.02 <= 0.05 → keep LLM value."""
+    from agents.dave import DaveAgent
+
+    components = {"beta": 0.5, "illiquidity": 0.5, "sector_concentration": 0.5, "volatility": 0.5}
+    output = {
+        **VALID_DAVE_OUTPUT,
+        "risk_score": 0.52,
+        "risk_components": components,
+    }
+    agent = DaveAgent(llm=make_mock_llm({}), config=BASE_CONFIG)
+    result = agent._validate_output(output)
+    assert abs(result["risk_score"] - 0.52) < 1e-4, (
+        f"Expected LLM value 0.52 to be kept, got {result['risk_score']}"
+    )
+
+
+def test_dave_tolerance_no_reported_score_uses_computed():
+    """risk_score=None in input → set to computed."""
+    from agents.dave import DaveAgent
+
+    components = {"beta": 0.5, "illiquidity": 0.5, "sector_concentration": 0.5, "volatility": 0.5}
+    output = {**VALID_DAVE_OUTPUT, "risk_score": None, "risk_components": components}
+    agent = DaveAgent(llm=make_mock_llm({}), config=BASE_CONFIG)
+    result = agent._validate_output(output)
+    assert abs(result["risk_score"] - 0.50) < 1e-4

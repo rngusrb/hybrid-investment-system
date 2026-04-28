@@ -325,3 +325,112 @@ class TestFormatCalibrationForPrompt:
         text = format_calibration_for_prompt(cal)
         # 플래그 없으면 플래그 섹션 없음
         assert "플래그" not in text or "⚠" not in text.split("END")[0].split("플래그")[-1] if "END" in text else True
+
+
+# ─── Reliability 영속화 테스트 (TASK-007) ────────────────────────────────────
+
+class TestReliabilityPersistence:
+    def test_save_creates_file(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        reset_session_state()
+        mgr = module._get_reliability_manager()
+        module._save_reliability_state(mgr)
+        assert (tmp_path / "reliability_state.json").exists()
+
+    def test_saved_state_has_all_agents(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        reset_session_state()
+        mgr = module._get_reliability_manager()
+        module._save_reliability_state(mgr)
+
+        import json
+        data = json.loads((tmp_path / "reliability_state.json").read_text())
+        for agent in _BC_AGENTS:
+            assert agent in data
+
+    def test_saved_state_has_required_fields(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        reset_session_state()
+        mgr = module._get_reliability_manager()
+        module._save_reliability_state(mgr)
+
+        import json
+        data = json.loads((tmp_path / "reliability_state.json").read_text())
+        for agent in _BC_AGENTS:
+            state = data[agent]
+            assert "score" in state
+            assert "update_count" in state
+            assert "decay_factor" in state
+            assert "floor" in state
+
+    def test_load_restores_score(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        # 초기화 후 update → 저장
+        reset_session_state()
+        mgr = module._get_reliability_manager()
+        mgr.update_agent("technical", decision_usefulness=0.9)
+        saved_score = mgr.states["technical"].score
+        module._save_reliability_state(mgr)
+
+        # 세션 리셋 → 재로드 (파일에서 복원 테스트이므로 _skip_file_load=False 필요)
+        reset_session_state()
+        module._skip_file_load = False  # 파일 로드 허용
+        mgr2 = module._get_reliability_manager()
+        restored_score = mgr2.states["technical"].score
+        assert abs(restored_score - saved_score) < 1e-5
+
+    def test_missing_file_returns_empty(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "nonexistent.json")
+
+        result = module._load_reliability_state()
+        assert result == {}
+
+    def test_corrupted_file_returns_empty(self, tmp_path, monkeypatch):
+        import calibration.run_calibration as module
+        bad_file = tmp_path / "reliability_state.json"
+        bad_file.write_text("NOT JSON {{{{")
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", bad_file)
+
+        result = module._load_reliability_state()
+        assert result == {}
+
+    def test_run_calibration_audit_saves_state(self, tmp_path, monkeypatch):
+        """run_calibration_audit 실행 후 파일이 생성됨."""
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        reset_session_state()
+        stocks = [make_stock("AAPL"), make_stock("NVDA")]
+        run_calibration_audit(stocks, {}, "2024-01-15")
+        assert (tmp_path / "reliability_state.json").exists()
+
+    def test_history_capped_at_20(self, tmp_path, monkeypatch):
+        """저장 시 history는 최근 20개만 유지."""
+        import calibration.run_calibration as module
+        monkeypatch.setattr(module, "RELIABILITY_STATE_PATH", tmp_path / "reliability_state.json")
+        monkeypatch.setattr(module, "RESULTS_DIR", tmp_path)
+
+        reset_session_state()
+        mgr = module._get_reliability_manager()
+        # 30번 업데이트 → history 30개
+        for _ in range(30):
+            mgr.update_agent("technical", decision_usefulness=0.7)
+        module._save_reliability_state(mgr)
+
+        import json
+        data = json.loads((tmp_path / "reliability_state.json").read_text())
+        assert len(data["technical"]["history"]) <= 20

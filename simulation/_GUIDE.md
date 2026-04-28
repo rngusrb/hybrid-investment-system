@@ -80,3 +80,5 @@ python scripts/harness.py simulation/
 | 2026-04-06 | trading_engine.py | data_source 필드 추가 |
 | 2026-04-06 | strategy_executor.py | mean_reversion z-score rolling window 수정 |
 | 2026-04-14 | backtester.py | 신규 (Phase 3 Bob): bars_to_returns / backtest_all / save_sim_result / format_sim_for_prompt. close=0 falsy 버그 수정. 30개 테스트 추가 |
+| 2026-04-17 | backtester.py | r_real 기반 전략 가중치 조정: _adjust_for_r_real() 추가 — r_real≥2%→+10% 보너스, r_real<0→-15% 패널티, 0~2%→조정 없음. backtest_all에 r_real_adjusted 필드 추가. 8개 테스트 추가 |
+| 2026-04-28 | backtester.py | Dave risk>0.7 트리거용 _adjust_for_risk_mode() 추가. _RISK_MODE_PENALTY: momentum -20%, directional -15%. backtest_all(risk_mode="normal") 파라미터 추가. risk_mode_adjusted/risk_mode 필드 반환. 9개 테스트 추가 |

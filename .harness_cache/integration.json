@@ -1,0 +1,14 @@
+{
+  "status": "pass",
+  "passed": 91,
+  "failed": 0,
+  "returncode": 0,
+  "output": "........................................................................ [ 79%]\n...................                                                      [100%]\n91 passed in 0.09s\n",
+  "tests": [
+    "tests/unit/test_integration_emily.py",
+    "tests/unit/test_integration_dave.py",
+    "tests/unit/test_integration_otto.py"
+  ],
+  "missing": [],
+  "timestamp": "2026-04-17T15:13:21.986387"
+}

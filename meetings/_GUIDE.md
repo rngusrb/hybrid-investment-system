@@ -104,3 +104,5 @@ python scripts/harness.py meetings/
 |------|------|----------|
 | 2026-04-06 | risk_alert.py | stress test seed 날짜 기반 변경 |
 | 2026-04-14 | run_meetings.py | 신규 (Phase 4): Pipeline B/C용 MAM/SDM/RAM 어댑터. 40개 테스트 |
+| 2026-04-17 | run_meetings.py | r_real 주입: run_mam/run_all_meetings에 r_real 파라미터 추가. prior_r_real/prior_performance 필드 반환. format_meetings_for_prompt에 이전 실제수익률 라인 추가. 19개 테스트 추가 |
+| 2026-04-28 | run_meetings.py | LLM 토론 추가: _build_debate_signals(), _run_llm_debate() 신규. run_mam(llm=None)/run_all_meetings(llm=None) 파라미터 추가. debate_skipped=False+llm 있을 때만 LLM 호출. llm_debate_used 필드 반환. LLM 실패 시 heuristic fallback. 7개 테스트 추가 |

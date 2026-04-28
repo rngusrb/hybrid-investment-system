@@ -16,6 +16,12 @@ Pipeline A(LangGraph SystemState)용이므로 여기서는 재사용하지 않�
 B/C 파이프라인의 출력(stock_results/sim_results)을 직접 처리.
 """
 
+import json
+import re
+import logging
+
+logger = logging.getLogger(__name__)
+
 RISK_ALERT_THRESHOLD = 0.75   # risk_score > 0.75 → RAM 트리거
 DEBATE_SKIP_CONFIDENCE = 0.80  # consensus ≥ 0.80 → debate 간소화
 
@@ -28,18 +34,169 @@ _RISK_LEVEL_SCORES = {
 }
 
 
+# ─── LLM 토론 헬퍼 ───────────────────────────────────────────────────────────
+
+def _build_debate_signals(stock_results: list[dict], tickers: list[str]) -> list[dict]:
+    """특정 ticker 목록에 해당하는 신호 요약 생성 (토론 입력용)."""
+    signals = []
+    for r in stock_results:
+        if r.get("ticker") not in tickers:
+            continue
+        rm = r.get("risk_manager") or {}
+        te = r.get("technical") or {}
+        fu = r.get("fundamental") or {}
+        re_ = r.get("researcher") or {}
+        signals.append({
+            "ticker":     r.get("ticker"),
+            "action":     rm.get("final_action", "HOLD"),
+            "risk_level": rm.get("risk_level", "medium"),
+            "consensus":  re_.get("consensus", "neutral"),
+            "conviction": re_.get("conviction", "medium"),
+            "tech_score": te.get("technical_score", 5),
+            "fund_score": fu.get("fundamental_score", 5),
+            "risk_flags": rm.get("risk_flags") or [],
+        })
+    return signals
+
+
+def _run_llm_debate(llm, bull_signals: list[dict], bear_signals: list[dict],
+                    conflicts: list[dict], date: str) -> dict:
+    """
+    LLM Bull/Bear 토론 실행.
+
+    debate_skipped=False(consensus < 0.80)일 때만 호출됨.
+    실패 시 {} 반환 → 호출자가 heuristic _parse_mam_resolution()으로 fallback.
+    """
+    bull_text = "\n".join(
+        f"  {s['ticker']}: action={s['action']} "
+        f"tech={s['tech_score']} fund={s['fund_score']} conviction={s['conviction']}"
+        for s in bull_signals
+    ) or "  (없음)"
+    bear_text = "\n".join(
+        f"  {s['ticker']}: action={s['action']} "
+        f"tech={s['tech_score']} fund={s['fund_score']} risk_flags={s['risk_flags']}"
+        for s in bear_signals
+    ) or "  (없음)"
+    conflicts_text = "\n".join(
+        f"  [{c['ticker']}] {c['conflict']}"
+        for c in conflicts[:3]
+    ) or "  (없음)"
+
+    user = f"""Date: {date}
+
+Bull 측 신호:
+{bull_text}
+
+Bear 측 신호:
+{bear_text}
+
+신호 충돌:
+{conflicts_text}
+
+위 신호를 분석하여 시장 토론 결과를 JSON으로 반환하라:
+{{
+  "consensus": "bullish" | "bearish" | "neutral" | "split",
+  "key_risks": ["리스크1", "리스크2"],
+  "recommended_bias": "risk_on" | "risk_off" | "neutral",
+  "confidence": 0.0~1.0,
+  "debate_summary": "한 문장 요약"
+}}
+JSON만 반환."""
+
+    system = (
+        "당신은 투자 전략 회의의 중재자입니다. "
+        "Bull 측과 Bear 측 논거를 분석하여 합리적인 토론 결론을 내립니다."
+    )
+
+    try:
+        raw = llm.chat(
+            messages=[{"role": "user", "content": user}],
+            system=system,
+        )
+        text = raw if isinstance(raw, str) else str(raw)
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if not match:
+            logger.warning(f"_run_llm_debate JSON 없음 (date={date}): {text[:80]!r}")
+            return {}
+        data = json.loads(match.group())
+        if "consensus" not in data or "recommended_bias" not in data:
+            logger.warning(f"_run_llm_debate 필수 필드 누락: {list(data.keys())}")
+            return {}
+        data["confidence"] = max(0.0, min(1.0, float(data.get("confidence", 0.5))))
+        return data
+    except Exception as e:
+        logger.warning(f"_run_llm_debate 실패: {e}", exc_info=True)
+        return {}
+
+
+# ─── MAM Resolution Parser ───────────────────────────────────────────────────
+
+def _parse_mam_resolution(market_regime: str, market_bias: str,
+                          conflicts: list[dict], consensus_score: float,
+                          date: str) -> dict:
+    """
+    MAM 결과를 구조화된 DebateResolution dict로 변환.
+    LLM 추가 호출 없이 기존 MAM 출력값으로부터 파싱.
+    실패 시 {} 반환.
+    """
+    try:
+        # consensus: regime 기반 매핑
+        if market_regime == "risk_on":
+            consensus = "bullish"
+        elif market_regime == "risk_off":
+            consensus = "bearish"
+        elif market_regime == "mixed" and consensus_score < 0.5:
+            consensus = "split"
+        else:
+            consensus = "neutral"
+
+        # key_risks: conflict resolution 텍스트에서 추출 (최대 3개)
+        key_risks: list[str] = []
+        for c in conflicts[:3]:
+            key_risks.append(f"[{c.get('ticker', '?')}] {c.get('conflict', '')}")
+
+        # recommended_bias: consensus 기반
+        if consensus == "bullish":
+            recommended_bias = "risk_on"
+        elif consensus == "bearish":
+            recommended_bias = "risk_off"
+        else:
+            recommended_bias = "neutral"
+
+        # confidence: consensus_score 그대로 사용 (0.0~1.0)
+        confidence = max(0.0, min(1.0, consensus_score))
+
+        return {
+            "meeting_type": "MAM",
+            "date": date,
+            "consensus": consensus,
+            "key_risks": key_risks,
+            "recommended_bias": recommended_bias,
+            "confidence": round(confidence, 4),
+        }
+    except Exception:
+        logger.warning("_parse_mam_resolution failed, returning empty dict", exc_info=True)
+        return {}
+
+
 # ─── MAM ────────────────────────────────────────────────────────────────────
 
-def run_mam(stock_results: list[dict], sim_results: dict, run_date: str) -> dict:
+def run_mam(stock_results: list[dict], sim_results: dict, run_date: str,
+            r_real: float | None = None, llm=None) -> dict:
     """
     Market Analysis Meeting — B/C pipeline 출력 기반 시장 분석.
+
+    r_real: 이전 주기 실제 포트폴리오 수익률 (Polygon T+7 확정). 있으면 시장 평가에 반영.
+    llm:    LLM provider. None이면 heuristic resolution만 사용 (하위 호환).
+            debate_skipped=False(consensus < 0.80)일 때만 LLM 토론 실행.
 
     반환:
         {
           date, market_regime, market_bias,
           bull_tickers, bear_tickers, neutral_tickers,
           signal_conflicts: [{ticker, conflict, resolution}, ...],
-          debate_skipped, consensus_score,
+          debate_skipped, consensus_score, llm_debate_used,
+          prior_r_real, prior_performance,
         }
     """
     bull_tickers: list[str] = []
@@ -114,6 +271,44 @@ def run_mam(stock_results: list[dict], sim_results: dict, run_date: str) -> dict
     consensus_score = max(bull_ratio, bear_ratio)
     debate_skipped = consensus_score >= DEBATE_SKIP_CONFIDENCE
 
+    # r_real 기반 이전 성과 분류
+    prior_performance: str | None = None
+    if r_real is not None:
+        if r_real >= 0.02:
+            prior_performance = "prior_gain"       # +2% 이상 — 이전 전략 효과적
+        elif r_real < 0:
+            prior_performance = "prior_loss"       # 손실 — 이전 전략 재검토 필요
+        else:
+            prior_performance = "prior_neutral"    # 소폭 양성
+
+    # LLM 토론: debate_skipped=False AND llm 있을 때만
+    llm_debate_used = False
+    if not debate_skipped and llm is not None:
+        bull_signals = _build_debate_signals(stock_results, bull_tickers)
+        bear_signals = _build_debate_signals(stock_results, bear_tickers)
+        llm_result = _run_llm_debate(llm, bull_signals, bear_signals, conflicts, run_date)
+        if llm_result:
+            resolution = {
+                "meeting_type":    "MAM",
+                "date":            run_date,
+                "consensus":       llm_result.get("consensus", "neutral"),
+                "key_risks":       llm_result.get("key_risks", []),
+                "recommended_bias": llm_result.get("recommended_bias", "neutral"),
+                "confidence":      llm_result.get("confidence", consensus_score),
+                "debate_summary":  llm_result.get("debate_summary", ""),
+                "llm_debate":      True,
+            }
+            llm_debate_used = True
+        else:
+            # LLM 실패 → heuristic fallback
+            resolution = _parse_mam_resolution(
+                market_regime, market_bias, conflicts, consensus_score, run_date,
+            )
+    else:
+        resolution = _parse_mam_resolution(
+            market_regime, market_bias, conflicts, consensus_score, run_date,
+        )
+
     return {
         "date": run_date,
         "market_regime": market_regime,
@@ -124,6 +319,10 @@ def run_mam(stock_results: list[dict], sim_results: dict, run_date: str) -> dict
         "signal_conflicts": conflicts,
         "debate_skipped": debate_skipped,
         "consensus_score": round(consensus_score, 4),
+        "llm_debate_used": llm_debate_used,
+        "resolution": resolution,
+        "prior_r_real": r_real,
+        "prior_performance": prior_performance,
     }
 
 
@@ -249,14 +448,19 @@ def run_all_meetings(
     stock_results: list[dict],
     sim_results: dict,
     run_date: str,
+    r_real: float | None = None,
+    llm=None,
 ) -> dict:
     """
     MAM → SDM → RAM (조건부) 순서로 실행.
 
+    r_real: 이전 주기 실제 수익률. MAM에 주입하여 시장 평가에 반영.
+    llm:    LLM provider. None이면 heuristic만 사용 (하위 호환).
+
     반환:
         { mam: {...}, sdm: {...}, ram: {...}, ram_triggered: bool }
     """
-    mam = run_mam(stock_results, sim_results, run_date)
+    mam = run_mam(stock_results, sim_results, run_date, r_real=r_real, llm=llm)
     sdm = run_sdm(stock_results, sim_results, run_date)
     ram = run_ram(stock_results, run_date)
 
@@ -306,6 +510,16 @@ def format_meetings_for_prompt(meetings: dict) -> str:
         lines.append(
             f"  ※ debate 간소화 (consensus={mam.get('consensus_score', 0):.0%})"
         )
+    prior_r_real = mam.get("prior_r_real")
+    prior_perf = mam.get("prior_performance")
+    if prior_r_real is not None:
+        sign = "+" if prior_r_real >= 0 else ""
+        perf_label = {
+            "prior_gain":    "✅ 이전 전략 효과적 — 같은 방향 유지 고려",
+            "prior_loss":    "⚠️  이전 전략 손실 — 배분 축소 고려",
+            "prior_neutral": "→ 이전 전략 소폭 양성 — 현상 유지",
+        }.get(prior_perf, "")
+        lines.append(f"  이전 주기 실제수익률: {sign}{prior_r_real*100:.1f}%  {perf_label}")
     lines.append("")
 
     # SDM

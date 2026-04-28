@@ -69,6 +69,28 @@ def fetch_forward_return(
         )
         t0_bars = t0_result.get("data", [])
         if not t0_bars:
+            # T0가 증시 휴장일일 수 있음 — 직전 거래일 close를 T0 proxy로 사용
+            t0_fallback_start = _fmt(exec_date - timedelta(days=5))
+            t0_fallback_end = _fmt(exec_date - timedelta(days=1))
+            try:
+                fallback_result = fetcher.get_ohlcv(
+                    ticker=ticker,
+                    from_date=t0_fallback_start,
+                    to_date=t0_fallback_end,
+                    as_of=t0_fallback_end,
+                )
+                t0_bars = fallback_result.get("data", [])
+                if t0_bars:
+                    logger.info(
+                        "T0 holiday fallback for %s on %s: using previous close (%s)",
+                        ticker, execution_date, t0_bars[-1].get("date", "?"),
+                    )
+            except Exception as fb_exc:
+                logger.warning(
+                    "T0 holiday fallback fetch failed for %s on %s: %s",
+                    ticker, execution_date, fb_exc,
+                )
+        if not t0_bars:
             return None
         close_t0 = t0_bars[-1].get("close")
         if close_t0 is None or close_t0 == 0:
