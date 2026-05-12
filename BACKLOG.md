@@ -9,17 +9,27 @@
 
 ---
 
-## 대기 중인 태스크
+## 시스템 완성도 (2026-05-12 기준): 약 85%
 
-### D-001: bc_graph 통합 테스트
-**우선순위**: medium
-**배경**: C-003에서 노드 단위 테스트만 추가. bc_graph 전체 흐름(conditional edges) 통합 테스트 없음.
-**작업**: `tests/integration/test_bc_graph.py` — mock LLM으로 Dave risk>0.7, Otto rejected 분기 검증
+핵심 기능 전부 작동. 미완성 항목은 "추가 개선"이지 "안 되는 것"이 아님.
 
-### D-002: DEV_GUIDE.md B/C 파이프라인 섹션 갱신
-**우선순위**: low
-**배경**: DEV_GUIDE.md의 B/C 파이프라인 섹션이 sequential 함수 호출 기준으로 작성됨. C-003 이후 LangGraph 구조로 변경.
-**작업**: bc_graph.py 흐름도, 9노드 구조, conditional edges 반영
+## 대기 중인 태스크 (미완성 — 논문 미적용)
+
+| ID | 항목 | 난이도 | 내용 |
+|----|------|--------|------|
+| M1 | Emily 4분할 | 상 | Emily 1명 → 기술/거시/감성/섹터 4에이전트 분리. 스키마 파괴적 변경 |
+| M2 | 3-Trader 토론 | 상 | RiskyTrader / NeutralTrader / SafeTrader 신설 + 토론 로직 |
+| RL | 강화학습 루프 | 최상 | PPO/SAC policy 업데이트 — 프레임워크 전면 교체 수준 |
+
+## 기술 부채
+
+| 항목 | 우선순위 |
+|------|---------|
+| FAISS dense retrieval (현재 token overlap 기반) | 중 |
+| 스케줄러 cron 연결 | 하 |
+| Memory DB 지속성 | 낮음 |
+
+### [이전 1순위 — 구현 완성]
 
 ---
 
@@ -28,8 +38,8 @@
 
 | 발견일 | 파일 | 내용 | 우선순위 |
 |--------|------|------|---------|
-| 2026-04-21 | `docs/` | AUDIT_WALKFORWARD.md 참조되지만 파일 없음 | low |
+| 2026-05-08 | `memory/registry.py` | DecisionJournal이 registry에 미등록 — 필요 시 싱글톤으로 올려야 함 | 낮음 |
 
 ---
 
-*마지막 갱신: 2026-04-28 — D-001, D-002 추가 (C-003 스프린트 후속)*
+*마지막 갱신: 2026-05-12 — rebalance_urgency 버그 픽스 완료. 대기 태스크 없음.*

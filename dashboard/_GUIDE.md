@@ -4,28 +4,15 @@
 파이프라인 A/B/C 실행 결과를 시각화하는 Streamlit 웹 UI.
 분석 실행, 뉴스 데이터 확인, 에이전트 보고서 조회, 포트폴리오 결과 시각화를 제공한다.
 
-## 파일 구조
-
-```
-dashboard/
-  app.py                       ← 메인 페이지 (종목 입력 + 실행)
-  pages/
-    0_🔄_파이프라인_추적.py      ← 전체 흐름 + 회의록 (Step 0~7 타임라인)
-    1_📰_뉴스_데이터.py          ← 뉴스 테이블 + OHLCV 차트
-    2_🤖_에이전트_보고서.py       ← 에이전트별 full 출력 + 플로우 다이어그램
-    3_📊_포트폴리오_결과.py       ← 파이차트 + 배분표 + 종목 비교
-  utils/
-    formatters.py               ← 순수 변환 함수 (st.* 없음, 테스트 가능)
-  _GUIDE.md                    ← 이 파일
-```
-
 ## 실행 방법
 ```bash
 streamlit run dashboard/app.py
 ```
 
-## 상태 공유 (session_state 구조)
-모든 페이지가 `st.session_state`를 통해 결과를 공유한다.
+## 데이터 소스 구분
+
+### Pipeline A 페이지 (0~3번) — session_state 사용
+`app.py`에서 실시간 실행 후 `st.session_state`를 통해 결과를 공유한다.
 
 ```python
 st.session_state = {
@@ -54,6 +41,29 @@ st.session_state = {
         "cash_pct": 0.60,
         ...
     }
+}
+```
+
+### Pipeline B/C 페이지 (4~5번) — 파일에서 직접 로드
+`run_loop.py`가 저장한 `results/{date}/portfolio.json` 와 `results/eval_*.json` 을 읽는다.
+session_state 불필요 — `list_bc_dates()` / `load_bc_result()` / `load_eval_results()` 사용.
+
+```python
+# results/{date}/portfolio.json 키 구조
+{
+    "date": "2024-01-05",
+    "tickers": [...],
+    "emily": {"market_regime": ..., "regime_confidence": ..., "technical_confidence": ...},
+    "dave":  {"risk_score": ..., "risk_components": {...}, "stress_multiplier": ...},
+    "otto":  {"approval_status": ..., "conditional_controls": ..., "rejection_reason": ...},
+    "reliability_summary": {"fundamental": 0.54, "sentiment": 0.54, ...},
+    "execution_feasibility": {
+        "feasibility_score": ..., "avg_sharpe": ...,
+        "cash_pct": ..., "dave_risk_score": ..., "rebalance_urgency": ...
+    },
+    "uncertainty_mode": false,
+    "meetings": {...},
+    "errors": [...],
 }
 ```
 
@@ -125,16 +135,20 @@ tests:
 python scripts/harness.py dashboard/
 ```
 
+## 페이지 목록
+
+| 파일 | 데이터 소스 | 역할 |
+|------|------------|------|
+| `app.py` | Pipeline A 실시간 실행 | 종목 입력 + 분석 시작 |
+| `pages/0_🔄_파이프라인_추적.py` | session_state | 에이전트 단계별 회의 추적 |
+| `pages/1_📰_뉴스_데이터.py` | session_state | 뉴스 원문 조회 |
+| `pages/2_🤖_에이전트_보고서.py` | session_state | 에이전트별 분석 보고서 |
+| `pages/3_📊_포트폴리오_결과.py` | session_state | 배분 파이차트 + 레이더 |
+| `pages/4_🔄_BC결과.py` | results/{date}/portfolio.json | B/C 파이프라인 결과 (Emily/Dave/Otto/Reliability) |
+| `pages/5_📈_평가결과.py` | results/eval_*.json | System vs Baseline 성과 비교 |
+
 ## 테스트 전략
 Streamlit UI는 직접 단위 테스트가 어려움. 대신:
 - **유틸 함수**는 `dashboard/utils/` 분리 후 pytest 테스트
 - **session_state 구조**는 `tests/unit/test_dashboard_utils.py`에서 검증
 - UI 렌더링 자체는 수동 확인 (streamlit run)
-
-
-## 최근 변경
-
-| 날짜 | 변경 내용 |
-|------|----------|
-| 2026-04-07 | dashboard/ 최초 생성, app.py + 3개 pages + utils/formatters.py 구현, 21개 테스트 통과 |
-| 2026-04-07 | 0_파이프라인_추적.py 추가 — 8단계 타임라인 + Researcher/RiskManager 회의록 전문 표시. build_pipeline_trace() 구현, 28개 테스트 통과 |

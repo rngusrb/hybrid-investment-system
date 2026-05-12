@@ -1,12 +1,12 @@
 {
   "status": "pass",
-  "passed": 28,
+  "passed": 45,
   "failed": 0,
   "returncode": 0,
-  "output": "............................                                             [100%]\n28 passed in 0.02s\n",
+  "output": ".............................................                            [100%]\n45 passed in 0.05s\n",
   "tests": [
     "tests/unit/test_dashboard_utils.py"
   ],
   "missing": [],
-  "timestamp": "2026-04-08T18:39:04.737360"
+  "timestamp": "2026-05-12T11:23:04.405106"
 }

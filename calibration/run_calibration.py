@@ -397,6 +397,20 @@ def run_calibration_audit(
     }
 
 
+# ─── Reliability 상태 영속화 (그래프 노드 전용) ───────────────────────────────
+
+def persist_reliability_state() -> dict[str, float]:
+    """
+    현재 reliability manager 상태를 파일에 저장하고 summary 반환.
+
+    BC_RELIABILITY_UPDATE 노드에서 호출 — calibration 이후 명시적 파일 동기화.
+    반환: {agent_role → score}
+    """
+    mgr = _get_reliability_manager()
+    _save_reliability_state(mgr)
+    return mgr.get_reliability_summary()
+
+
 # ─── Portfolio Manager 프롬프트 포맷 ─────────────────────────────────────────
 
 def format_calibration_for_prompt(cal: dict) -> str:

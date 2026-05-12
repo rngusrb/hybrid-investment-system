@@ -1,0 +1,33 @@
+# meta/project_state.yaml
+# harness doc lint의 검증 원천 데이터.
+# 여기 적힌 파일은 반드시 존재해야 함 — 없으면 harness lint FAIL.
+# 설명/아키텍처는 DEV_GUIDE.md에, 이 파일엔 검증 가능한 사실만.
+
+entry_points:
+  bc_pipeline: graph/bc_graph.py        # B/C 파이프라인 LangGraph 진입점
+  pipeline_a:  graph/builder.py         # Pipeline A LangGraph (SPY, 레거시)
+  run_loop:    scripts/run_loop.py      # 날짜 범위 실행 루프
+  portfolio:   scripts/portfolio_pipeline.py
+  harness:     scripts/harness.py
+
+sprint_archive_dir: docs/sprints/
+
+folder_guides:
+  agents:       agents/_GUIDE.md
+  calibration:  calibration/_GUIDE.md
+  data:         data/_GUIDE.md
+  dashboard:    dashboard/_GUIDE.md
+  evaluation:   evaluation/_GUIDE.md
+  execution:    execution/_GUIDE.md
+  graph/nodes:  graph/nodes/_GUIDE.md
+  integration:  integration/_GUIDE.md
+  llm:          llm/_GUIDE.md
+  meetings:     meetings/_GUIDE.md
+  memory:       memory/_GUIDE.md
+  reliability:  reliability/_GUIDE.md
+  schemas:      schemas/_GUIDE.md
+  scripts:      scripts/_GUIDE.md
+  simulation:   simulation/_GUIDE.md
+  tools:        tools/_GUIDE.md
+  transforms:   transforms/_GUIDE.md
+  utils:        utils/_GUIDE.md

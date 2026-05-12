@@ -95,7 +95,7 @@ def run_one_cycle(run_date: str, tickers: list[str], llm, llm_decision) -> dict:
 
     실행 순서 (bc_graph.py):
       Emily → StockAnalysis → Backtester → Meetings → Calibration
-      → PortfolioManager → Dave
+      → ReliabilityUpdate → PortfolioManager → Dave
       → [Dave risk>0.7] → Backtester(defensive) → PortfolioManager → Dave
       → Otto
       → [Otto rejected, retry<2] → PortfolioManager → Dave → Otto
@@ -169,17 +169,20 @@ def run_one_cycle(run_date: str, tickers: list[str], llm, llm_decision) -> dict:
               f"dave_rerun={final_state.get('dave_rerun_triggered',False)}")
 
     return {
-        "date":          run_date,
-        "tickers":       tickers,
-        "stock_results": final_state.get("stock_results", []),
-        "portfolio":     portfolio,
-        "meetings":      meetings,
-        "calibration":   cal_result,
-        "emily":         emily_out,
-        "dave":          dave_output,
-        "otto":          otto_output,
-        "errors":        errors,
-        "prev_date":     prev_date,
+        "date":                   run_date,
+        "tickers":                tickers,
+        "stock_results":          final_state.get("stock_results", []),
+        "portfolio":              portfolio,
+        "meetings":               meetings,
+        "calibration":            cal_result,
+        "emily":                  emily_out,
+        "dave":                   dave_output,
+        "otto":                   otto_output,
+        "errors":                 errors,
+        "prev_date":              prev_date,
+        "reliability_summary":    final_state.get("reliability_summary", {}),
+        "execution_feasibility":  final_state.get("execution_feasibility", {}),
+        "uncertainty_mode":       final_state.get("uncertainty_mode", False),
     }
 
 

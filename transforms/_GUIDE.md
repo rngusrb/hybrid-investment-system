@@ -56,17 +56,6 @@ Dave가 리스크 평가에 사용.
 
 ---
 
-## 파일 구조
-
-| 파일 | 변환 내용 |
-|------|----------|
-| `emily_to_bob.py` | EmilyOutput → EmilyToBobPacket. technical_signal 보존 |
-| `bob_to_dave.py` | BobOutput → BobToDavePacket. failure_conditions, technical_alignment 보존 |
-| `bob_to_execution.py` | urgency = 1-(sharpe×0.1+regime_fit×0.3), hedge_preference 계산 |
-| `all_to_otto.py` | 4개 packet → OttoInput. raw data 차단, reward_history 조회 |
-
----
-
 ## 하네스
 
 ```
@@ -79,9 +68,3 @@ python scripts/harness.py transforms/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-06 | all_to_otto.py | reward_history strategy_memory 자동 조회 추가 |

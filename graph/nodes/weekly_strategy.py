@@ -1,4 +1,5 @@
 """WEEKLY_STRATEGY_DEVELOPMENT_MEETING node."""
+import os
 import yaml
 from graph.state import SystemState
 from schemas.audit_schema import NodeResult
@@ -6,11 +7,13 @@ from simulation.trading_engine import SimulatedTradingEngine
 
 
 def _make_trading_engine() -> SimulatedTradingEngine:
-    """config의 polygon_api_key로 PolygonFetcher 주입. 키 없으면 synthetic fallback."""
+    """환경변수 POLYGON_API_KEY 우선, 없으면 synthetic fallback."""
     try:
-        with open("config/system_config.yaml") as f:
-            cfg = yaml.safe_load(f)
-        api_key = cfg.get("data", {}).get("polygon_api_key")
+        api_key = os.environ.get("POLYGON_API_KEY")
+        if not api_key:
+            with open("config/system_config.yaml") as f:
+                cfg = yaml.safe_load(f)
+            api_key = cfg.get("data", {}).get("polygon_api_key")
         if api_key:
             from data.polygon_fetcher import PolygonFetcher
             return SimulatedTradingEngine(fetcher=PolygonFetcher(api_key=api_key))

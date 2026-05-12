@@ -92,3 +92,87 @@ def get_baseline_config(name: str) -> BaselineConfig:
 
 def list_baselines() -> List[str]:
     return list(BASELINE_NAMES)
+
+
+# ── 실제 시그널/수익률 계산 ──────────────────────────────────────────────────
+
+def _ema(data: List[float], period: int) -> List[float]:
+    """EMA 계산 (단순 loop, pandas 미사용)."""
+    if not data:
+        return []
+    k = 2.0 / (period + 1)
+    result = [data[0]]
+    for x in data[1:]:
+        result.append(x * k + result[-1] * (1 - k))
+    return result
+
+
+def compute_macd_signal(bars: List[dict]) -> int:
+    """
+    MACD(12, 26, 9) 시그널: 마지막 바 기준.
+    Returns 1 (MACD > Signal → long) or 0 (flat).
+    bars 부족(<26)이면 기본값 1 반환.
+    """
+    closes = [float(b["close"]) for b in bars if b.get("close") is not None]
+    if len(closes) < 26:
+        return 1
+    ema12 = _ema(closes, 12)
+    ema26 = _ema(closes, 26)
+    macd_line = [a - b for a, b in zip(ema12, ema26)]
+    # signal line은 macd_line 전체 대상
+    signal_line = _ema(macd_line, 9)
+    return 1 if macd_line[-1] > signal_line[-1] else 0
+
+
+def compute_sma_signal(bars: List[dict], period: int = 20) -> int:
+    """
+    SMA(period) 시그널: 현재가 > SMA → long(1), else flat(0).
+    bars 부족이면 기본값 1 반환.
+    """
+    closes = [float(b["close"]) for b in bars if b.get("close") is not None]
+    if len(closes) < period:
+        return 1
+    sma = sum(closes[-period:]) / period
+    return 1 if closes[-1] > sma else 0
+
+
+def compute_baseline_returns(
+    system_dates: List[str],
+    aapl_prices: List[float],   # 각 날짜의 AAPL 현재가
+    aapl_bars_by_date: Dict[str, List[dict]],  # 날짜 → AAPL bars (시그널용)
+) -> Dict[str, List[float]]:
+    """
+    BnH / MACD / SMA 베이스라인 수익률 시계열 계산.
+
+    system_dates[i] → system_dates[i+1] 기간의 수익률.
+    → len(system_dates) - 1 개의 수익률 반환.
+
+    Args:
+        system_dates: 포트폴리오 실행 날짜 목록 (시간순)
+        aapl_prices:  각 날짜의 AAPL 현재가 (len == len(system_dates))
+        aapl_bars_by_date: 날짜 → 해당 날짜까지의 AAPL OHLCV bars
+    """
+    bnh, macd_ret, sma_ret = [], [], []
+
+    for i in range(len(system_dates) - 1):
+        p0 = aapl_prices[i]
+        p1 = aapl_prices[i + 1]
+        if p0 and p0 > 0 and p1 and p1 > 0:
+            period_ret = p1 / p0 - 1.0
+        else:
+            period_ret = 0.0
+
+        bnh.append(period_ret)
+
+        bars = aapl_bars_by_date.get(system_dates[i], [])
+        macd_sig = compute_macd_signal(bars)
+        sma_sig  = compute_sma_signal(bars)
+
+        macd_ret.append(period_ret if macd_sig == 1 else 0.0)
+        sma_ret.append(period_ret if sma_sig  == 1 else 0.0)
+
+    return {
+        "buy_and_hold": bnh,
+        "macd":         macd_ret,
+        "sma":          sma_ret,
+    }

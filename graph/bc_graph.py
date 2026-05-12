@@ -6,12 +6,12 @@ run_loop.py의 run_one_cycle() 함수 순차 호출을 이 그래프로 교체.
 
 흐름:
   EMILY → STOCK_ANALYSIS → BACKTESTER → MEETINGS → CALIBRATION
-  → PORTFOLIO_MANAGER → DAVE
+  → RELIABILITY_UPDATE → PORTFOLIO_MANAGER → DAVE
   → [route_after_dave]
       risk > 0.7 (첫 번째만) → BACKTESTER(defensive) → PORTFOLIO_MANAGER → DAVE
       else                    → OTTO
   → [route_after_otto]
-      rejected + retry < 2 → PORTFOLIO_MANAGER (otto_retry_count++)
+      rejected + retry_count <= 2 → PORTFOLIO_MANAGER (otto_retry_count++)
       else                  → END
 """
 from langgraph.graph import StateGraph, END
@@ -21,8 +21,9 @@ from graph.nodes.bc_emily      import bc_emily_node
 from graph.nodes.bc_stock      import bc_stock_node
 from graph.nodes.bc_backtester import bc_backtester_node
 from graph.nodes.bc_meetings   import bc_meetings_node
-from graph.nodes.bc_calibration import bc_calibration_node
-from graph.nodes.bc_portfolio  import bc_portfolio_node
+from graph.nodes.bc_calibration        import bc_calibration_node
+from graph.nodes.bc_reliability_update import bc_reliability_update_node
+from graph.nodes.bc_portfolio          import bc_portfolio_node
 from graph.nodes.bc_dave       import bc_dave_node
 from graph.nodes.bc_otto       import bc_otto_node
 
@@ -58,7 +59,7 @@ def route_after_dave(state: SystemStateBC) -> str:
 def route_after_otto(state: SystemStateBC) -> str:
     """
     Otto 이후 분기.
-    - rejected AND retry < 2 → PORTFOLIO_MANAGER (재실행)
+    - rejected AND retry_count <= 2 → PORTFOLIO_MANAGER (재실행)
     - else → END
     """
     otto        = state.get("otto_output") or {}
@@ -96,8 +97,9 @@ def build_bc_graph() -> StateGraph:
     graph.add_node("BC_BACKTESTER",         bc_backtester_node)
     graph.add_node("BC_BACKTESTER_DEFENSIVE", bc_backtester_defensive_node)
     graph.add_node("BC_MEETINGS",           bc_meetings_node)
-    graph.add_node("BC_CALIBRATION",        bc_calibration_node)
-    graph.add_node("BC_PORTFOLIO_MANAGER",  bc_portfolio_node)
+    graph.add_node("BC_CALIBRATION",         bc_calibration_node)
+    graph.add_node("BC_RELIABILITY_UPDATE",  bc_reliability_update_node)
+    graph.add_node("BC_PORTFOLIO_MANAGER",   bc_portfolio_node)
     graph.add_node("BC_DAVE",               bc_dave_node)
     graph.add_node("BC_OTTO",               bc_otto_node)
 
@@ -118,8 +120,9 @@ def build_bc_graph() -> StateGraph:
         },
     )
 
-    graph.add_edge("BC_MEETINGS",    "BC_CALIBRATION")
-    graph.add_edge("BC_CALIBRATION", "BC_PORTFOLIO_MANAGER")
+    graph.add_edge("BC_MEETINGS",           "BC_CALIBRATION")
+    graph.add_edge("BC_CALIBRATION",        "BC_RELIABILITY_UPDATE")
+    graph.add_edge("BC_RELIABILITY_UPDATE", "BC_PORTFOLIO_MANAGER")
     graph.add_edge("BC_PORTFOLIO_MANAGER", "BC_DAVE")
 
     # Dave 이후 분기: risk > 0.7 → Defensive Backtester, else → Otto

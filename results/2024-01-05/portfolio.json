@@ -1157,17 +1157,17 @@
         "fundamental_score": 0.68,
         "key_risks": [
           "Revenue decline YoY",
-          "High P/E ratio at 31x",
-          "Mature iPhone market",
-          "China market challenges"
+          "High valuation multiple",
+          "Macroeconomic headwinds",
+          "iPhone market saturation"
         ],
         "key_strengths": [
           "Strong profit margins above 25%",
           "Consistent net income generation",
-          "Services segment growth potential",
-          "Brand strength and ecosystem"
+          "Established ecosystem",
+          "Services segment growth potential"
         ],
-        "summary": "Apple exhibits solid profitability with 25.3% net margins, but faces headwinds with 2.8% revenue decline YoY. At a P/E of 31.0, the stock appears overvalued relative to current earnings trajectory and growth rate, suggesting limited margin of safety for new investors."
+        "summary": "Apple demonstrates solid profitability with 25.3% net margins, but faces revenue headwinds with 2.8% YoY decline. Trading at elevated P/E of 31.0x suggests premium valuation not fully justified by current growth trajectory. Fundamental strength is offset by valuation concerns."
       },
       "sentiment": {
         "ticker": "AAPL",
@@ -1177,36 +1177,36 @@
         "dominant_emotion": "neutral",
         "news_volume": 465,
         "key_themes": [
-          "antitrust concerns",
-          "valuation questions",
-          "tech sector weakness",
-          "competitive pressure",
-          "market volatility"
+          "Antitrust concerns",
+          "Valuation questions",
+          "Tech sector weakness",
+          "Market volatility",
+          "Competitive pressure"
         ],
-        "summary": "Mixed sentiment with significant uncertainty. Positive elements include analyst interest and Warren Buffett association, but overshadowed by DOJ antitrust investigation, analyst downgrades, tech sector weakness, and competitive threats from Qualcomm/Google/Samsung partnership. Market volatility and questions about valuation timing create hesitation among investors."
+        "summary": "Mixed sentiment with significant uncertainty. While some articles present Apple as a potential buy, concerns about DOJ antitrust action, analyst downgrades, and broader tech sector weakness create headwinds. Market volatility and questions about valuation at current levels temper optimism."
       },
       "news": {
         "ticker": "AAPL",
         "date": "2024-01-05",
         "macro_impact": -0.2,
         "company_events": [
-          "Analyst downgrade issued",
-          "DOJ antitrust investigation progressing",
+          "Analyst downgrade",
+          "DOJ antitrust investigation escalating",
           "Competitive pressure from Qualcomm/Google/Samsung partnership"
         ],
         "industry_trends": [
-          "Nasdaq experiencing longest losing streak in over a year",
+          "Nasdaq longest losing streak in over a year",
           "Market volatility despite low VIX",
-          "Large-cap stocks outperforming small-caps"
+          "Large-cap outperformance vs small-cap"
         ],
         "event_risk_level": 0.6,
         "catalyst_signals": [
-          "Negative: DOJ antitrust case risk escalating",
-          "Negative: Analyst downgrade signals weakness",
-          "Negative: Intensifying competition in key markets",
-          "Neutral: Strong labor market backdrop"
+          "DOJ antitrust case risk escalating",
+          "Competitive threat in key markets",
+          "Analyst sentiment deteriorating",
+          "Market momentum negative for tech"
         ],
-        "summary": "Macro environment mildly negative with market volatility and Nasdaq weakness. Significant company-specific risks include DOJ antitrust investigation advancement and analyst downgrade. Competitive threats from major tech partnerships pose medium-term headwind. Event risk elevated due to regulatory and analyst sentiment deterioration."
+        "summary": "Macro environment mildly negative with tech sector weakness and market volatility. Major risk catalyst is DOJ antitrust investigation escalating. Competitive threats from Qualcomm/Google/Samsung partnership in key market. Analyst downgrade signals weakening sentiment. Event risk elevated due to regulatory and competitive pressures."
       },
       "technical": {
         "ticker": "AAPL",
@@ -1220,24 +1220,24 @@
         "resistance_level": 186.0,
         "entry_signal": "sell",
         "technical_score": 0.22,
-        "summary": "Strong downtrend from $194.68 to $181.18 over 10 trading days. RSI at 28.5 indicates oversold conditions. Price breaking below key support levels with elevated volume. MACD showing bearish momentum. Further downside risk toward $179.50 support."
+        "summary": "Strong downtrend with sharp decline from 194.68 to 181.18. RSI deeply oversold at 28.5 indicating potential capitulation. Price near lower Bollinger Band with elevated volume confirming selling pressure. MACD in bearish configuration. Support at 179.5 critical."
       },
       "researcher": {
         "ticker": "AAPL",
         "date": "2024-01-05",
-        "bull_thesis": "Apple maintains exceptional profit margins above 25% and consistent net income generation, providing a fortress balance sheet. The services segment offers high-margin growth potential to offset mature iPhone hardware sales. Strong brand ecosystem creates durable competitive moats and customer lock-in. Current weakness presents a buying opportunity for long-term investors, with technical oversold conditions (RSI 28.5) suggesting potential mean reversion.",
-        "bear_thesis": "Apple trades at a stretched 31x P/E ratio with negative revenue growth (-2.8% YoY), indicating fundamental deterioration. The iPhone market is mature with limited growth catalysts. DOJ antitrust investigation poses regulatory risk and potential business model constraints. Analyst downgrades, intensifying competition from Qualcomm/Google/Samsung partnerships, and neutral sentiment reflect market skepticism. Technical indicators are decisively bearish with downtrend strength at 0.72 and MACD bearish crossover, signaling further downside risk.",
+        "bull_thesis": "Despite near-term headwinds, Apple's fortress balance sheet, exceptional profit margins above 25%, and high-margin services segment growth provide a durable competitive moat. The established ecosystem creates sticky customer relationships that justify a premium valuation multiple. Current weakness presents a buying opportunity for long-term investors as macroeconomic conditions stabilize and iPhone upgrade cycles resume.",
+        "bear_thesis": "Apple faces a perfect storm of challenges: revenue declining YoY, valuation stretched at 31x P/E (well above historical averages), escalating DOJ antitrust investigation threatening business model, intensifying competition from Qualcomm/Google/Samsung partnerships, and technical indicators flashing red (RSI 28.5, bearish MACD, downtrend). Analyst downgrades and negative market sentiment reflect deteriorating fundamentals and event risk that could impair growth for quarters ahead.",
         "consensus": "bearish",
         "conviction": 0.62,
         "key_debate_points": [
-          "Valuation disconnect: 31x P/E unjustified given negative revenue growth and mature core business",
-          "Services growth potential vs. iPhone market saturation reality",
-          "DOJ antitrust risk materially underestimated by bulls given regulatory escalation",
-          "Technical breakdown contradicts fundamental strength narrative",
-          "Sentiment deterioration reflects institutional recognition of valuation excess"
+          "Valuation premium (31x P/E) unjustified given revenue contraction and macro uncertainty",
+          "Antitrust risk materially underpriced by market; DOJ escalation threatens App Store economics",
+          "Services growth insufficient to offset iPhone saturation and YoY revenue decline",
+          "Technical breakdown (down trend, oversold RSI) suggests further downside before stabilization",
+          "Ecosystem moat real but not impenetrable against coordinated competitive threats"
         ],
-        "risk_reward_ratio": 1.8,
-        "summary": "Moderately bearish. While Apple's profitability and ecosystem remain strong, negative revenue growth, extreme valuation, escalating antitrust risk, and decisive technical breakdown outweigh bull arguments. Risk/reward favors downside near-term despite long-term franchise quality."
+        "risk_reward_ratio": 1.2,
+        "summary": "Bearish bias warranted. Combination of deteriorating fundamentals (negative revenue growth, high valuation), escalating regulatory risk, technical weakness, and negative sentiment outweigh services growth potential. Risk/reward unfavorable near-term; downside risks exceed upside catalysts."
       },
       "trader": {
         "ticker": "AAPL",
@@ -1250,18 +1250,18 @@
         "time_horizon": "short",
         "reasoning": [
           "Bearish consensus with 0.62 conviction from researcher team",
-          "Technical score extremely weak at 0.22 with downtrend strength 0.72 and MACD bearish crossover",
-          "Sentiment score critically low at 0.15 reflecting analyst downgrades and market skepticism",
-          "Entry signal is sell with price near support at $179.5, risk of breakdown",
-          "Elevated event risk (0.6) from DOJ antitrust investigation adds uncertainty",
-          "Risk/reward ratio of 1.8 favors short position given bearish technical setup"
+          "Technical score extremely weak at 0.22 with RSI oversold at 28.5 and bearish MACD",
+          "Sentiment score critically low at 0.15 reflecting analyst downgrades and negative market perception",
+          "Event risk elevated at 0.6 due to DOJ antitrust investigation overhang",
+          "Entry signal confirms sell with price near support at $179.5",
+          "Risk/reward ratio of 1.2 marginally favors short position"
         ],
         "key_signals_used": [
           "technical_score",
           "sentiment_score",
+          "event_risk",
           "consensus",
-          "entry_signal",
-          "event_risk_level"
+          "entry_signal"
         ]
       },
       "risk_manager": {
@@ -1269,26 +1269,27 @@
         "date": "2024-01-05",
         "final_action": "SELL",
         "action_changed": false,
-        "final_position_size_pct": 0.05,
-        "position_adjustment": -0.01,
+        "final_position_size_pct": 0.04,
+        "position_adjustment": -0.02,
         "hedge_required": false,
         "hedge_type": "stop_order",
-        "hedge_size_pct": 0.05,
+        "hedge_size_pct": 0.04,
         "cash_reserve_pct": 0.2,
         "risk_level": "high",
-        "aggressive_view": "RSI at 28.5 is approaching oversold territory - we could see a snap-back rally any moment. Fundamental score of 0.68 shows AAPL is still a quality company. I'd reduce the short size or wait for a better entry after a bounce. The DOJ risk is priced in already.",
-        "conservative_view": "Event risk at 0.6 is dangerously high with the DOJ investigation. Technical score 0.22 confirms the downtrend, but RSI 28.5 means we're shorting into oversold conditions - classic trap. Reduce position to 4% maximum and set tight stop at $185. Keep 25% cash reserve.",
-        "neutral_view": "The bearish case is valid - technicals are weak, sentiment is terrible at 0.15, and trend is clearly down. However, RSI 28.5 flags oversold risk. Compromise: maintain SELL but reduce size from 6% to 5%, use stop order at $187.5 as planned, increase cash reserve to 20% given event uncertainty.",
-        "consensus_reasoning": "All three agree the bearish setup is legitimate with technical score 0.22 and sentiment 0.15. However, RSI 28.5 near oversold and high event risk 0.6 warrant caution. Reducing position size by 1% and maintaining strict stop loss discipline addresses both the opportunity and the risk of a short squeeze or event-driven reversal.",
+        "aggressive_view": "RSI at 28.5 is deeply oversold - this is exactly when shorts get squeezed. Fundamental score of 0.68 shows AAPL is still a quality company. DOJ investigations take years to resolve. I'd actually consider this a contrarian BUY opportunity, not a SELL. If we must short, keep it tiny because the bounce risk is real.",
+        "conservative_view": "I agree with the SELL but we need to be extremely careful. Event risk at 0.6 is a major red flag - DOJ overhang creates binary outcome risk. Sentiment at 0.15 is critically low which usually precedes capitulation. However, oversold RSI at 28.5 means we could see a violent snap-back rally. Reduce position size significantly and use tight stops. Keep 20%+ in cash.",
+        "neutral_view": "The SELL thesis has merit - technical score 0.22, bearish MACD, downtrend confirmed. But the oversold RSI at 28.5 is a legitimate concern that both Rick and Clara flagged. Risk/reward of only 1.2 is marginal for a short. Compromise: maintain SELL direction but reduce size from 6% to 4%, implement stop order at $187.5 as stated, and increase cash reserves given the high event risk environment.",
+        "consensus_reasoning": "All three agree the oversold RSI creates snap-back risk that warrants position reduction. The SELL signal is technically valid given weak technicals and sentiment, but the 1.2 risk/reward and 0.6 event risk demand conservative sizing. Stop order at $187.5 provides defined risk. Reduced position from 6% to 4% balances the bearish thesis against bounce probability.",
         "risk_flags": [
           "high_event_risk",
           "negative_sentiment",
-          "oversold_conditions"
+          "oversold_rsi"
         ],
         "adjustment_reasons": [
-          "RSI 28.5 approaching oversold territory increases snap-back risk",
-          "Event risk 0.6 from DOJ investigation creates binary outcome uncertainty",
-          "Sentiment score 0.15 already reflects extreme pessimism - limited downside catalyst"
+          "RSI 28.5 deeply oversold increases short squeeze risk",
+          "Event risk 0.6 exceeds threshold creating binary outcome exposure",
+          "Sentiment 0.15 critically low - capitulation may be near",
+          "Risk/reward 1.2 marginal for short position sizing"
         ]
       }
     },
@@ -2444,15 +2445,16 @@
         "fundamental_score": 0.68,
         "key_risks": [
           "Declining profitability year-over-year",
-          "Net income down 55% despite flat revenue",
+          "Net income dropped 55% despite flat revenue",
           "Margin compression concerns"
         ],
         "key_strengths": [
           "Extremely low P/E ratio of 3.3",
-          "Strong absolute revenue base",
-          "Significant upside potential if profitability recovers"
+          "Strong EPS of $14.84",
+          "Stable revenue base",
+          "Potential recovery upside"
         ],
-        "summary": "NVDA appears undervalued with an exceptionally low P/E of 3.3, though profitability declined sharply from $9.75B to $4.37B. The stock presents value opportunity if the company can stabilize margins and return to growth."
+        "summary": "NVDA appears significantly undervalued with a P/E ratio of 3.3, though profitability declined sharply from $9.75B to $4.37B net income. The stock trades at a substantial discount despite earnings concerns, suggesting either market pessimism or a potential value opportunity pending operational recovery."
       },
       "sentiment": {
         "ticker": "NVDA",
@@ -2475,79 +2477,79 @@
         "date": "2024-01-05",
         "macro_impact": 0.6,
         "company_events": [
-          "Analyst identifies $100B FCF potential for growth initiatives",
+          "Analyst identifies $100B free cash flow potential for growth initiatives",
           "Positioned as top sector pick among analysts",
-          "Generative AI healthcare applications expanding"
+          "Generative AI healthcare applications expanding addressable market"
         ],
         "industry_trends": [
-          "Tech stocks finding relief after market volatility",
-          "Generative AI reshaping multiple sectors",
-          "Nasdaq 100 snapping negative streak",
-          "Magnificent Seven stocks outperforming"
+          "Nasdaq tech recovery after 14-month negative streak",
+          "Generative AI reshaping multiple sectors including healthcare",
+          "AMD increasing AI chip capacity creating competitive pressure",
+          "Magnificent Seven stocks outperforming broader market"
         ],
         "event_risk_level": 0.4,
         "catalyst_signals": [
-          "Strong FCF generation supporting AI investments",
-          "AMD capacity expansion poses competitive threat",
-          "Intel weakness benefits GPU/AI chip leaders",
-          "Potential valuation expansion if adopting SaaS-like models",
-          "Healthcare AI adoption accelerating"
+          "Strong FCF generation enabling AI investment acceleration",
+          "Healthcare AI applications driving new demand vectors",
+          "AMD capacity expansion poses competitive threat to market share",
+          "Valuation optimization opportunity vs Salesforce model",
+          "Tech sector momentum reversal positive for chip demand"
         ],
-        "summary": "Macro environment moderately positive with tech sector relief and low volatility. NVDA positioned as top AI beneficiary with $100B FCF potential, but faces competitive pressure from AMD's AI capacity expansion. Key upside catalysts include healthcare AI adoption and potential business model optimization. Moderate risk from intensifying competition and valuation concerns."
+        "summary": "Macro environment moderately positive with tech sector finding relief and market volatility contained. NVDA positioned as analyst favorite with substantial FCF generation potential. Key upside catalyst is expanding AI applications across healthcare and enterprise. Primary risk is AMD's AI chip capacity expansion threatening market dominance. Valuation optimization and cash deployment strategies could unlock additional shareholder value."
       },
       "technical": {
         "ticker": "NVDA",
         "date": "2024-01-05",
         "trend_direction": "sideways",
         "trend_strength": 0.45,
-        "rsi": 52.3,
+        "rsi": 52.1,
         "macd_signal": "neutral",
         "bollinger_position": "middle",
         "support_level": 47.5,
         "resistance_level": 49.6,
         "entry_signal": "neutral",
         "technical_score": 0.52,
-        "summary": "Price consolidating near recent highs after pullback. RSI neutral, volume elevated on recovery day. Resistance at 49.6, support at 47.5. Awaiting breakout confirmation."
+        "summary": "Price consolidating near recent highs after pullback. RSI neutral, no clear directional bias. Volume elevated on recovery day suggests potential for breakout above 49.6 resistance."
       },
       "researcher": {
         "ticker": "NVDA",
         "date": "2024-01-05",
-        "bull_thesis": "NVDA trades at an extremely attractive 3.3x P/E ratio despite its AI leadership position and $100B+ free cash flow potential. The company dominates GPU/AI chip markets with expanding healthcare AI applications, benefits from Intel's weakness, and maintains strong absolute revenue. Sentiment remains optimistic on AI tailwinds and Magnificent Seven outperformance. Significant upside if profitability recovers and the market re-rates the stock toward historical multiples.",
-        "bear_thesis": "Profitability has collapsed 55% year-over-year despite flat revenue, signaling serious margin compression and operational challenges. The ultra-low 3.3x P/E may reflect justified concerns about sustainable earnings recovery rather than a bargain. AMD's capacity expansion poses direct competitive pressure. Technical setup is sideways with neutral momentum (RSI 52.3, MACD neutral), offering no directional conviction. Valuation expansion depends on speculative SaaS-model adoption and healthcare AI adoption acceleration, which remain unproven.",
+        "bull_thesis": "NVDA trades at an extremely attractive 3.3x P/E ratio with strong EPS of $14.84, suggesting significant undervaluation. The company maintains a stable revenue base and possesses $100B free cash flow potential to fund AI growth initiatives. As the clear AI leadership player with expanding healthcare AI applications, NVDA benefits from secular tailwinds in generative AI adoption. Sentiment remains optimistic with Magnificent Seven momentum, and the valuation discount versus peers like Salesforce presents a compelling recovery opportunity.",
+        "bear_thesis": "Despite flat revenue, NVDA's net income collapsed 55% year-over-year, signaling deteriorating profitability and concerning margin compression. The sideways technical trend with neutral MACD and RSI at 52.1 lacks bullish momentum confirmation. Competitive pressure from AMD's capacity expansion threatens market share in a cyclical semiconductor industry. The low P/E may reflect justified concerns about earnings sustainability rather than a true value opportunity, and the 0.2% revenue growth suggests the company faces headwinds beyond valuation.",
         "consensus": "bullish",
         "conviction": 0.62,
         "key_debate_points": [
-          "Valuation disconnect: 3.3x P/E appears cheap but reflects 55% profit decline—is this a value trap or genuine recovery opportunity?",
-          "Margin recovery trajectory: Can NVDA restore profitability through operational leverage or is structural compression permanent?",
-          "Competitive dynamics: AMD threat vs. NVDA's entrenched AI leadership and ecosystem moat",
-          "Free cash flow strength ($100B potential) provides financial flexibility but requires revenue growth acceleration",
-          "Technical weakness contradicts fundamental/sentiment bullishness—lack of price momentum is a warning sign"
+          "Valuation disconnect: 3.3x P/E appears cheap but reflects 55% net income decline—is it a value trap or genuine opportunity?",
+          "Profitability trajectory: Margin compression and declining earnings contradict AI boom narrative",
+          "Competitive dynamics: AMD threat to market share in AI accelerators could pressure future margins",
+          "FCF potential: $100B free cash flow capacity provides strategic flexibility if execution improves",
+          "Technical confirmation: Sideways trend lacks conviction; needs breakout to validate fundamental thesis"
         ],
-        "risk_reward_ratio": 2.1,
-        "summary": "Moderately bullish with moderate conviction. Extreme valuation cheapness (3.3x P/E) and AI leadership position outweigh profitability concerns, but the 55% earnings decline and sideways technicals warrant caution. Upside depends on margin recovery and competitive positioning holding. Risk/reward favors longs, but execution risk is material."
+        "risk_reward_ratio": 1.8,
+        "summary": "Moderately bullish with tempered conviction. NVDA's extreme valuation discount and AI leadership position support upside, but deteriorating profitability and weak technicals create meaningful execution risk. The bull case hinges on margin recovery and AI monetization acceleration. Investors should await technical confirmation and Q1 earnings before committing capital."
       },
       "trader": {
         "ticker": "NVDA",
         "date": "2024-01-05",
         "action": "BUY",
-        "confidence": 0.62,
+        "confidence": 0.58,
         "position_size_pct": 0.06,
         "target_price": 58.0,
         "stop_loss_price": 46.5,
         "time_horizon": "medium",
         "reasoning": [
-          "Bullish consensus with 0.62 conviction from research team supports entry",
-          "Extremely attractive 3.3x P/E ratio for AI market leader suggests significant undervaluation",
-          "Risk/reward ratio of 2.1 favors long position with defined risk parameters",
-          "Fundamental score of 0.68 confirms underlying quality despite margin pressures",
-          "Current price near resistance at $49.6 - breakout potential with AI tailwinds"
+          "Bullish consensus with 0.62 conviction supports long position",
+          "Extremely attractive 3.3x P/E with $14.84 EPS indicates significant undervaluation",
+          "Strong fundamental score of 0.68 confirms quality despite near-term earnings volatility",
+          "AI leadership position provides secular growth tailwind",
+          "Risk/reward ratio of 1.8 favors upside with defined stop below support at $47.5"
         ],
         "key_signals_used": [
           "fundamental_score",
           "sentiment_score",
           "consensus",
-          "risk_reward_ratio",
-          "support_resistance"
+          "support_level",
+          "risk_reward_ratio"
         ]
       },
       "risk_manager": {
@@ -2562,15 +2564,15 @@
         "hedge_size_pct": 0.0,
         "cash_reserve_pct": 0.1,
         "risk_level": "moderate",
-        "aggressive_view": "This is NVDA at 3.3x P/E - absolutely absurd valuation for the AI leader. Fundamental score of 0.68 is solid, sentiment is positive at 0.62, and we have a 2.1 risk/reward ratio. I'd actually increase to 8-10% position. The sideways trend is consolidation before the next leg up. Event risk at 0.4 is manageable. Full send on this one.",
-        "conservative_view": "Hold on. Technical score is only 0.52 - barely above neutral. Trend is sideways, not up. RSI at 52.3 shows no momentum. Conviction at 0.62 is decent but not strong. Event risk at 0.4 means 40% chance of disruption. I'd reduce to 4% max and wait for a cleaner technical setup or trend confirmation before adding.",
-        "neutral_view": "Both have valid points. The fundamental case is compelling - 3.3x P/E for NVDA is historically cheap if accurate. But Clara's right that technicals are lukewarm. Compromise: keep the BUY but trim from 6% to 5%. This respects the value opportunity while acknowledging the sideways trend uncertainty. No hedge needed at this risk level.",
-        "consensus_reasoning": "The fundamental undervaluation case is strong enough to maintain the BUY signal, but the sideways trend and middling technical score warrant a modest position reduction. At 5% allocation with a 2.1 R/R ratio and defined stop at $46.5, the risk is well-contained. Event risk at 0.4 doesn't warrant hedging but justifies the smaller position and 10% cash reserve for potential averaging down.",
+        "aggressive_view": "This is a screaming buy. 3.3x P/E on NVDA with AI leadership? The fundamental score of 0.68 is solid, sentiment is positive at 0.62, and we have a 1.8 risk/reward ratio. I'd actually push for 8-10% position size. The sideways trend is consolidation before the next leg up. Event risk at 0.4 is manageable. Full send.",
+        "conservative_view": "Hold on. Technical score is only 0.52 - barely above neutral. Sideways trend means no clear direction. Conviction at 0.62 is decent but not strong. Event risk at 0.4 before any potential announcements concerns me. I'd reduce to 4% max and set a tighter stop. The P/E looks too good to be true - verify that EPS figure.",
+        "neutral_view": "Both have valid points. The fundamentals are genuinely attractive with strong AI positioning. However, the technical picture is neutral with RSI at 52.1 showing no momentum. I recommend keeping the BUY but trimming position to 5% given the sideways trend. The 1.8 R/R ratio justifies entry, but we should be measured until technicals confirm.",
+        "consensus_reasoning": "The fundamental case for NVDA remains compelling with exceptional valuation metrics and AI leadership. However, the sideways trend and middling technical score of 0.52 warrant a modest position reduction from 6% to 5%. RSI at 52.1 is neutral, providing no urgency. Event risk at 0.4 is acceptable but justifies keeping 10% cash reserve. No hedge needed as the setup is constructive, just sized appropriately for current uncertainty.",
         "risk_flags": [],
         "adjustment_reasons": [
-          "Sideways trend lacks directional confirmation for full position",
-          "Technical score 0.52 suggests waiting for momentum before full allocation",
-          "Maintaining dry powder given 0.4 event risk level"
+          "Technical score 0.52 indicates neutral momentum, warrants slight size reduction",
+          "Sideways trend suggests waiting for directional confirmation",
+          "Maintaining cash reserve for potential better entry on pullback"
         ]
       }
     }
@@ -2586,38 +2588,39 @@
         "ticker": "AAPL",
         "weight": 0.0,
         "action": "SELL",
-        "rationale": "High risk flags, bearish consensus, oversold but negative sentiment - avoid/exit"
+        "rationale": "3주 연속 SELL 신호 유지. RSI 28.5 과매도 상태이나 high_event_risk + negative_sentiment 지속. Tech 섹터 회피 권고와 일치. 진입 불가."
       },
       {
         "ticker": "NVDA",
-        "weight": 0.2,
+        "weight": 0.12,
         "action": "BUY",
-        "rationale": "Undervalued PE 3.3, bullish consensus, moderate risk, defensive strategy performing well"
+        "rationale": "Defensive 전략 Sharpe 0.99로 4주 연속 선택. PE 3.3 저평가, moderate risk. 이전 10%에서 소폭 증가하나 Tech 회피 권고 감안 보수적 사이징."
       }
     ],
-    "total_equity_pct": 0.2,
-    "cash_pct": 0.72,
-    "hedge_pct": 0.08,
+    "total_equity_pct": 0.12,
+    "cash_pct": 0.7,
+    "hedge_pct": 0.18,
     "hedge_instrument": "put_option",
     "portfolio_risk_level": "moderate",
     "concentration_risk": false,
-    "diversification_score": 0.4,
+    "diversification_score": 0.35,
     "rebalance_urgency": "this_week",
     "entry_style": "staggered",
-    "market_outlook": "Mixed market regime with NVDA showing strength while AAPL faces significant headwinds. High cash position warranted given RAM alert and single viable position.",
+    "market_outlook": "Mixed regime 지속. Tech 섹터 회피 권고 유효. ISM Services 급락과 Russell 2000 약세로 risk-off 환경. NVDA만 defensive 전략으로 제한적 노출 유지. 고현금 비중으로 변동성 대비.",
     "key_risks": [
-      "Single stock exposure to NVDA",
-      "Tech sector concentration",
-      "AAPL high event risk spillover",
-      "Low diversification with only one active position"
+      "Tech sector macro headwind despite NVDA fundamentals",
+      "Mixed growth signals (strong jobs vs weak services)",
+      "Profit-taking risk after Q4 rally",
+      "AAPL high_event_risk 지속"
     ],
     "reasoning": [
-      "AAPL SELL signal with high risk level and multiple risk flags (high_event_risk, negative_sentiment, oversold_conditions) - zero allocation",
-      "NVDA BUY with moderate risk, undervalued fundamentals (PE 3.3), and bullish researcher consensus - 20% allocation",
-      "RAM alert triggered for AAPL recommending reduce_directional_exposure and add_hedge_position",
-      "High cash reserve (72%) reflects mixed market regime and single viable position",
-      "8% hedge via put_option to protect NVDA position given overall market uncertainty",
-      "Staggered entry for NVDA given sideways technical trend and need for confirmation"
+      "이전 주기 포트폴리오 리스크 moderate 유지 — 방어적 기조 계승",
+      "AAPL 3주 연속 SELL + RAM 고위험 경보 → 배분 0% 유지",
+      "NVDA BUY 신호이나 Tech 섹터 회피 권고로 12%로 제한 (이전 10%에서 소폭 증가)",
+      "Emily 분석: Technology 회피 섹터 명시 — 전체 Tech 노출 최소화",
+      "현금 70% 유지로 whipsaw risk 및 추가 하락 대비",
+      "헤지 18%로 소폭 축소 (이전 20%) — AAPL 포지션 없어 직접 헤지 필요성 감소",
+      "Propagation Audit: NVDA 신호손실 1건 — 확신도 일부 할인 적용"
     ]
   },
   "meetings": {
@@ -2634,7 +2637,25 @@
       "neutral_tickers": [],
       "signal_conflicts": [],
       "debate_skipped": false,
-      "consensus_score": 0.5
+      "consensus_score": 0.5,
+      "llm_debate_used": true,
+      "resolution": {
+        "meeting_type": "MAM",
+        "date": "2024-01-05",
+        "consensus": "split",
+        "key_risks": [
+          "NVDA의 기술적 신호 약세(0.52) - 모멘텀 부족",
+          "AAPL 고위험 이벤트 임박 - 변동성 증가 우려",
+          "AAPL 부정적 심리 + 과매도 상태 - 반등 vs 추가 하락 불확실",
+          "섹터 간 방향성 불일치 - 시장 방향성 모호"
+        ],
+        "recommended_bias": "neutral",
+        "confidence": 0.55,
+        "debate_summary": "NVDA 강한 펀더멘탈(0.68)은 긍정적이나 기술적 약세가 진입 타이밍을 불확실하게 하며, AAPL은 고위험 이벤트 앞 방어적 포지션이 권장되므로 현물 진입보다는 관망 후 명확한 신호 대기가 합리적입니다.",
+        "llm_debate": true
+      },
+      "prior_r_real": null,
+      "prior_performance": null
     },
     "sdm": {
       "date": "2024-01-05",
@@ -2673,9 +2694,9 @@
         "add_hedge_position"
       ],
       "all_risk_flags": [
-        "high_event_risk",
+        "oversold_rsi",
         "negative_sentiment",
-        "oversold_conditions"
+        "high_event_risk"
       ]
     },
     "ram_triggered": true
@@ -2687,13 +2708,13 @@
         "technical.technical_score": 0.022,
         "fundamental.fundamental_score": 0.068,
         "sentiment.sentiment_score": 0.015,
-        "researcher.risk_reward_ratio": 0.18
+        "researcher.risk_reward_ratio": 0.12
       },
       "NVDA": {
         "technical.technical_score": 0.052,
         "fundamental.fundamental_score": 0.068,
         "sentiment.sentiment_score": 0.062,
-        "researcher.risk_reward_ratio": 0.21
+        "researcher.risk_reward_ratio": 0.18
       }
     },
     "propagation_audit": {
@@ -2715,13 +2736,13 @@
       }
     },
     "reliability_scores": {
-      "fundamental": 0.5336,
-      "sentiment": 0.5336,
-      "news": 0.5336,
-      "technical": 0.5336,
-      "researcher": 0.5336,
-      "trader": 0.5336,
-      "risk_manager": 0.5336
+      "fundamental": 0.66972179,
+      "sentiment": 0.66972179,
+      "news": 0.66972179,
+      "technical": 0.66972179,
+      "researcher": 0.66972179,
+      "trader": 0.66972179,
+      "risk_manager": 0.66972179
     },
     "gating_decisions": {
       "fundamental": "full",
@@ -2734,9 +2755,184 @@
     },
     "flags": []
   },
+  "emily": {
+    "agent": "Emily",
+    "date": "2024-01-05",
+    "market_regime": "mixed",
+    "regime_confidence": 0.62,
+    "macro_state": {
+      "rates": 0.35,
+      "inflation": 0.15,
+      "growth": -0.1,
+      "liquidity": 0.05,
+      "risk_sentiment": 0.2
+    },
+    "technical_signal_state": {
+      "trend_direction": "mixed",
+      "continuation_strength": 0.45,
+      "reversal_risk": 0.55,
+      "technical_confidence": 0.58
+    },
+    "sector_preference": [
+      {
+        "sector": "Healthcare",
+        "score": 0.65
+      },
+      {
+        "sector": "Financials",
+        "score": 0.6
+      },
+      {
+        "sector": "Utilities",
+        "score": 0.55
+      },
+      {
+        "sector": "Technology",
+        "score": 0.35
+      }
+    ],
+    "bull_catalysts": [
+      "Strong December jobs report (216k payrolls vs 170k expected)",
+      "VIX remains historically low below 20, indicating contained fear",
+      "Bullish sentiment intact despite early-year weakness",
+      "Bond market pricing avoids deep recession scenario"
+    ],
+    "bear_catalysts": [
+      "ISM Services PMI collapsed to 50.5 vs 52.5 expected",
+      "S&P 500 down 1.1% YTD after 9-week winning streak",
+      "Russell 2000 down ~5% in first 3 trading days",
+      "Fed minutes hawkish; March rate cut odds fell from 85% to 65%",
+      "Tech sector weakness persists; Magnificent Seven concentration risk",
+      "Nomura forecasts mild recession in H2 2024"
+    ],
+    "event_sensitivity_map": [
+      {
+        "event": "FOMC Rate Decision",
+        "risk_level": 0.75
+      },
+      {
+        "event": "Monthly Jobs Report",
+        "risk_level": 0.7
+      },
+      {
+        "event": "ISM PMI Data",
+        "risk_level": 0.65
+      },
+      {
+        "event": "Treasury Yield Moves",
+        "risk_level": 0.6
+      },
+      {
+        "event": "Earnings Season",
+        "risk_level": 0.55
+      }
+    ],
+    "technical_conflict_flags": [
+      "Strong uptrend from Oct 11 (435.64) to Dec 28 (476.69) now reversing sharply",
+      "Price broke below 470 support on Jan 3-5; momentum divergence with low VIX",
+      "Volume surged on down days (121M+ on Oct 19-20, 141M on Dec 15) vs lower volume on recent rallies",
+      "VWAP rejection: price trading below VWAP on Jan 3-5 after sustained above-VWAP period"
+    ],
+    "risk_flags": [
+      "Profit-taking after 16% Q4 2023 rally creates whipsaw risk",
+      "Concentration in Magnificent Seven creates downside leverage for broad market",
+      "Labor market strength conflicts with services sector weakness—mixed growth signal",
+      "Treasury yields rising (10Y at 4%+) pressures high-beta tech valuations",
+      "Small-cap underperformance (-5% YTD) signals risk-off rotation",
+      "Hawkish Fed pivot reduces liquidity support for equities"
+    ],
+    "uncertainty_reasons": [
+      "Conflicting macro signals: strong jobs vs weak services PMI",
+      "Fed communication shift from dovish (Dec) to hawkish (Jan) creates policy uncertainty",
+      "Early-year volatility after extended rally; unclear if dip is buyable or start of correction",
+      "Recession probability rising (Nomura H2 2024 call) but not yet priced in",
+      "No material earnings catalysts yet; guidance will be critical"
+    ],
+    "recommended_market_bias": "neutral"
+  },
+  "dave": {
+    "agent": "Dave",
+    "date": "2024-01-05",
+    "risk_score": 0.42,
+    "risk_components": {
+      "beta": 0.06,
+      "illiquidity": 0.6,
+      "sector_concentration": 1.0,
+      "volatility": 0.05
+    },
+    "signal_conflict_risk": 0.45,
+    "stress_test": {
+      "severity_score": 0.35,
+      "worst_case_drawdown": 0.03
+    },
+    "risk_level": "medium",
+    "recommended_controls": [
+      "Diversify beyond single sector exposure",
+      "Maintain elevated cash position given concentration risk",
+      "Consider adding non-correlated assets before increasing equity allocation",
+      "Monitor NVDA-specific volatility given 100% sector concentration"
+    ],
+    "risk_constraints": {
+      "max_single_sector_weight": 0.3,
+      "max_beta": 1.2,
+      "max_gross_exposure": 0.015
+    },
+    "trigger_risk_alert_meeting": false
+  },
+  "otto": {
+    "agent": "Otto",
+    "date": "2024-01-05",
+    "candidate_policies": [
+      "mean_reversion"
+    ],
+    "adaptive_weights": {
+      "w_sim": 0.5,
+      "w_real": 0.5,
+      "lookback_steps": 10
+    },
+    "selected_policy": "mean_reversion",
+    "allocation": {
+      "equities": 0.15,
+      "hedge": 0.2,
+      "cash": 0.65
+    },
+    "execution_plan": {
+      "entry_style": "staggered",
+      "rebalance_frequency": "weekly",
+      "stop_loss": 0.04
+    },
+    "policy_reasoning_summary": [
+      "Mixed regime with neutral bias supports mean reversion approach over directional bets",
+      "Elevated reversal risk (0.55) warrants defensive positioning with high cash allocation",
+      "Strategy confidence is low (0.26) requiring conservative execution and tight stops",
+      "Multiple failure conditions present: ISM weakness, hawkish Fed, tech sector vulnerability",
+      "Medium risk score (0.42) permits modest equity exposure but not aggressive positioning",
+      "Agent reliability uniform at ~0.67 provides moderate confidence in signal quality",
+      "Staggered entry aligns with execution constraints hint and elevated uncertainty",
+      "Slight increase in hedge allocation from current 18% to 20% given recession forecast risk"
+    ],
+    "approval_status": "approved_with_modification"
+  },
   "errors": [],
-  "prev_date": null,
+  "prev_date": "2024-01-04",
+  "reliability_summary": {
+    "fundamental": 0.66972179,
+    "sentiment": 0.66972179,
+    "news": 0.66972179,
+    "technical": 0.66972179,
+    "researcher": 0.66972179,
+    "trader": 0.66972179,
+    "risk_manager": 0.66972179
+  },
+  "execution_feasibility": {
+    "feasibility_score": 0.606,
+    "rebalance_urgency": 0.0772,
+    "avg_sharpe": 0.7802,
+    "cash_pct": 0.7,
+    "dave_risk_score": 0.5
+  },
+  "uncertainty_mode": false,
   "r_real": 0.064281,
   "r_real_source": "polygon_weighted",
-  "r_real_eval_date": "2024-01-14"
+  "r_real_eval_date": "2024-01-12"
 }

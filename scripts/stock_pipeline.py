@@ -8,10 +8,13 @@ stock_pipeline.py — 개별 종목 TradingAgents 파이프라인
 """
 import argparse
 import json
+import logging
 import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
@@ -102,8 +105,8 @@ def fetch_data(ticker: str, date: str) -> dict:
             if diluted:
                 eps      = round(diluted * 4, 2)   # 연환산
                 pe_ratio = round(current_price / eps, 1) if eps and eps > 0 else None
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"[fetch_data] EPS/PE 계산 실패 ({ticker}): {e}")
 
     return {
         "ticker":        ticker,
@@ -136,6 +139,7 @@ def call_llm(llm, system_prompt: str, user_content: str, schema_class,
         text  = raw if isinstance(raw, str) else str(raw)
         match = re.search(r"\{.*\}", text, re.DOTALL)
         if not match:
+            logger.warning(f"[call_llm] attempt={attempt+1} JSON 블록 없음 ({schema_class.__name__})")
             continue
         try:
             data = json.loads(match.group())
@@ -144,8 +148,10 @@ def call_llm(llm, system_prompt: str, user_content: str, schema_class,
             if return_raw:
                 return result, text, user_content
             return result
-        except Exception:
+        except Exception as e:
+            logger.warning(f"[call_llm] attempt={attempt+1} 파싱 실패 ({schema_class.__name__}): {e}")
             continue
+    logger.warning(f"[call_llm] 3회 모두 실패 — 빈 dict 반환 (schema={schema_class.__name__})")
     if return_raw:
         return {}, "", user_content
     return {}

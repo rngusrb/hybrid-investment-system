@@ -2,6 +2,11 @@
 # Hybrid Multi-Agent Investment System v3.6
 # Claude Code 핸드오프 문서 — Director + Sub-agent Teams용
 
+> **[LEGACY DOCUMENT — 2026-05-12 기준]**
+> 이 문서는 시스템 초기 구축 당시 사용된 핸드오프 문서(역사적 기록)이다.
+> 현재 운영 지침은 **CLAUDE.md → DEV_GUIDE.md → TASKS.md** 를 참조할 것.
+> 이 문서의 Phase/스프린트 계획은 이미 완료되었으며, 현재 상태를 반영하지 않는다.
+
 ---
 
 ## 0. 이 문서의 목적과 사용법

@@ -60,14 +60,6 @@ cold start 기본값은 0.5. 0으로 시작하면 첫 번째 agent가 즉시 HAR
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `agent_reliability.py` | ReliabilityState, AgentReliabilityManager, GatingDecision |
-
----
-
 ## 하네스
 
 ```
@@ -80,9 +72,3 @@ python scripts/harness.py reliability/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-06 | agent_reliability.py | HARD_GATE output nulling 수정, outcome_alignment key 수정 |

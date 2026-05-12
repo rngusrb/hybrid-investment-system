@@ -31,12 +31,15 @@ class SystemStateBC(TypedDict, total=False):
     sim_context: str
     risk_mode: str               # "normal" | "defensive"  (Dave 트리거로 변경)
     dave_rerun_triggered: bool   # True = Backtester가 이미 defensive 재실행됨
+    uncertainty_mode: bool       # True = Emily regime_confidence < 0.55 (uncertainty propagation)
 
     meetings: dict
     meetings_context: str
 
     calibration: dict
     calibration_context: str
+    reliability_summary: dict    # agent별 신뢰도 점수 (bc_calibration_node에서 설정)
+    execution_feasibility: dict  # execution feasibility packet (bc_portfolio_node에서 설정)
 
     otto_feedback: str           # Otto rejected 시 PM에 주입할 거부 이유
     portfolio: dict
@@ -77,10 +80,13 @@ def make_initial_bc_state(
         "sim_context":        "",
         "risk_mode":          "normal",
         "dave_rerun_triggered": False,
+        "uncertainty_mode":   False,
         "meetings":           {},
         "meetings_context":   "",
         "calibration":        {},
         "calibration_context": "",
+        "reliability_summary": {},
+        "execution_feasibility": {},
         "otto_feedback":      "",
         "portfolio":          {},
         "dave_output":        {},

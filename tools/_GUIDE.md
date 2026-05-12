@@ -60,17 +60,6 @@ tools/는 순수 계산만. 데이터는 호출부에서 주입.
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `technical_analyzer.py` | RSI, MACD, Bollinger, momentum |
-| `risk_analyzer.py` | VaR, Beta, HHI, Stress |
-| `sentiment_analyzer.py` | 키워드 감성, 불확실성 |
-| `tool_registry.py` | 도구 등록 및 접근 |
-
----
-
 ## 하네스
 
 ```
@@ -83,9 +72,3 @@ python scripts/harness.py tools/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-02 | tools/ | 초기 구현 완료 — 58개 테스트 통과 |

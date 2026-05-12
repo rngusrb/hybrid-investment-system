@@ -64,16 +64,6 @@ DataManager.preprocess_ohlcv()에서 forward-fill + 이상치 탐지 후 전달.
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `polygon_fetcher.py` | OHLCV + News. point-in-time 강제, staleness 체크 |
-| `data_manager.py` | preprocess, compute_returns, compute_realized_vol, get_sector |
-| `missing_protocol.py` | MissingReason(6종), MissingFlag, DataQualityReport |
-
----
-
 ## 하네스
 
 ```
@@ -86,10 +76,3 @@ python scripts/harness.py data/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-06 | polygon_fetcher.py | Polygon API key 연결, 실제 데이터 검증 완료 |
-| 2026-04-07 | polygon_fetcher.py | 뉴스 article dict에 publisher 필드 추가 (대시보드 출처 표시 버그 수정) |

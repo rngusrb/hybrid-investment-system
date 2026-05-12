@@ -64,20 +64,6 @@ LLM이 "없어도 되나보다"고 판단해 누락시킴.
 
 ---
 
-## 파일 구조
-
-| 파일 | 주요 클래스 |
-|------|------------|
-| `base_schema.py` | AgentBaseOutput, PacketBase, ControlSignal |
-| `emily_schema.py` | EmilyOutput, TechnicalSignalState, EmilyToBobPacket |
-| `bob_schema.py` | BobOutput, CandidateStrategy, SimMetrics, BobToDavePacket |
-| `dave_schema.py` | DaveOutput, RiskComponents, StressTest, RiskConstraints |
-| `otto_schema.py` | OttoOutput, AdaptiveWeights, Allocation, ExecutionPlan |
-| `audit_schema.py` | NodeResult, PropagationAuditLog |
-| `meeting_schema.py` | DebateResolution, WeeklyMarketReport 등 |
-
----
-
 ## 하네스
 
 ```
@@ -106,10 +92,3 @@ required_sync:
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-07 | otto_schema.py | AdaptiveWeights.lookback_steps int 타입 확인 |
-| 2026-04-06 | dave_schema.py | RiskComponents 4개 필드 [0,1] 범위 제약 추가 |

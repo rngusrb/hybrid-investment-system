@@ -53,23 +53,19 @@ leakage_violations에 기록하고 해당 데이터 제외.
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `metrics.py` | 12개 지표 계산 함수 |
-| `backtester.py` | PointInTimeBacktester, BacktestResult |
-| `baselines.py` | 9개 baseline 전략 정의 |
-| `ablation.py` | 12개 ablation 변형, run_ablation_suite() |
-
----
-
 ## 하네스
 
 ```
 tests:
   - tests/unit/test_calibration.py
   - tests/unit/test_simulation.py
+  - tests/unit/test_run_eval.py   ← E-006 평가 파이프라인 (baselines + run_eval)
+```
+
+**평가 실행 스크립트**
+```bash
+python scripts/run_eval.py --start 2024-01-01 --end 2024-03-31
+# → results/eval_YYYY-MM-DD.json 저장 + CR/ARR/SR/MDD 비교표 출력
 ```
 
 ```bash
@@ -77,9 +73,3 @@ python scripts/harness.py evaluation/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-06 | metrics.py | Sortino 공식 수정 (downside std), Calmar MDD=0 처리 |

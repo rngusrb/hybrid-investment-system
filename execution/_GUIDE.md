@@ -50,14 +50,6 @@ PositionSizer 생성자에서 ValueError 발생. 0이나 음수 입력 금지.
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `position_sizer.py` | PositionSizer, OrderPlan, OrderLine |
-
----
-
 ## 하네스
 
 ```
@@ -70,9 +62,3 @@ python scripts/harness.py execution/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-07 | position_sizer.py | 신규 생성 — allocation → shares/stop_loss/slippage |

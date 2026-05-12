@@ -93,22 +93,6 @@ state["risk_score"] = 0.8   # 원본 변경
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `ingest.py` | 데이터 ingestion placeholder |
-| `signal_calibration.py` | Emily/Bob 출력 calibration |
-| `agent_reliability.py` | reliability 업데이트, HARD_GATE 적용 |
-| `risk_check.py` | Dave 리스크 평가 실행 |
-| `policy.py` | Otto 정책 선택, utility 계산 |
-| `execution.py` | 실행 가능성 점수 계산 |
-| `order.py` | PositionSizer로 주문 계획 생성 |
-| `logging_node.py` | outcome 저장, r_real Polygon 조회 시도 |
-| `weekly_strategy.py` | SimulatedTradingEngine + Polygon 연결 |
-
----
-
 ## 하네스
 
 ```
@@ -140,14 +124,3 @@ required:
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-07 | ingest.py | placeholder → PolygonFetcher 실제 호출 연결 |
-| 2026-04-07 | policy.py | placeholder → Emily→Bob→Dave→Otto 실제 에이전트 호출 |
-| 2026-04-07 | policy.py | _compute_utility() 제거 → utils/utility.py 위임 |
-| 2026-04-07 | order.py | PositionSizer 연결 — 실제 주문 수량/손절가 계산 |
-| 2026-04-07 | logging_node.py | r_real Polygon T+1 조회 추가 (fallback: r_sim proxy) |
-| 2026-04-06 | agent_reliability.py | HARD_GATE 실제 output nulling 수정 |

@@ -1,5 +1,9 @@
 """dashboard/utils/formatters.py — UI 표시용 순수 변환 함수 (st.* 없음)."""
+import json
+from pathlib import Path
 from typing import Optional
+
+_RESULTS_DIR = Path(__file__).parent.parent.parent / "results"
 
 
 ACTION_ICON = {"BUY": "🟢 BUY", "SELL": "🔴 SELL", "HOLD": "🟡 HOLD"}
@@ -307,6 +311,62 @@ def build_pipeline_trace(result: dict) -> list[dict]:
     })
 
     return trace
+
+
+# ── B/C 파이프라인 결과 로더 ──────────────────────────────────────────────
+
+
+def list_bc_dates() -> list[str]:
+    """results/ 에서 저장된 날짜 목록 반환 (portfolio.json 있는 디렉토리)."""
+    if not _RESULTS_DIR.exists():
+        return []
+    return sorted(
+        d.name for d in _RESULTS_DIR.iterdir()
+        if d.is_dir() and (d / "portfolio.json").exists()
+    )
+
+
+def load_bc_result(run_date: str) -> dict | None:
+    """results/{run_date}/portfolio.json 로드."""
+    path = _RESULTS_DIR / run_date / "portfolio.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    return None
+
+
+def load_eval_results() -> list[dict]:
+    """results/eval_*.json 전부 로드 (날짜순 오름차순)."""
+    files = sorted(_RESULTS_DIR.glob("eval_*.json")) if _RESULTS_DIR.exists() else []
+    out = []
+    for f in files:
+        try:
+            out.append(json.loads(f.read_text()))
+        except Exception:
+            pass
+    return out
+
+
+def format_approval_badge(status: str) -> str:
+    """approval_status → 이모지 배지 문자열."""
+    return {
+        "approved":             "✅ APPROVED",
+        "rejected":             "❌ REJECTED",
+        "conditional_approval": "⚠️ CONDITIONAL",
+    }.get(status, f"❓ {status}")
+
+
+def format_reliability_rows(reliability_summary: dict) -> list[dict]:
+    """reliability_summary dict → 테이블용 rows."""
+    rows = []
+    for agent, score in reliability_summary.items():
+        if score < 0.35:
+            status = "🔴 GATED"
+        elif score < 0.6:
+            status = "🟡 LOW"
+        else:
+            status = "🟢 OK"
+        rows.append({"에이전트": agent, "신뢰도": f"{score:.3f}", "상태": status})
+    return rows
 
 
 def build_allocation_rows(portfolio: dict) -> list[dict]:

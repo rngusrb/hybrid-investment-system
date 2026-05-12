@@ -14,6 +14,21 @@ sys.path.insert(0, str(ROOT))
 
 from agents.dave import DaveAgent
 
+_URGENCY_MAP = {
+    "none": 0.0, "monitor": 0.1, "low": 0.2,
+    "this_week": 0.5, "medium": 0.5, "soon": 0.6,
+    "high": 0.7, "immediate": 0.9, "urgent": 0.9,
+}
+
+
+def _urgency_to_float(val) -> float:
+    """rebalance_urgency 문자열/숫자 → float 변환. 미지 문자열은 0.5 반환."""
+    if isinstance(val, (int, float)):
+        return float(val)
+    if isinstance(val, str):
+        return _URGENCY_MAP.get(val.strip().lower(), 0.5)
+    return 0.5
+
 _DAVE_CONFIG = {
     "name": "Dave",
     "system_prompt_path": "prompts/dave_system.md",
@@ -94,7 +109,7 @@ def build_dave_input(portfolio: dict, stock_results: list, date: str) -> dict:
             "hedge_pct": round(hedge_pct, 4),
             "n_positions": len(weight_map),
             "portfolio_risk_level": portfolio.get("portfolio_risk_level", "medium"),
-            "rebalance_urgency": round(float(portfolio.get("rebalance_urgency") or 0.5), 4),
+            "rebalance_urgency": round(_urgency_to_float(portfolio.get("rebalance_urgency")), 4),
         },
         "allocations": [
             {

@@ -51,15 +51,6 @@ cold start = 0.5. 0이면 첫 cycle에서 즉시 HARD_GATE됨.
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `calibrator.py` | AgentCalibrator — rolling std / shrinkage / clipping / sector_relative |
-| `run_calibration.py` | Pipeline B/C 어댑터 — Calibration + Audit + Reliability 통합 |
-
----
-
 ## 하네스
 
 ```
@@ -72,10 +63,3 @@ python scripts/harness.py calibration/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-06 | calibrator.py | rolling_std 4가지 method 구현 |
-| 2026-04-14 | run_calibration.py | 신규 (Phase 5): B/C용 Calibration+Audit+Reliability 통합. 36개 테스트 |

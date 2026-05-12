@@ -3,7 +3,7 @@
 ## 역할
 - `stock_pipeline.py`: 단일 종목 TradingAgents 파이프라인 (CLI)
 - `portfolio_pipeline.py`: 멀티 종목 → Portfolio Manager 파이프라인 (CLI)
-- `run_loop.py`: 날짜 범위 반복 실행 루프 + `results/` 저장 (Phase 1)
+- `run_loop.py`: 날짜 범위 반복 실행 루프 — bc_graph.compile() → invoke() 경로 (B/C 파이프라인)
 - `harness.py`: 폴더별 테스트/GC 실행 도구
 
 ## 파일별 책임
@@ -12,7 +12,7 @@
 |------|------|
 | `stock_pipeline.py` | fetch_data + 6 agents 순차 호출 + 출력 |
 | `portfolio_pipeline.py` | 여러 ticker에 stock_pipeline 적용 후 Portfolio Manager 호출 |
-| `run_loop.py` | 날짜 범위 생성 → 각 날짜에 portfolio_pipeline 실행 → results/ 저장 |
+| `run_loop.py` | 날짜 범위 생성 → 각 날짜에 compile_bc_graph() → bc.invoke() 실행 → results/ 저장 |
 | `harness.py` | pytest 래퍼 + GC + staleness check |
 
 ## 금지사항
@@ -57,9 +57,19 @@ trader_output["cash_pct"] = 0.3  # 종목마다 따로 잡으면 안 됨
 # ❌ 금지 — LLM 무한 루프
 for attempt in range(100): ...
 
-# ✅ max 3회, 실패 시 빈 dict 반환
-for attempt in range(3): ...
+# ❌ 금지 — 로그 없이 조용히 빈 dict 반환 (Silent Failure)
+except Exception:
+    continue
+return {}
+
+# ✅ max 3회, 각 실패 로깅 후 빈 dict 반환
+except Exception as e:
+    logger.warning(f"[call_llm] attempt={attempt+1} 실패: {e}")
+    continue
+logger.warning("[call_llm] 3회 모두 실패 — 빈 dict 반환")
+return {}
 ```
+**사고 이력**: CLAUDE.md Silent Failure 금지 원칙과 충돌 — except Exception: pass 패턴은 반드시 로깅 필수.
 
 ### 3. stock_pipeline 함수를 portfolio_pipeline에서 import해서 재사용할 것
 ```python
@@ -93,15 +103,3 @@ python scripts/run_loop.py AAPL NVDA --start 2024-01-01 --end 2024-03-31 --dry-r
 python scripts/run_loop.py AAPL NVDA TSLA --start 2024-01-01 --end 2024-03-31
 python scripts/run_loop.py AAPL --start 2024-01-01 --end 2024-06-30 --freq daily --resume
 ```
-
-## 최근 변경
-
-| 날짜 | 변경 내용 |
-|------|----------|
-| 2026-04-07 | stock_pipeline.py 최초 생성 (4 Analysts + Researcher + Trader) |
-| 2026-04-07 | Risk Manager 추가 (3인 토론: Aggressive/Conservative/Neutral) |
-| 2026-04-07 | portfolio_pipeline.py 추가 (멀티 종목 → Portfolio Manager) |
-| 2026-04-07 | fetch_data() 재무제표 이중 필터 적용: period_of_report_date_lte(API) + _financials_available(Python). filing_date=None 우회 버그 수정 |
-| 2026-04-14 | run_loop.py 추가 (Phase 1 루프): 날짜 범위 반복 실행 + results/ 저장 + resume/dry-run 지원. 26개 단위 테스트 추가 |
-| 2026-04-17 | portfolio_pipeline.py: exception logging 추가 (try/except 3곳 — JSON없음/파싱실패). 14개 단위 테스트(test_portfolio_pipeline.py) 추가 |
-| 2026-04-17 | prompts/portfolio_manager_system.md: ## Historical Performance Context 섹션 추가 — r_real 해석 지침, streak 경고, action_changed 처리, reasoning 의무 언급 |

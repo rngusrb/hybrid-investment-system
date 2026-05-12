@@ -26,10 +26,16 @@ def bc_calibration_node(state: dict) -> dict:
         for flag in flags[:3]:
             logger.info(f"[BC_CALIBRATION] {flag}")
 
+        reliability_summary = cal_result.get("reliability_scores", {})
+        below_floor = [a for a, s in reliability_summary.items() if isinstance(s, (int, float)) and s < 0.35]
+        if below_floor:
+            logger.warning(f"[BC_CALIBRATION] reliability floor 이하: {below_floor}")
+
         return {
             "calibration":        cal_result,
             "calibration_context": calibration_context,
             "gating":             new_gating,
+            "reliability_summary": reliability_summary,
             "errors":             errors,
         }
 

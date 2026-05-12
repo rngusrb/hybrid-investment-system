@@ -2,125 +2,148 @@
 
 TradingAgents × QuantAgents × Expert Investment Teams
 with Temporal Cadence, Dual Reward Policy, Retrieval-Grounded Meetings,
-Technical Signal Priority, Agent Gating, and Structured Debate-Controlled Execution.
+Technical Signal Priority, Agent Reliability Gating, Uncertainty Propagation, and Structured Debate-Controlled Execution.
 
 ---
 
 ## Architecture
 
+### 두 파이프라인이 공존
+
+| 파이프라인 | 진입점 | 역할 |
+|-----------|--------|------|
+| **Pipeline A** (SPY) | `python orchestrator.py` | Emily→Bob→Dave→Otto LangGraph, 단일 SPY 포트폴리오 |
+| **Pipeline B/C** (운영 루프) | `python scripts/run_loop.py` | 개별 종목 × 날짜 범위, LangGraph 상태 기계 |
+
+---
+
+### Pipeline B/C — 핵심 노드 흐름
+
+```
+BC_EMILY → BC_STOCK_ANALYSIS → BC_BACKTESTER → BC_MEETINGS → BC_CALIBRATION
+→ BC_RELIABILITY_UPDATE → BC_PORTFOLIO_MANAGER → BC_DAVE
+→ [Dave risk > 0.7] → BC_BACKTESTER_DEFENSIVE → BC_PORTFOLIO_MANAGER → BC_DAVE
+→ BC_OTTO
+→ [Otto rejected, retry ≤ 2] → BC_PORTFOLIO_MANAGER
+→ END
+```
+
 ### 4 Agents
 
-| Agent | Role | Input | Key Constraint |
-|-------|------|-------|----------------|
-| **Emily** | Market Analyst | Raw market data, news, macro | Technical signal as independent top-level field |
-| **Bob** | Strategy Analyst | Emily packet | sim_window required; technical_confidence ≥ 0.6 → must include technical-aligned candidate |
-| **Dave** | Risk Analyst | Bob packet | R_score > 0.75 → trigger_risk_alert_meeting = True (hard) |
-| **Otto** | Fund Manager | Official packets only | Raw data access blocked (frozenset hard-coded) |
+| Agent | Role | Key Constraint |
+|-------|------|----------------|
+| **Emily** | Market regime 분석 | `regime_confidence < 0.55` → uncertainty_mode 전파 |
+| **Dave** | 포트폴리오 리스크 평가 | `risk_score > 0.7` → defensive 재실행 트리거 |
+| **Otto** | 최종 승인 게이트 | reliability floor < 0.35 → conditional_approval 강제 |
+| **Portfolio Manager** | 배분 결정 | execution_feasibility < 0.4 → staggered 강제 |
 
 ### 3 Meeting Types
 
 | Meeting | Cadence | Key Output |
 |---------|---------|------------|
-| **Weekly Market Analysis** | Every Friday | WeeklyMarketReport + DebateResolution + SignalConflictResolution |
-| **Weekly Strategy Development** | After market analysis | WeeklyStrategySet + ExecutionFeasibilityPacket (separate from strategy) |
-| **Risk Alert** | Event-driven (R_score > 0.75) | RiskAdjustedUtility calculation + emergency controls + risk_override_record |
-
----
-
-## Design Principles (Non-Negotiable)
-
-1. **Fine-grained task contract** —업무 계약이 agent 수보다 중요
-2. **Technical signal priority** — `technical_signal_state`는 EmilyOutput의 독립 최상위 필드
-3. **Agent conditional gating** — cold start 0.5, floor 0.35 이하 → hard gating
-4. **Propagation audit** — signal 손실/모순을 실제 비교 로직으로 감지
-5. **Calibration layer** — raw score 상위 전달 전 rolling_std/shrinkage/clipping 통과
-6. **LangGraph flexibility** — state 기반 conditional edge, skip/retry 실제 작동
-
----
-
-## Key Implementation Decisions
-
-- **Otto raw data 차단**: `_FORBIDDEN_RAW_FIELDS` frozenset으로 run() 진입 시 즉시 차단
-- **Selected strategy ≠ execution order**: `BobToExecutionPacket` 별도 생성 강제
-- **Debate는 구조체로 저장**: `DebateResolution` Pydantic 모델, 장식용 텍스트 금지
-- **Propagation audit**: token overlap + contradiction detection + semantic similarity
-- **Retrieval validity**: Sim × RecencyDecay × RegimeMatch × DataQuality × OutcomeReliability (5개 factor 곱)
-- **SharedLedger**: ALLOWED/FORBIDDEN type frozenset, raw chain-of-thought 저장 불가
+| **Market Analysis** | 매주 금요일 | WeeklyMarketReport + DebateResolution |
+| **Strategy Development** | Market Analysis 이후 | WeeklyStrategySet + ExecutionFeasibilityPacket |
+| **Risk Alert** | 이벤트 기반 (risk_score > 0.75) | RiskAdjustedUtility + emergency controls |
 
 ---
 
 ## Setup
 
 ```bash
-# 1. API keys 설정
+# 1. API keys
 cp .env.example .env
 # ANTHROPIC_API_KEY, OPENAI_API_KEY, POLYGON_API_KEY 입력
 
 # 2. 의존성 설치
 pip install -r requirements.txt
 
-# 3. (선택) provider 변경
-# config/system_config.yaml의 llm.provider: "anthropic" | "openai" | "ollama"
-
-# 4. 실행
-python orchestrator.py
+# 3. git hook 설치 (커밋 시 harness all 자동 강제)
+sh scripts/install_git_hooks.sh
 ```
 
 ---
 
 ## Usage
 
-```python
-from orchestrator import Orchestrator
-
-orch = Orchestrator()
-
-# Daily cycle
-result = orch.run_daily_cycle("2024-01-15")
-
-# Weekly cycle (Friday)
-result = orch.run_weekly_cycle("2024-01-19")
-
-# Risk alert (event-driven)
-result = orch.run_risk_alert_cycle("2024-01-15", trigger_reason="risk_score=0.82")
-
-# Ledger 확인
-print(orch.get_ledger_summary())
-```
-
----
-
-## Testing
+### Pipeline B/C — 날짜 범위 운영 루프 (주력)
 
 ```bash
-# 전체 테스트 (323개)
-pytest tests/ -v
+# 주간 실행 (매주 금요일)
+python scripts/run_loop.py AAPL NVDA TSLA --start 2024-01-01 --end 2024-03-31
 
-# 단위 테스트만
-pytest tests/unit/ -v
+# 일간 실행
+python scripts/run_loop.py AAPL --start 2024-01-01 --end 2024-03-31 --freq daily
 
-# 통합 테스트만
-pytest tests/integration/ -v
+# 이어서 실행 (이미 저장된 날짜 스킵)
+python scripts/run_loop.py AAPL NVDA --start 2024-01-01 --end 2024-03-31 --resume
+```
+
+### Pipeline A — SPY 포트폴리오 (레거시 호환)
+
+```bash
+python orchestrator.py
+```
+
+### 평가
+
+```bash
+# 시스템 vs 베이스라인 (CR / ARR / SR / MDD)
+python scripts/run_eval.py --start 2024-01-01 --end 2024-03-31
+# → results/eval_YYYY-MM-DD.json 저장
 ```
 
 ---
 
-## Evaluation
+## Testing & Verification
 
-```python
-from evaluation.metrics import compute_all_metrics
-from evaluation.backtester import PointInTimeBacktester
-from evaluation.baselines import list_baselines      # 9개
-from evaluation.ablation import list_ablations, run_ablation_suite  # 12개
+```bash
+# 전체 검증 (pytest + Doc Lint) — 완료 기준
+sh scripts/verify.sh
 
-# Ablation suite
-results = run_ablation_suite()  # 12개 변형 config 반환
+# 또는
+python scripts/harness.py all
+
+# 특정 폴더만
+python scripts/harness.py graph/
+python scripts/harness.py evaluation/
 ```
+
+현재 테스트: **1016 passed**
+
+---
+
+## Key Design Decisions
+
+- **Uncertainty Propagation**: Emily confidence → lookback 확장 → Dave stress multiplier → Otto equity shrinkage
+- **Agent Reliability Gating**: EMA 기반 신뢰도, floor 0.35 이하 → Otto conditional_approval 강제
+- **Execution Feasibility**: Sharpe/Cash/Risk 복합 점수, < 0.4 → staggered execution 강제
+- **Retrieval Validity**: Sim × RecencyDecay × RegimeMatch × DataQuality × OutcomeReliability (5-factor)
+- **Otto raw data 차단**: `_FORBIDDEN_RAW_FIELDS` frozenset, run() 진입 시 즉시 차단
+- **Point-in-time safe**: 백테스터/평가 모두 as_of 이후 데이터 접근 차단
 
 ---
 
 ## Project Structure
 
-See `CLAUDE_CODE_BRIEFING.md` for full directory layout.
-See `DESIGN_SPEC_v3.6.md` for complete system design specification.
-See `PROGRESS_LOG.md` for implementation history and design decisions.
+```
+graph/          — LangGraph 상태 기계 (bc_graph.py, bc_state.py, nodes/)
+agents/         — Emily, Bob, Dave, Otto (Pipeline A)
+memory/         — 메모리 레이어 (registry, retrieval, run_memory, outcome_filler)
+simulation/     — 전략 백테스터 (6개 전략 pool)
+calibration/    — 신뢰도 감사 + AgentReliabilityManager
+evaluation/     — 성과 지표, PointInTimeBacktester, baselines
+scripts/        — run_loop.py, run_eval.py, harness.py, verify.sh
+results/        — 주기별 portfolio.json, reliability_state.json
+docs/sprints/   — 완료 스프린트 아카이브
+```
+
+### 문서 계층
+
+| 파일 | 역할 |
+|------|------|
+| `CLAUDE.md` | 핵심 원칙 + 완료 스프린트 목록 |
+| `DEV_GUIDE.md` | 전체 아키텍처, 데이터 흐름, 금지사항 색인 |
+| `WORKFLOW.md` | 태스크 lifecycle, 이슈 심각도 기준 |
+| `TASKS.md` | 현재 스프린트 태스크 (최대 3개) |
+| `BACKLOG.md` | 대기 태스크 + 이슈 테이블 |
+| `DESIGN_SPEC_v3.6.md` | 시스템 설계 원본 (논문급 스펙) |

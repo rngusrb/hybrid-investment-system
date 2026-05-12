@@ -6,15 +6,6 @@
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `utility.py` | Utility 공식 단일 소스. policy.py + otto.py 모두 여기서 가져옴 |
-| `forward_return.py` | Polygon T+1 실제 수익률 계산. 실패 시 None 반환 |
-
----
-
 ## 핵심 패턴
 
 ### utility.py — 단일 소스 원칙
@@ -69,10 +60,3 @@ python scripts/harness.py utils/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-07 | utility.py | 신규 생성 — policy.py _compute_utility() + otto.py compute_utility() 통합 |
-| 2026-04-07 | forward_return.py | 신규 생성 — Polygon T+1 실제 수익률 계산 |

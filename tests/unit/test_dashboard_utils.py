@@ -1,13 +1,17 @@
 """tests/unit/test_dashboard_utils.py — dashboard/utils 단위 테스트."""
+import json
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+import dashboard.utils.formatters as fmts
 from dashboard.utils.formatters import (
     action_icon, risk_icon, pct_str, price_str,
     agent_flow_steps, extract_articles_table,
     extract_ohlcv_table, build_allocation_rows,
     build_pipeline_trace,
+    list_bc_dates, load_bc_result, load_eval_results,
+    format_approval_badge, format_reliability_rows,
 )
 
 
@@ -216,3 +220,99 @@ class TestBuildPipelineTrace:
     def test_empty_result_no_crash(self):
         trace = build_pipeline_trace({})
         assert len(trace) == 8  # 항상 8단계
+
+
+class TestListBcDates:
+    def test_returns_sorted_list(self, tmp_path, monkeypatch):
+        (tmp_path / "2024-01-12").mkdir()
+        (tmp_path / "2024-01-12" / "portfolio.json").write_text("{}")
+        (tmp_path / "2024-01-05").mkdir()
+        (tmp_path / "2024-01-05" / "portfolio.json").write_text("{}")
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        dates = list_bc_dates()
+        assert dates == ["2024-01-05", "2024-01-12"]
+
+    def test_excludes_dirs_without_portfolio_json(self, tmp_path, monkeypatch):
+        (tmp_path / "2024-01-05").mkdir()  # no portfolio.json
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        assert list_bc_dates() == []
+
+    def test_returns_empty_when_results_dir_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path / "nonexistent")
+        assert list_bc_dates() == []
+
+
+class TestLoadBcResult:
+    def test_loads_json(self, tmp_path, monkeypatch):
+        d = tmp_path / "2024-01-05"
+        d.mkdir()
+        (d / "portfolio.json").write_text(json.dumps({"date": "2024-01-05", "tickers": ["AAPL"]}))
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        result = load_bc_result("2024-01-05")
+        assert result["date"] == "2024-01-05"
+        assert result["tickers"] == ["AAPL"]
+
+    def test_returns_none_for_missing_date(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        assert load_bc_result("2024-99-99") is None
+
+    def test_returns_none_when_results_dir_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path / "nonexistent")
+        assert load_bc_result("2024-01-05") is None
+
+
+class TestLoadEvalResults:
+    def test_loads_all_eval_files(self, tmp_path, monkeypatch):
+        (tmp_path / "eval_2024-01-05.json").write_text(json.dumps({"period": "A"}))
+        (tmp_path / "eval_2024-03-22.json").write_text(json.dumps({"period": "B"}))
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        results = load_eval_results()
+        assert len(results) == 2
+        periods = [r["period"] for r in results]
+        assert "A" in periods and "B" in periods
+
+    def test_returns_empty_when_no_eval_files(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path)
+        assert load_eval_results() == []
+
+    def test_returns_empty_when_results_dir_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(fmts, "_RESULTS_DIR", tmp_path / "nonexistent")
+        assert load_eval_results() == []
+
+
+class TestFormatApprovalBadge:
+    def test_approved(self):
+        assert format_approval_badge("approved") == "✅ APPROVED"
+
+    def test_rejected(self):
+        assert format_approval_badge("rejected") == "❌ REJECTED"
+
+    def test_conditional(self):
+        assert format_approval_badge("conditional_approval") == "⚠️ CONDITIONAL"
+
+    def test_unknown_status(self):
+        badge = format_approval_badge("pending")
+        assert "pending" in badge
+        assert "❓" in badge
+
+
+class TestFormatReliabilityRows:
+    def test_gated_below_floor(self):
+        rows = format_reliability_rows({"fundamental": 0.30})
+        assert rows[0]["상태"] == "🔴 GATED"
+        assert rows[0]["신뢰도"] == "0.300"
+
+    def test_low_between_floor_and_threshold(self):
+        rows = format_reliability_rows({"sentiment": 0.50})
+        assert rows[0]["상태"] == "🟡 LOW"
+
+    def test_ok_above_threshold(self):
+        rows = format_reliability_rows({"technical": 0.80})
+        assert rows[0]["상태"] == "🟢 OK"
+
+    def test_multiple_agents(self):
+        rel = {"fundamental": 0.30, "sentiment": 0.50, "technical": 0.80}
+        rows = format_reliability_rows(rel)
+        assert len(rows) == 3
+        agents = [r["에이전트"] for r in rows]
+        assert "fundamental" in agents

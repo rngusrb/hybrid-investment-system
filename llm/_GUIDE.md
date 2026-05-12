@@ -53,18 +53,6 @@ base_agent.py에서 차단하지만, provider에서도 이상한 응답은 조�
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `base.py` | BaseLLMProvider ABC |
-| `factory.py` | config 읽고 provider 인스턴스 반환 |
-| `providers/anthropic_provider.py` | Claude API (기본 사용) |
-| `providers/openai_provider.py` | OpenAI API |
-| `providers/ollama_provider.py` | 로컬 Ollama |
-
----
-
 ## 하네스
 
 ```
@@ -77,9 +65,3 @@ python scripts/harness.py llm/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-01 | providers/ | 3개 provider 초기 구현 |

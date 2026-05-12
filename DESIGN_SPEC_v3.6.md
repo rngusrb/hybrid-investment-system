@@ -1,6 +1,11 @@
 # DESIGN_SPEC_v3.6.md
 # 코덱스용 최종 통합 설계 명령서 v3.6
 
+> **[설계 원본 — 구현 기준 문서 아님]**
+> 이 파일은 시스템 설계 의도와 스펙을 기록한 원본이다.
+> 실제 구현 현황(노드 구성, 에이전트 제약, 상태 필드 등)은 **DEV_GUIDE.md** 를 기준으로 한다.
+> 이 문서와 DEV_GUIDE.md가 충돌할 경우 **DEV_GUIDE.md가 우선**한다.
+
 **프로젝트명**: Hybrid Multi-Agent Investment System v3.6
 
 **부제**: TradingAgents × QuantAgents × Expert Investment Teams with Temporal Cadence, Dual Reward Policy, Retrieval-Grounded Meetings, Technical Signal Priority, Agent Gating, and Structured Debate-Controlled Execution

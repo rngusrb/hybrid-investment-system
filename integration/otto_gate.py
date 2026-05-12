@@ -16,6 +16,21 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+_URGENCY_MAP = {
+    "none": 0.0, "monitor": 0.1, "low": 0.2,
+    "this_week": 0.5, "medium": 0.5, "soon": 0.6,
+    "high": 0.7, "immediate": 0.9, "urgent": 0.9,
+}
+
+
+def _urgency_to_float(val) -> float:
+    """rebalance_urgency 문자열/숫자 → float 변환. 미지 문자열은 0.5 반환."""
+    if isinstance(val, (int, float)):
+        return float(val)
+    if isinstance(val, str):
+        return _URGENCY_MAP.get(val.strip().lower(), 0.5)
+    return 0.5
+
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
@@ -135,7 +150,7 @@ def build_otto_input(
         "risk_constraints": risk_constraints,
         "trigger_risk_alert": trigger_risk_alert,
         # Execution (portfolio 정보 기반)
-        "rebalance_urgency": float(portfolio.get("rebalance_urgency", 0.5)),
+        "rebalance_urgency": _urgency_to_float(portfolio.get("rebalance_urgency", 0.5)),
         "execution_constraints_hint": [portfolio.get("entry_style", "staggered")],
         # Portfolio 요약 (Otto의 approval_status 결정 근거)
         "portfolio_summary": {

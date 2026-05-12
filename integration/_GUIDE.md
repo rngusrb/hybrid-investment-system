@@ -47,19 +47,20 @@ build_otto_input()이 raw field를 포함하면 OttoAgent._block_raw_data_access
 ### ❌ Dave 실행을 Portfolio Manager 이전에 하지 말 것
 Dave 입력은 portfolio.allocations를 필요로 함. Portfolio Manager 완료 전에 호출하면 빈 dict 반환.
 
+### ❌ rebalance_urgency를 float()로 직접 변환 금지
+```python
+# ❌ 금지 — LLM이 문자열로 반환 시 ValueError
+float(portfolio.get("rebalance_urgency", 0.5))  # 'monitor', 'this_week' 등 crash
+
+# ✅ _urgency_to_float() 헬퍼 사용 (dave_context.py / otto_gate.py에 정의됨)
+_urgency_to_float(portfolio.get("rebalance_urgency"))
+```
+**사고 이력 (2026-05-12)**: Portfolio Manager LLM이 `rebalance_urgency`를 `"monitor"`, `"this_week"`, `"immediate"` 같은 문자열로 반환 → `float()` 변환 시 ValueError → BC_DAVE, BC_OTTO 전부 실패.
+매핑: none=0.0 / monitor=0.1 / low=0.2 / this_week,medium=0.5 / soon=0.6 / high=0.7 / immediate,urgent=0.9
+
 ### ❌ graceful skip 제거 금지
 emily_output={}, portfolio={} 등 빈 입력 시 ({}, "") 반환. 호출자가 try/except로 감싸도 되지만
 이 모듈 자체는 예외 대신 빈 결과를 반환해야 run_loop의 graceful degradation이 유지됨.
-
----
-
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `emily_context.py` | EmilyAgent 실행 + format_emily_for_prompt() |
-| `dave_context.py` | build_dave_input() + DaveAgent 실행 + format_dave_for_prompt() |
-| `otto_gate.py` | build_otto_input() + OttoAgent 실행 + apply_otto_decision() |
 
 ---
 
@@ -76,11 +77,3 @@ python scripts/harness.py integration/
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-17 | emily_context.py | 신규: EmilyAgent B/C 어댑터 (TASK-001) |
-| 2026-04-17 | dave_context.py | 신규: DaveAgent 포트폴리오 리스크 어댑터 (TASK-002) |
-| 2026-04-17 | otto_gate.py | 신규: OttoAgent 승인 게이트 + compute_adaptive_weights 연결 (TASK-003) |

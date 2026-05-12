@@ -74,6 +74,7 @@ DEFAULT_MAP = {
     "evaluation": [
         "tests/unit/test_calibration.py",
         "tests/unit/test_simulation.py",
+        "tests/unit/test_run_eval.py",
     ],
     "calibration": [
         "tests/unit/test_calibration.py",
@@ -301,6 +302,166 @@ def run_gc(folder_key: str, guide_path: Path) -> list[dict]:
     return findings
 
 
+META_PATH = ROOT / "meta" / "project_state.yaml"
+
+_PH = r'(?!your_|test[-_]|example|placeholder|<|xxx)'  # placeholder 제외
+_SECRET_PATTERNS = [
+    (r'sk-[A-Za-z0-9]{20,}',                                                          "sk- 키 하드코딩"),
+    (r'ANTHROPIC_API_KEY\s*[=:]\s*["\']?' + _PH + r'[A-Za-z0-9_\-]{10,}',           "ANTHROPIC_API_KEY 하드코딩"),
+    (r'OPENAI_API_KEY\s*[=:]\s*["\']?' + _PH + r'[A-Za-z0-9_\-]{10,}',             "OPENAI_API_KEY 하드코딩"),
+    (r'polygon_api_key\s*[=:]\s*["\']?' + _PH + r'[A-Za-z0-9_\-]{10,}',            "Polygon API 키 하드코딩"),
+    (r'POLYGON_API_KEY\s*[=:]\s*["\']?' + _PH + r'[A-Za-z0-9_\-]{10,}',            "POLYGON_API_KEY 하드코딩"),
+]
+
+
+def run_doc_lint() -> list[dict]:
+    """
+    문서 정합성 검사.
+    - TASKS.md: completed 본문 존재 시 FAIL, 태스크 수 4개 이상 FAIL
+    - _GUIDE.md: 최근 변경 섹션 존재 시 WARNING
+    - 전체 .py: 시크릿 패턴 탐지
+    """
+    findings = []
+
+    # ── TASKS.md 검사 ────────────────────────────────────────────────
+    tasks_path = ROOT / "TASKS.md"
+    if tasks_path.exists():
+        tasks_text = tasks_path.read_text()
+
+        # completed 본문 존재 여부
+        if re.search(r'\*\*상태\*\*:\s*completed', tasks_text):
+            findings.append({
+                "level": "FAIL",
+                "type": "tasks_completed_body",
+                "file": "TASKS.md",
+                "message": "completed 태스크 본문이 TASKS.md에 남아있음 — docs/sprints/로 이동 필요",
+            })
+
+        # 활성 태스크 수 (## X-NNN: 패턴)
+        active_tasks = re.findall(r'^## [A-Z]-\d{3}:', tasks_text, re.MULTILINE)
+        if len(active_tasks) > 3:
+            findings.append({
+                "level": "FAIL",
+                "type": "tasks_overflow",
+                "file": "TASKS.md",
+                "message": f"활성 태스크 {len(active_tasks)}개 — 최대 3개 초과",
+            })
+
+        # 아카이브 링크 존재 검증
+        archive_links = re.findall(r'`(docs/sprints/[^`]+\.md)`', tasks_text)
+        for link in archive_links:
+            if not (ROOT / link).exists():
+                findings.append({
+                    "level": "FAIL",
+                    "type": "broken_archive_link",
+                    "file": "TASKS.md",
+                    "message": f"아카이브 링크 깨짐: {link}",
+                })
+
+    # ── _GUIDE.md 최근 변경 섹션 ─────────────────────────────────────
+    for guide in ROOT.glob("**/_GUIDE.md"):
+        if "## 최근 변경" in guide.read_text():
+            findings.append({
+                "level": "WARN",
+                "type": "guide_recent_changes",
+                "file": str(guide.relative_to(ROOT)),
+                "message": "'## 최근 변경' 섹션 존재 — 제거 필요",
+            })
+
+    # ── meta/project_state.yaml 검증 ────────────────────────────────
+    if META_PATH.exists():
+        try:
+            import yaml
+            meta = yaml.safe_load(META_PATH.read_text())
+
+            # entry_points 파일 존재 확인
+            for name, path in (meta.get("entry_points") or {}).items():
+                if not (ROOT / path).exists():
+                    findings.append({
+                        "level": "FAIL",
+                        "type": "missing_entry_point",
+                        "file": path,
+                        "message": f"entry_points.{name} 파일 없음 — meta/project_state.yaml 갱신 필요",
+                    })
+
+            # sprint_archive_dir 존재 확인
+            archive_dir = meta.get("sprint_archive_dir")
+            if archive_dir and not (ROOT / archive_dir).exists():
+                findings.append({
+                    "level": "WARN",
+                    "type": "missing_archive_dir",
+                    "file": archive_dir,
+                    "message": "sprint_archive_dir 디렉토리 없음",
+                })
+
+            # folder_guides 파일 존재 확인
+            for folder, guide in (meta.get("folder_guides") or {}).items():
+                if not (ROOT / guide).exists():
+                    findings.append({
+                        "level": "WARN",
+                        "type": "missing_folder_guide",
+                        "file": guide,
+                        "message": f"folder_guides.{folder} _GUIDE.md 없음",
+                    })
+        except ImportError:
+            pass  # yaml 없으면 검사 스킵
+        except Exception as e:
+            findings.append({
+                "level": "WARN",
+                "type": "meta_parse_error",
+                "file": "meta/project_state.yaml",
+                "message": f"파싱 오류: {e}",
+            })
+
+    # ── 시크릿 패턴 탐지 (.py / .yaml / .yml / .env* / .md) ──────────
+    # .env는 로컬 전용 파일이므로 스킵 — 소스코드/설정 파일 하드코딩만 탐지
+    _SECRET_EXTS = {"*.py", "*.yaml", "*.yml", "*.md"}
+    _SKIP_DIRS = {"__pycache__", ".venv", "venv", "site-packages", ".git", "tests"}
+    secret_files: list[Path] = []
+    for ext in _SECRET_EXTS:
+        secret_files.extend(ROOT.rglob(ext))
+
+    for target_file in secret_files:
+        if any(skip in target_file.parts for skip in _SKIP_DIRS):
+            continue
+        try:
+            content = target_file.read_text()
+        except Exception:
+            continue
+        for pattern, desc in _SECRET_PATTERNS:
+            if re.search(pattern, content):
+                findings.append({
+                    "level": "FAIL",
+                    "type": "secret_pattern",
+                    "file": str(target_file.relative_to(ROOT)),
+                    "message": f"시크릿 하드코딩 의심: {desc}",
+                })
+
+    return findings
+
+
+def print_doc_lint(findings: list[dict]) -> bool:
+    """doc lint 결과 출력. FAIL 존재 시 False 반환."""
+    print(f"\n{'─'*40}")
+    print("  Doc Lint")
+    if not findings:
+        print("  ✅ 문제 없음")
+        return True
+
+    fails = [f for f in findings if f["level"] == "FAIL"]
+    warns = [f for f in findings if f["level"] == "WARN"]
+
+    for f in fails:
+        print(f"\n  ❌ [{f['type']}] {f['file']}")
+        print(f"     {f['message']}")
+    for f in warns:
+        print(f"\n  ⚠️  [{f['type']}] {f['file']}")
+        print(f"     {f['message']}")
+
+    print(f"\n  결과: FAIL {len(fails)}개  WARN {len(warns)}개")
+    return len(fails) == 0
+
+
 def load_cache(folder_key: str) -> dict:
     cache_file = CACHE_DIR / f"{folder_key.replace('/', '_')}.json"
     if cache_file.exists():
@@ -340,6 +501,7 @@ def main():
     parser.add_argument("target", help="폴더 또는 파일 경로 (예: agents/, agents/bob.py, all)")
     parser.add_argument("--gc", action="store_true", help="GC 체크 포함 (drift/forbidden 패턴)")
     parser.add_argument("--diff", action="store_true", help="이전 실행 결과와 비교")
+    parser.add_argument("--lint", action="store_true", help="doc lint 실행 (문서 정합성 검사)")
     args = parser.parse_args()
 
     print(f"\n{'='*60}")
@@ -348,9 +510,27 @@ def main():
 
     # 전체 실행
     if args.target == "all":
+        # doc lint 먼저
+        lint_findings = run_doc_lint()
+        lint_ok = print_doc_lint(lint_findings)
+
+        print(f"\n{'─'*40}")
+        print("  pytest all")
         cmd = ["python", "-m", "pytest", "tests/", "-q"]
         result = subprocess.run(cmd, cwd=ROOT)
+
+        print(f"\n{'='*60}")
+        if not lint_ok:
+            print("  ❌ doc lint 실패 — 위 항목 수정 후 재실행")
+            sys.exit(1)
         sys.exit(result.returncode)
+
+    # --lint 단독 실행
+    if args.lint and args.target != "all":
+        lint_findings = run_doc_lint()
+        lint_ok = print_doc_lint(lint_findings)
+        print(f"\n{'='*60}\n")
+        sys.exit(0 if lint_ok else 1)
 
     folder_key, guide_path = resolve_target(args.target)
 
@@ -385,6 +565,14 @@ def main():
     # diff 출력
     if args.diff and prev_result:
         print_diff(prev_result, result)
+
+    # doc lint
+    if args.lint:
+        lint_findings = run_doc_lint()
+        lint_ok = print_doc_lint(lint_findings)
+        if not lint_ok:
+            print(f"\n{'='*60}\n")
+            sys.exit(1)
 
     # GC 체크
     if args.gc:

@@ -16,7 +16,6 @@
               python scripts/harness.py <폴더>/
 5. 실패 시  → 원인 파악 → 코드 수정 → 4번으로 (max 10회)
 6. 통과 시  → _GUIDE.md ## 금지사항에 새 패턴 추가 (사고 이력 포함)
-              _GUIDE.md ## 최근변경 섹션 업데이트
               → 6번 완료 전까지 "완료" 선언 금지
 7. GC 체크  → python scripts/harness.py <폴더>/ --gc
 ```
@@ -31,9 +30,9 @@
 
 ---
 
-## 시스템 전체 구조 (2026-04-07 기준)
+## 시스템 전체 구조 (2026-05-12 기준)
 
-이 프로젝트는 **2개의 독립적인 파이프라인**이 공존한다.
+이 프로젝트는 **3개의 실행 경로**가 공존한다: Pipeline A (SPY 분석), B/C 운영 루프 (bc_graph LangGraph), 그리고 단일 종목 CLI (stock_pipeline).
 
 ---
 
@@ -130,62 +129,90 @@ print_results() (터미널 출력)
 
 ---
 
-### 파이프라인 C — 멀티 종목 포트폴리오 시스템
+### 파이프라인 B/C — LangGraph 상태 기계 (2026-04-28 전환)
+
+날짜 범위 반복 실행은 `run_loop.py` → `bc_graph.py` 로 통합됐다.
 
 ```
-python scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15
+python scripts/run_loop.py AAPL NVDA TSLA --start 2024-01-01 --end 2024-03-31
 
-  AAPL → [파이프라인 B 전체] → signal (risk_manager output 포함)
-  NVDA → [파이프라인 B 전체] → signal          ↓
-  TSLA → [파이프라인 B 전체] → signal          ↓
-                                               ↓
-                              [Portfolio Manager]  ← prompts/portfolio_manager_system.md
-                                               ↓
-                              PortfolioManagerOutput:
-                                allocations: [{ticker, weight, action}, ...]
-                                total_equity_pct / cash_pct / hedge_pct
-                                hedge_instrument, portfolio_risk_level
-                                rebalance_urgency, entry_style
+[bc_graph.py — StateGraph(SystemStateBC)]
+
+  BC_EMILY          ← Emily SPY 레짐 분석 (emily_context 생성)
+       ↓
+  BC_STOCK_ANALYSIS ← 종목별 파이프라인 B 실행 (gating 적용)
+       ↓
+  BC_BACKTESTER     ← 6개 전략 Pool 백테스트 (emily_context, risk_mode 지원)
+       ↓ [route_after_backtester]
+  BC_MEETINGS       ← MAM/SDM/RAM (llm 토론 포함)
+       ↓
+  BC_CALIBRATION       ← 신뢰도 감사 + gating 갱신 → reliability_summary 추출
+       ↓
+  BC_RELIABILITY_UPDATE ← reliability_state.json 영속 + state reliability_summary 갱신
+       ↓
+  BC_PORTFOLIO_MANAGER ← Portfolio Manager (otto_feedback 주입 지원) → execution_feasibility 계산
+       ↓
+  BC_DAVE              ← 포트폴리오 리스크 평가 (avg_sharpe < 0.5 → stress_multiplier)
+       ↓ [route_after_dave]
+       ├─ risk_score > 0.7 (첫 1회) → BC_BACKTESTER_DEFENSIVE → BC_PORTFOLIO_MANAGER → BC_DAVE
+       └─ else →
+  BC_OTTO              ← 최종 승인 게이트
+       ↓ [route_after_otto]
+       ├─ rejected + retry <= 2 → BC_PORTFOLIO_MANAGER (otto_retry_count++)
+       └─ else → END
 ```
 
-**진입점**: `scripts/portfolio_pipeline.py AAPL NVDA TSLA --date 2024-01-15 --verbose`
+**Conditional edges (핵심)**
+- `Dave risk_score > 0.7` → defensive 백테스터 재실행 (momentum -20%, directional -15%)
+- `Otto rejected + retry <= 2` → Portfolio Manager 재실행 (rejection reason 주입)
+
+**E-001~E-004 uncertainty/reliability 체인**
+- `Emily regime_confidence < 0.55` → `uncertainty_mode=True`, lookback=30, candidate_strategies 포함
+- `avg_sharpe < 0.5` → Dave stress_multiplier 적용 (최대 1.15배, risk_score 상향)
+- `Dave risk > 0.7 + Emily conf < 0.55` → Otto: total_equity_pct × 0.85 shrinkage
+- `reliability[trader|risk_manager|researcher] < 0.35` → Otto: approved → conditional_approval 강제
+- `execution_feasibility < 0.4` → Otto: execution_style = staggered 강제
+
+**SystemStateBC 주요 필드** (`graph/bc_state.py`)
+- `uncertainty_mode` — Emily confidence < 0.55 시 True
+- `reliability_summary` — agent별 EMA 신뢰도 점수 (CALIBRATION/RELIABILITY_UPDATE 갱신)
+- `execution_feasibility` — feasibility_score + rebalance_urgency (PORTFOLIO_MANAGER 계산, OTTO 재산출)
+
+**관련 파일**
+- `graph/bc_state.py` — SystemStateBC TypedDict + make_initial_bc_state()
+- `graph/bc_graph.py` — build_bc_graph() / compile_bc_graph()
+- `graph/nodes/bc_*.py` — 10개 노드 (emily/stock/backtester/meetings/calibration/reliability_update/portfolio/dave/otto + defensive)
+- `scripts/run_loop.py` — 날짜 범위 루프, bc_graph.invoke() 호출
+- `scripts/run_eval.py` — 평가 파이프라인 (CR/ARR/SR/MDD vs baselines)
+- `scripts/portfolio_pipeline.py` — 단일 날짜 one-off 실행용 (레거시 호환)
+
 **스키마**: `schemas/portfolio_schemas.py` (StockAllocation, PortfolioManagerOutput)
-**재사용**: `portfolio_pipeline.py`가 `stock_pipeline.py` 함수를 import해서 재사용 (코드 중복 없음)
 
 ---
 
 ### 세 파이프라인 비교
 
-| 항목 | A (SPY 포트폴리오) | B (개별 종목) | C (멀티 종목) |
-|------|-------------------|---------------|---------------|
-| 대상 | SPY 고정 | 임의 single ticker | 임의 N개 ticker |
-| 에이전트 | Emily→Bob→Dave→Otto | 4 Analysts→Researcher→Trader→RiskMgr | B × N + Portfolio Manager |
+| 항목 | A (SPY 포트폴리오) | B (개별 종목) | B/C (운영 루프) |
+|------|-------------------|---------------|----------------|
+| 대상 | SPY 고정 | 임의 single ticker | 임의 N개 ticker × 날짜 범위 |
+| 에이전트 | Emily→Bob→Dave→Otto | 4 Analysts→Researcher→Trader→RiskMgr | B × N + Emily/Dave/Otto + PM |
 | 출력 | equities/hedge/cash % | BUY/SELL/HOLD + 리스크 조정 | 종목별 배분 + 현금/헤지 % |
-| 현금/헤지 | Otto 결정 | RiskManager 권고 (개별) | Portfolio Manager 결정 (통합) |
-| 메모리 | strategy_memory 누적 | 없음 (1회성) | 없음 (1회성) |
-| 실행 방식 | LangGraph 상태 그래프 | 함수 순차 호출 | 함수 순차 호출 (B 재사용) |
-| 진입점 | `orchestrator.py` | `scripts/stock_pipeline.py` | `scripts/portfolio_pipeline.py` |
+| 현금/헤지 | Otto 결정 | RiskManager 권고 (개별) | Portfolio Manager + Otto 승인 |
+| 메모리 | strategy_memory 누적 | 없음 (1회성) | run_memory (주기별 컨텍스트) |
+| 실행 방식 | LangGraph 상태 그래프 | 함수 순차 호출 (1회성) | LangGraph bc_graph (conditional edges) |
+| 진입점 | `orchestrator.py` | `scripts/stock_pipeline.py` | `scripts/run_loop.py` → `graph/bc_graph.py` |
 
 ---
 
-### 미완성/의도적 제외 영역
+### 미구현/의도적 제외 영역
 
-| 영역 | 현재 상태 | 다음 단계 |
-|------|----------|----------|
-| ~~**실행 루프**~~ | ✅ `scripts/run_loop.py` (2026-04-14) | — |
-| ~~**결과 저장**~~ | ✅ `results/YYYY-MM-DD/portfolio.json` (2026-04-14) | — |
-| ~~**B/C 메모리**~~ | ✅ `memory/run_memory.py` — 이전 주기 컨텍스트 주입 (2026-04-14) | — |
-| ~~**Bob 시뮬레이션**~~ | ✅ `simulation/backtester.py` — 6개 전략 Pool 백테스트 (2026-04-14) | — |
-| ~~**3 Meetings**~~ | ✅ `meetings/run_meetings.py` — MAM/SDM/RAM (2026-04-14) | — |
-| ~~**r_real 피드백 루프**~~ | ✅ `memory/outcome_filler.py` — T+7 역산 + strategy_memory 업데이트 (2026-04-17) | — |
-| **A↔B/C 통합** | 진행 중 — `integration/` 폴더 신규 (TASKS.md TASK-001~005 참조) | Emily→Portfolio Manager, Dave→리스크 검증, Otto→승인 게이트 |
-| **Reliability 영속화** | module-level dict (재시작 시 초기화) | TASKS.md TASK-007 — results/reliability_state.json |
-| **backtester regime-aware** | Sharpe 기반만 | TASKS.md TASK-006 — Emily regime 연동 |
-| **compute_adaptive_weights()** | otto.py에 구현됨, 호출 안 됨 | TASK-003 완료 후 otto_gate.py에서 연결 |
+| 영역 | 현재 상태 | 비고 |
+|------|----------|------|
 | FAISS dense retrieval | token overlap 기반 | 추후 |
 | `r_real` T+1 업데이트 | T+7 guard | 실시간 모드 시 T+1 미확정 |
 | 브로커 연결 | position_sizer까지만 | API 계정 필요 |
 | 종목 간 상관관계 | 미구현 | Portfolio Manager 개선 시 |
+| bc_graph 통합 테스트 | graph 전체 흐름 포함 | tests/integration/ (9개 파일) |
 
 ---
 
@@ -334,6 +361,18 @@ validated = bob._validate_output(raw_llm_output)
 
 ---
 
+## 새 클론 온보딩
+
+```bash
+# 1. git hook 설치 (커밋 시 harness all 자동 강제)
+sh scripts/install_git_hooks.sh
+
+# 2. 완료 검증 단일 명령
+sh scripts/verify.sh
+```
+
+---
+
 ## harness 사용법
 
 ```bash
@@ -354,4 +393,4 @@ python scripts/harness.py all
 
 ---
 
-*마지막 갱신: 2026-04-17 — A↔B/C 통합 진행 중 (integration/ 폴더 신규). Reliability 영속화, backtester regime-aware 추가. 미완성 영역 표 업데이트.*
+*마지막 갱신: 2026-05-12 — RELIABILITY_UPDATE 노드 추가, E-001~E-004 체인 설명, SystemStateBC 신규 필드, 온보딩 섹션, retry 조건 정정, bc_graph 통합 테스트 반영.*

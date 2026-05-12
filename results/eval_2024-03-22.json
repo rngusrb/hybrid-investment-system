@@ -1,0 +1,102 @@
+{
+  "generated_date": "2026-05-12",
+  "period": "2024-01-05 ~ 2024-03-22",
+  "n_periods": 12,
+  "metrics": {
+    "system": {
+      "label": "Hybrid System",
+      "n_periods": 12,
+      "cumulative_return": 0.1572,
+      "annualized_return": 0.8827,
+      "sharpe_ratio": 3.1145,
+      "sortino_ratio": 6.5832,
+      "max_drawdown": 0.0435,
+      "win_rate": 0.8333
+    },
+    "buy_and_hold": {
+      "label": "Buy & Hold (AAPL)",
+      "n_periods": 11,
+      "cumulative_return": -0.0491,
+      "annualized_return": -0.2119,
+      "sharpe_ratio": -1.1675,
+      "sortino_ratio": -1.4259,
+      "max_drawdown": 0.1127,
+      "win_rate": 0.5455
+    },
+    "macd": {
+      "label": "MACD (12/26/9)",
+      "n_periods": 11,
+      "cumulative_return": -0.0298,
+      "annualized_return": -0.1333,
+      "sharpe_ratio": -1.8485,
+      "sortino_ratio": -1.8883,
+      "max_drawdown": 0.0341,
+      "win_rate": 0.0909
+    },
+    "sma": {
+      "label": "SMA (20)",
+      "n_periods": 11,
+      "cumulative_return": -0.0298,
+      "annualized_return": -0.1333,
+      "sharpe_ratio": -1.8485,
+      "sortino_ratio": -1.8883,
+      "max_drawdown": 0.0341,
+      "win_rate": 0.0909
+    }
+  },
+  "system_returns": [
+    0.064281,
+    0.030561,
+    0.00274,
+    0.016369157894736842,
+    0.047944,
+    0.001594,
+    -0.043532,
+    0.003489,
+    0.035951,
+    -0.020039,
+    0.006900157894736842,
+    0.005296
+  ],
+  "baseline_returns": {
+    "buy_and_hold": [
+      0.026162,
+      0.030336,
+      0.004489,
+      -0.034144,
+      0.016142,
+      -0.034631,
+      0.001152,
+      -0.01567,
+      -0.049705,
+      0.01107,
+      -0.00197
+    ],
+    "macd": [
+      0.0,
+      0.0,
+      0.004489,
+      -0.034144,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "sma": [
+      0.0,
+      0.0,
+      0.004489,
+      -0.034144,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

@@ -74,18 +74,6 @@ _validate_output()에서 교정하고, _should_retry()는 구조적으로
 
 ---
 
-## 파일 구조
-
-| 파일 | 역할 |
-|------|------|
-| `base_agent.py` | retry 루프, JSON 파싱, 50KB 상한, path traversal 방어 |
-| `emily.py` | 시장 분석. event_sensitivity_map dict→list 교정 포함 |
-| `bob.py` | 전략 생성. Bear Critique, sim_metrics 실제 백테스트 교체 |
-| `dave.py` | 리스크 평가. risk_score를 컴포넌트 가중합으로 강제 덮어씀 |
-| `otto.py` | 정책 선택. raw data frozenset 차단. compute_utility()는 utils/utility.py 위임 |
-
----
-
 ## 하네스
 
 ```
@@ -110,12 +98,3 @@ forbidden:
 ```
 
 ---
-
-## 최근 변경
-
-| 날짜 | 파일 | 변경 내용 |
-|------|------|----------|
-| 2026-04-07 | emily.py | _validate_output() 추가 — trend_direction alias, event_sensitivity_map dict→list, list 필드 보장 |
-| 2026-04-07 | otto.py | _validate_output() 추가 — candidate_policies, adaptive_weights.lookback_steps, allocation 교정 |
-| 2026-04-06 | bob.py | _SIM_METRICS_ALIASES 추가 — expected_return→return, win_rate→hit_rate 등 |
-| 2026-04-06 | dave.py | _validate_output()에 risk_score 강제 덮어쓰기, risk_level lowercase, stress_test/risk_constraints 교정 |
